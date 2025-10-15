@@ -4,7 +4,6 @@ import { Badge } from './ui/badge'
 import { Avatar, AvatarFallback } from './ui/avatar'
 import { ArrowRight, RotateCcw, Crown } from 'lucide-react'
 import type { Player, Assignment } from '../lib/types'
-import { getPlayerName } from '../lib/secretSanta'
 
 interface ResultsDisplayProps {
   assignments: Assignment[]

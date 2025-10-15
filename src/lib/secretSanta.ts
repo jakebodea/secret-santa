@@ -111,9 +111,9 @@ function analyzeConstraints(
     const possibleReceivers = players.filter((receiver) =>
       canAssign(giver.id, receiver.id, constraints)
     )
+    const giverName = giver.name
 
     if (possibleReceivers.length === 0) {
-      const giverName = giver.name
       details.push(
         `${giverName} has no one they can give to (all other players are excluded by constraints)`
       )
