@@ -38,17 +38,17 @@ function HomePage() {
           </div>
 
           {/* Heading */}
-          <div className="space-y-4">
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground">
-              Secret Santa
+          <div className="space-y-6">
+            <h1 className="text-6xl md:text-7xl font-normal text-foreground tracking-tight leading-[1.1]">
+              <span className="italic font-light"> <span className="underline decoration-primary decoration-4">Super</span> Simple</span> Secret Santa
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground">
+            <p className="text-2xl md:text-3xl text-muted-foreground font-light tracking-wide">
               Organize your gift exchange with ease
             </p>
           </div>
 
           {/* Description */}
-          <p className="text-lg text-foreground/80 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-foreground/80 max-w-2xl mx-auto leading-relaxed font-normal tracking-wide">
             Planning a Secret Santa? We make it simple! Add your participants,
             set any rules (like who shouldn't give to whom), and let us handle
             the rest. Everyone gets assigned randomly while respecting your
@@ -56,40 +56,40 @@ function HomePage() {
           </p>
 
           {/* Features */}
-          <div className="grid md:grid-cols-3 gap-6 pt-8">
-            <div className="flex flex-col items-center space-y-2 p-4">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <Users className="w-6 h-6 text-primary" />
+          <div className="grid md:grid-cols-3 gap-8 pt-12">
+            <div className="flex flex-col items-center space-y-3 p-6">
+              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                <Users className="w-7 h-7 text-primary" />
               </div>
-              <h3 className="font-semibold text-foreground">Easy Setup</h3>
-              <p className="text-sm text-muted-foreground text-center">
+              <h3 className="text-2xl font-normal text-foreground tracking-wide">Easy Setup</h3>
+              <p className="text-base text-foreground/70 text-center font-normal leading-relaxed tracking-wide">
                 Add participants with just a name and email
               </p>
             </div>
-            <div className="flex flex-col items-center space-y-2 p-4">
-              <div className="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center">
-                <Gift className="w-6 h-6 text-secondary" />
+            <div className="flex flex-col items-center space-y-3 p-6">
+              <div className="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center">
+                <Gift className="w-7 h-7 text-secondary" />
               </div>
-              <h3 className="font-semibold text-foreground">Smart Rules</h3>
-              <p className="text-sm text-muted-foreground text-center">
+              <h3 className="text-2xl font-normal text-foreground tracking-wide">Smart Rules</h3>
+              <p className="text-base text-foreground/70 text-center font-normal leading-relaxed tracking-wide">
                 Set constraints for who can't give to whom
               </p>
             </div>
-            <div className="flex flex-col items-center space-y-2 p-4">
-              <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-accent" />
+            <div className="flex flex-col items-center space-y-3 p-6">
+              <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center">
+                <Sparkles className="w-7 h-7 text-accent" />
               </div>
-              <h3 className="font-semibold text-foreground">Auto Assign</h3>
-              <p className="text-sm text-muted-foreground text-center">
+              <h3 className="text-2xl font-normal text-foreground tracking-wide">Auto Assign</h3>
+              <p className="text-base text-foreground/70 text-center font-normal leading-relaxed tracking-wide">
                 Random assignments that respect all your rules
               </p>
             </div>
           </div>
 
           {/* CTA Button */}
-          <div className="pt-8">
+          <div className="pt-12">
             <Link to="/assign">
-              <Button size="lg" className="text-lg px-8 py-6 gap-2">
+              <Button size="lg" className="text-base font-medium px-10 py-7 gap-2 tracking-wide">
                 Get started
                 <ArrowRight className="w-5 h-5" />
               </Button>
@@ -99,8 +99,8 @@ function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-16 py-8">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+      <footer className="border-t border-border mt-20 py-10">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground font-light tracking-wide">
           <p>Make your holiday gift exchange magical ✨</p>
         </div>
       </footer>

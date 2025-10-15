@@ -44,7 +44,7 @@ export function PlayerForm({ onAddPlayer, existingPlayers }: PlayerFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Add Participant</CardTitle>
+        <CardTitle className="text-2xl font-normal tracking-wide">Add Participant</CardTitle>
       </CardHeader>
       <CardContent>
         <form

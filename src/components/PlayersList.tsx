@@ -15,10 +15,10 @@ export function PlayersList({ players, onRemovePlayer }: PlayersListProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Participants ({players.length})</CardTitle>
+          <CardTitle className="text-2xl font-normal tracking-wide">Participants ({players.length})</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground text-center py-8">
+          <p className="text-base text-muted-foreground font-light tracking-wide text-center py-8">
             No participants yet. Add your first player to get started!
           </p>
         </CardContent>
@@ -29,10 +29,10 @@ export function PlayersList({ players, onRemovePlayer }: PlayersListProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
+        <CardTitle className="text-2xl font-normal tracking-wide">
           Participants ({players.length})
           {players.length < 3 && (
-            <span className="text-sm font-normal text-muted-foreground ml-2">
+            <span className="text-base font-light text-muted-foreground ml-2">
               (minimum 3 required)
             </span>
           )}
@@ -58,7 +58,7 @@ export function PlayersList({ players, onRemovePlayer }: PlayersListProps) {
                 </Avatar>
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="font-medium">{player.name}</p>
+                    <p className="font-normal tracking-wide">{player.name}</p>
                     {player.isAdmin && (
                       <Badge variant="secondary" className="gap-1">
                         <Crown className="w-3 h-3" />
@@ -66,7 +66,7 @@ export function PlayersList({ players, onRemovePlayer }: PlayersListProps) {
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm text-muted-foreground">{player.email}</p>
+                  <p className="text-sm text-muted-foreground font-light tracking-wide">{player.email}</p>
                 </div>
               </div>
               {!player.isAdmin && (
@@ -82,7 +82,7 @@ export function PlayersList({ players, onRemovePlayer }: PlayersListProps) {
             </div>
           ))}
           {players.length > 0 && players[0].isAdmin && (
-            <p className="text-xs text-muted-foreground pt-2">
+            <p className="text-sm text-muted-foreground font-light tracking-wide pt-2">
               The admin will receive the complete list of assignments (for backup
               purposes). They're encouraged not to look at it!
             </p>

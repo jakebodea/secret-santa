@@ -23,7 +23,7 @@ export function ConstraintsForm({
 }: ConstraintsFormProps) {
   const [giverId, setGiverId] = useState<string>('')
   const [receiverId, setReceiverId] = useState<string>('')
-  const [bidirectional, setBidirectional] = useState(false)
+  const [bidirectional, setBidirectional] = useState(true)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -60,7 +60,7 @@ export function ConstraintsForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Add Exclusion Rule</CardTitle>
+        <CardTitle className="text-2xl font-normal tracking-wide">Add Exclusion Rule</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -99,7 +99,7 @@ export function ConstraintsForm({
           <div className="flex items-center justify-between space-x-2 p-3 rounded-lg border">
             <div className="space-y-0.5">
               <Label htmlFor="bidirectional">Apply both ways</Label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground font-light tracking-wide">
                 Both players cannot give to each other
               </p>
             </div>

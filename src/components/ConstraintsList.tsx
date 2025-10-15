@@ -20,10 +20,10 @@ export function ConstraintsList({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Exclusion Rules ({constraints.length})</CardTitle>
+          <CardTitle className="text-2xl font-normal tracking-wide">Exclusion Rules ({constraints.length})</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground text-center py-8">
+          <p className="text-base text-muted-foreground font-light tracking-wide text-center py-8">
             No exclusion rules yet. Add rules if certain players shouldn't give to
             each other (e.g., spouses, close family members).
           </p>
@@ -35,7 +35,7 @@ export function ConstraintsList({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Exclusion Rules ({constraints.length})</CardTitle>
+        <CardTitle className="text-2xl font-normal tracking-wide">Exclusion Rules ({constraints.length})</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
@@ -57,7 +57,7 @@ export function ConstraintsList({
                   {getPlayerName(players, constraint.receiverId)}
                 </Badge>
                 {constraint.bidirectional && (
-                  <span className="text-xs text-muted-foreground ml-2">
+                  <span className="text-sm text-muted-foreground font-light tracking-wide ml-2">
                     (both ways)
                   </span>
                 )}

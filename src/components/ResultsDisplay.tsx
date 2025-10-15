@@ -24,7 +24,7 @@ export function ResultsDisplay({
     <Card className="border-primary/50">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>🎉 Secret Santa Assignments</CardTitle>
+          <CardTitle className="text-3xl md:text-4xl font-normal tracking-wide">🎉 Secret Santa Assignments</CardTitle>
           <Button variant="outline" onClick={onStartOver}>
             <RotateCcw className="w-4 h-4 mr-2" />
             Start Over
@@ -33,8 +33,8 @@ export function ResultsDisplay({
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="bg-accent/30 p-4 rounded-lg border border-accent mb-4">
-          <p className="text-sm font-medium mb-2">📧 Coming Soon:</p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base font-normal tracking-wide mb-2">📧 Coming Soon:</p>
+          <p className="text-sm text-muted-foreground font-light tracking-wide">
             Each participant will receive an email with their assigned recipient.
             For now, you can see all assignments below.
           </p>
@@ -65,7 +65,7 @@ export function ResultsDisplay({
                   </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="font-medium">{giver.name}</p>
+                      <p className="font-normal tracking-wide">{giver.name}</p>
                       {giver.isAdmin && (
                         <Badge variant="secondary" className="gap-1">
                           <Crown className="w-3 h-3" />
@@ -73,7 +73,7 @@ export function ResultsDisplay({
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground">{giver.email}</p>
+                    <p className="text-sm text-muted-foreground font-light tracking-wide">{giver.email}</p>
                   </div>
                 </div>
 
@@ -91,8 +91,8 @@ export function ResultsDisplay({
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
-                    <p className="font-medium">{receiver.name}</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="font-normal tracking-wide">{receiver.name}</p>
+                    <p className="text-sm text-muted-foreground font-light tracking-wide">
                       {receiver.email}
                     </p>
                   </div>
@@ -104,8 +104,8 @@ export function ResultsDisplay({
 
         {players.find((p) => p.isAdmin) && (
           <div className="bg-muted/50 p-4 rounded-lg border mt-4">
-            <p className="text-sm text-muted-foreground">
-              <strong className="text-foreground">
+            <p className="text-sm text-muted-foreground font-light tracking-wide">
+              <strong className="text-foreground font-normal">
                 {players.find((p) => p.isAdmin)?.name}
               </strong>{' '}
               (Admin) will receive the complete assignment list via email as a
