@@ -50,7 +50,7 @@ export function ConstraintsForm({
     // Reset form
     setGiverId('')
     setReceiverId('')
-    setBidirectional(false)
+    setBidirectional(true)
   }
 
   if (players.length < 2) {

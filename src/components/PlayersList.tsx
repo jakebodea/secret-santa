@@ -2,15 +2,23 @@ import { Avatar, AvatarFallback } from './ui/avatar'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { Trash2, Crown } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from './ui/dropdown-menu'
+import { Trash2, Crown, MoreVertical } from 'lucide-react'
 import type { Player } from '../lib/types'
 
 interface PlayersListProps {
   players: Player[]
   onRemovePlayer: (playerId: string) => void
+  onToggleAdmin: (playerId: string) => void
 }
 
-export function PlayersList({ players, onRemovePlayer }: PlayersListProps) {
+export function PlayersList({ players, onRemovePlayer, onToggleAdmin }: PlayersListProps) {
   if (players.length === 0) {
     return (
       <Card>
@@ -69,19 +77,35 @@ export function PlayersList({ players, onRemovePlayer }: PlayersListProps) {
                   <p className="text-sm text-muted-foreground font-light tracking-wide">{player.email}</p>
                 </div>
               </div>
-              {!player.isAdmin && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => onRemovePlayer(player.id)}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                  >
+                    <MoreVertical className="h-4 w-4" />
+                    <span className="sr-only">Open menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => onToggleAdmin(player.id)}>
+                    <Crown className="w-4 h-4" />
+                    {player.isAdmin ? 'Remove admin' : 'Make admin'}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={() => onRemovePlayer(player.id)}
+                    variant="destructive"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete player
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           ))}
-          {players.length > 0 && players[0].isAdmin && (
+          {players.length > 0 && players.some(p => p.isAdmin) && (
             <p className="text-sm text-muted-foreground font-light tracking-wide pt-2">
               The admin will receive the complete list of assignments (for backup
               purposes). They're encouraged not to look at it!

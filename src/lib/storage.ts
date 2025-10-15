@@ -58,6 +58,29 @@ export function removePlayer(playerId: string): void {
   data.constraints = data.constraints.filter(
     (c) => c.giverId !== playerId && c.receiverId !== playerId
   )
+  // If we removed the last admin and there are still players, make the first one admin
+  const hasAdmin = data.players.some(p => p.isAdmin)
+  if (!hasAdmin && data.players.length > 0) {
+    data.players[0].isAdmin = true
+  }
+  saveData(data)
+}
+
+export function toggleAdmin(playerId: string): void {
+  const data = getData()
+  const player = data.players.find(p => p.id === playerId)
+  if (!player) return
+  
+  // Toggle the admin status
+  player.isAdmin = !player.isAdmin
+  
+  // Ensure at least one admin exists
+  const hasAdmin = data.players.some(p => p.isAdmin)
+  if (!hasAdmin && data.players.length > 0) {
+    // If no admin, make the first player admin (or restore the current player)
+    data.players[0].isAdmin = true
+  }
+  
   saveData(data)
 }
 

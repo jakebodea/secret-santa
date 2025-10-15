@@ -22,6 +22,7 @@ import {
   getData,
   addPlayer,
   removePlayer,
+  toggleAdmin,
   addConstraint,
   removeConstraint,
   saveAssignments,
@@ -62,6 +63,12 @@ function AssignPage() {
     const data = getData()
     setPlayers(data.players)
     setConstraints(data.constraints)
+  }
+
+  const handleToggleAdmin = (playerId: string) => {
+    toggleAdmin(playerId)
+    const data = getData()
+    setPlayers(data.players)
   }
 
   const handleAddConstraint = (constraint: Constraint) => {
@@ -148,6 +155,7 @@ function AssignPage() {
                 <PlayersList
                   players={players}
                   onRemovePlayer={handleRemovePlayer}
+                  onToggleAdmin={handleToggleAdmin}
                 />
               </div>
 
