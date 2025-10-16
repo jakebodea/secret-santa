@@ -1,8 +1,18 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import appCss from '../styles.css?url'
+
+import React from 'react'
+
+// Lazy load devtools only in development
+const TanStackRouterDevtools =
+  process.env.NODE_ENV === 'production'
+    ? () => null
+    : React.lazy(() =>
+        import('@tanstack/react-router-devtools').then((res) => ({
+          default: res.TanStackRouterDevtools,
+        }))
+      )
 
 export const Route = createRootRoute({
   head: () => ({
@@ -37,17 +47,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        <TanStackRouterDevtools />
         <Scripts />
       </body>
     </html>
