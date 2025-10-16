@@ -8,8 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../components/ui/dialog'
-import { Sparkles, Home } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
+import { Sparkles } from 'lucide-react'
 
 import { PlayerForm } from '../components/PlayerForm'
 import { PlayersList } from '../components/PlayersList'
@@ -116,17 +115,6 @@ function AssignPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 hover:opacity-80">
-              <Home className="w-5 h-5" />
-              <span className="text-xl font-normal tracking-wide">Secret Santa</span>
-            </Link>
-          </div>
-        </div>
-      </header>
-
       <main className="container mx-auto px-4 py-8">
         {hasAssignments ? (
           <div className="max-w-4xl mx-auto">

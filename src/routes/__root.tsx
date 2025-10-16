@@ -33,6 +33,11 @@ export const Route = createRootRoute({
         rel: 'stylesheet',
         href: appCss,
       },
+      {
+        rel: 'icon',
+        href: '/gift.svg',
+        type: 'image/svg+xml',
+      },
     ],
   }),
 

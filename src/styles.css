@@ -44,7 +44,7 @@ code {
   --muted-foreground: oklch(0.5 0.02 30);
   
   /* Accent - Gold */
-  --accent: oklch(0.75 0.15 85);
+  --accent: oklch(0.88 0.08 85);
   --accent-foreground: oklch(0.2 0.02 30);
   
   /* Destructive */
@@ -54,7 +54,7 @@ code {
   /* Borders and inputs */
   --border: oklch(0.88 0.02 70);
   --input: oklch(0.88 0.02 70);
-  --ring: oklch(0.55 0.22 25);
+  --ring: oklch(0.75 0.15 85);
   
   /* Charts - Christmas colors */
   --chart-1: oklch(0.55 0.22 25);
@@ -107,5 +107,12 @@ code {
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Instrument Serif', Georgia, serif;
+  }
+  ::selection {
+    background-color: oklch(0.85 0.08 85 / 0.5);
+    color: var(--foreground);
+  }
+  [data-slot="select-item"]:focus {
+    background-color: oklch(0.75 0.15 85 / 0.4);
   }
 }
