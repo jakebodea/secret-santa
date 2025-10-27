@@ -10,11 +10,11 @@ import {
 } from '../components/ui/dialog'
 import { Sparkles } from 'lucide-react'
 
-import { PlayerForm } from '../components/PlayerForm'
-import { PlayersList } from '../components/PlayersList'
-import { ConstraintsForm } from '../components/ConstraintsForm'
-import { ConstraintsList } from '../components/ConstraintsList'
-import { ResultsDisplay } from '../components/ResultsDisplay'
+import { PlayerForm } from '../components/player-form'
+import { PlayersList } from '../components/players-list'
+import { ConstraintsForm } from '../components/constraints-form'
+import { ConstraintsList } from '../components/constraints-list'
+import { ResultsDisplay } from '../components/results-display'
 
 import type { Player, Constraint, Assignment } from '../lib/types'
 import {
@@ -27,7 +27,7 @@ import {
   saveAssignments,
   clearAssignments,
 } from '../lib/storage'
-import { generateAssignments } from '../lib/secretSanta'
+import { generateAssignments } from '../lib/secret-santa-assignments'
 
 export const Route = createFileRoute('/assign')({
   component: AssignPage,

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Badge } from './ui/badge'
 import { Trash2, ArrowRight, ArrowLeftRight } from 'lucide-react'
 import type { Player, Constraint } from '../lib/types'
-import { getPlayerName } from '../lib/secretSanta'
+import { getPlayerName } from '../lib/secret-santa-assignments'
 
 interface ConstraintsListProps {
   constraints: Constraint[]
