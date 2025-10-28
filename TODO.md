@@ -1,0 +1,12 @@
+- hide assignments in main flow 
+- clean up results page 
+    - allow for peeking at one participant's assignment vs. showing all 
+- clean up emails and formatting 
+    - add recipient name in the subject line 
+    - reveal assignment name with a fun effect? 
+    - emojis? 
+- add venmo / zelle links for optional support 
+- import from spreadsheet (with fixed column names)
+- quicker keybindings to add participants 
+- make/find better secret santa svg 
+- add a party / group name and mention that in all emails, displays, etc 
