@@ -1,4 +1,3 @@
-- hide assignments in main flow 
 - clean up results page 
     - allow for peeking at one participant's assignment vs. showing all 
 - clean up emails and formatting 
@@ -12,3 +11,4 @@
 - add a party / group name and mention that in all emails, displays, etc 
 - tighten feature card text on the main page (too much spacing between lines)
 - fix mobile view 
+- figure out a way to stop spam... maybe block to only once an hour per browser sessoin?

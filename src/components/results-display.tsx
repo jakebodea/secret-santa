@@ -1,15 +1,13 @@
 import { useState } from 'react'
 import { Button } from './ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { Badge } from './ui/badge'
-import { Avatar, AvatarFallback } from './ui/avatar'
+import { Card, CardContent } from './ui/card'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from './ui/dialog'
-import { ArrowRight, RotateCcw, Crown, Mail, Loader2 } from 'lucide-react'
+import { RotateCcw, Mail, Loader2, CheckCircle2, XCircle } from 'lucide-react'
 import type { Player, Assignment } from '../lib/types'
 
 interface ResultsDisplayProps {
@@ -31,9 +29,6 @@ export function ResultsDisplay({
     message: string
     details?: string
   }>({ open: false, type: 'success', message: '' })
-
-  const getPlayer = (playerId: string) =>
-    players.find((p) => p.id === playerId)
 
   const handleSendEmails = async () => {
     setIsSending(true)
@@ -60,7 +55,7 @@ export function ResultsDisplay({
       setDialog({
         open: true,
         type: 'success',
-        message: 'Emails sent successfully! 🎉',
+        message: 'Emails sent successfully!',
         details: data.message,
       })
     } catch (error) {
@@ -77,137 +72,112 @@ export function ResultsDisplay({
 
   return (
     <>
-      <Card className="border-primary/50">
-        <CardHeader>
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <CardTitle className="text-3xl md:text-4xl font-normal tracking-wide">
-              🎉 Secret Santa Assignments
-            </CardTitle>
-            <div className="flex gap-2">
-              {!emailsSent && (
-                <Button
-                  variant="default"
-                  onClick={handleSendEmails}
-                  disabled={isSending}
-                >
-                  {isSending ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <Mail className="w-4 h-4 mr-2" />
-                      Send Emails
-                    </>
-                  )}
-                </Button>
-              )}
-              <Button variant="outline" onClick={onStartOver}>
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Start Over
-              </Button>
-            </div>
+      <div className="min-h-screen bg-background flex items-center justify-center py-16">
+        <div className="max-w-3xl mx-auto px-4 text-center space-y-8">
+          {/* Celebration Icon */}
+          <div className="flex justify-center">
+            <img
+              src="/santa-face.svg"
+              alt="Secret Santa"
+              className="w-32 h-32 md:w-40 md:h-40"
+            />
           </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {emailsSent ? (
-            <div className="bg-primary/10 p-4 rounded-lg border border-primary/50 mb-4">
-              <p className="text-base font-normal tracking-wide mb-2">✅ Emails Sent!</p>
-              <p className="text-sm text-muted-foreground font-light tracking-wide">
-                Each participant has received an email with their assignment. Admins received a link to view all assignments.
-              </p>
-            </div>
-          ) : (
-            <div className="bg-accent/30 p-4 rounded-lg border border-accent mb-4">
-              <p className="text-base font-normal tracking-wide mb-2">📧 Ready to Send:</p>
-              <p className="text-sm text-muted-foreground font-light tracking-wide">
-                Click "Send Emails" to notify all participants of their assignments. Each person will receive an email with their assigned recipient.
-              </p>
-            </div>
-          )}
 
-        <div className="space-y-3">
-          {assignments.map((assignment) => {
-            const giver = getPlayer(assignment.giverId)
-            const receiver = getPlayer(assignment.receiverId)
-
-            if (!giver || !receiver) return null
-
-            return (
-              <div
-                key={assignment.giverId}
-                className="flex items-center gap-4 p-4 rounded-lg border bg-card"
-              >
-                <div className="flex items-center gap-3 flex-1">
-                  <Avatar>
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      {giver.name
-                        .split(' ')
-                        .map((n) => n[0])
-                        .join('')
-                        .toUpperCase()
-                        .slice(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="font-normal tracking-wide">{giver.name}</p>
-                      {giver.isAdmin && (
-                        <Badge variant="secondary" className="gap-1">
-                          <Crown className="w-3 h-3" />
-                          Admin
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-sm text-muted-foreground font-light tracking-wide">{giver.email}</p>
-                  </div>
-                </div>
-
-                <ArrowRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-
-                <div className="flex items-center gap-3 flex-1">
-                  <Avatar>
-                    <AvatarFallback className="bg-secondary text-secondary-foreground">
-                      {receiver.name
-                        .split(' ')
-                        .map((n) => n[0])
-                        .join('')
-                        .toUpperCase()
-                        .slice(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <p className="font-normal tracking-wide">{receiver.name}</p>
-                    <p className="text-sm text-muted-foreground font-light tracking-wide">
-                      {receiver.email}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {players.find((p) => p.isAdmin) && (
-          <div className="bg-muted/50 p-4 rounded-lg border mt-4">
-            <p className="text-sm text-muted-foreground font-light tracking-wide">
-              <strong className="text-foreground font-normal">
-                {players.find((p) => p.isAdmin)?.name}
-              </strong>{' '}
-              (Admin) will receive a link to view all assignments. Please resist the temptation to look at it before the reveal! 🙈
+          {/* Main Message */}
+          <div className="space-y-4">
+            <h1 className="text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
+              Assignments Generated!
+            </h1>
+            <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
+              Your Secret Santa assignments are ready to send!
             </p>
           </div>
-        )}
-      </CardContent>
-    </Card>
+
+          {/* Status Message */}
+          {emailsSent ? (
+            <Card className="bg-primary/10 border-primary/50">
+              <CardContent>
+                <p className="text-lg font-normal tracking-wide mb-2">Emails Sent!</p>
+                <p className="text-base text-muted-foreground font-light tracking-wide">
+                  Each participant has received an email with their assignment. Admins received a link to view all assignments.
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="bg-accent/30 border-accent">
+              <CardContent>
+                <p className="text-base text-muted-foreground font-light tracking-wide">
+                  Click the button below to notify all participants of their assignments. Each person will receive an email with their assigned recipient.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            {!emailsSent && (
+              <Button
+                size="lg"
+                onClick={handleSendEmails}
+                disabled={isSending}
+                className="text-lg font-medium px-12 py-8 gap-3 tracking-wide"
+              >
+                {isSending ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="w-5 h-5" />
+                    Send Emails
+                  </>
+                )}
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={onStartOver}
+              className="text-lg font-medium px-12 py-8 gap-3 tracking-wide"
+            >
+              <RotateCcw className="w-5 h-5" />
+              Start Over
+            </Button>
+          </div>
+
+          {/* Admin Note */}
+          {players.find((p) => p.isAdmin) && !emailsSent && (
+            <Card className="bg-muted/50 mt-8">
+              <CardContent>
+                <p className="text-sm text-muted-foreground font-light tracking-wide">
+                  <strong className="text-foreground font-normal">
+                    {players.find((p) => p.isAdmin)?.name}
+                  </strong>{' '}
+                  (Admin) will receive a link to view all assignments. Please resist the temptation to look at it before the reveal! :)
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
 
     {/* Feedback Dialog */}
     <Dialog open={dialog.open} onOpenChange={(open) => setDialog({ ...dialog, open })}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {dialog.type === 'success' ? '✅ Success' : '❌ Error'}
+          <DialogTitle className="flex items-center gap-2">
+            {dialog.type === 'success' ? (
+              <>
+                <CheckCircle2 className="w-5 h-5" />
+                Success
+              </>
+            ) : (
+              <>
+                <XCircle className="w-5 h-5" />
+                Error
+              </>
+            )}
           </DialogTitle>
         </DialogHeader>
         <div className="pt-4">

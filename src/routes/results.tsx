@@ -45,13 +45,9 @@ function ResultsPage() {
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Header */}
           <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-4">
-              <span className="text-5xl">🎅</span>
-              <h1 className="text-5xl md:text-6xl font-normal tracking-tight">
-                Secret Santa Results
-              </h1>
-              <span className="text-5xl">🤫</span>
-            </div>
+            <h1 className="text-5xl md:text-6xl font-normal tracking-tight">
+              Secret Santa Results
+            </h1>
           </div>
 
           {/* Warning Banner */}
@@ -113,19 +109,13 @@ function ResultsPage() {
                           className="border-b border-border/50 last:border-0 hover:bg-muted/30 transition-colors"
                         >
                           <td className="py-4 px-4">
-                            <div className="flex items-center gap-2">
-                              <span className="text-lg">🎁</span>
-                              <span className="font-medium">{assignment.giver}</span>
-                            </div>
+                            <span className="font-medium">{assignment.giver}</span>
                           </td>
                           <td className="py-4 px-4 text-center">
                             <span className="text-muted-foreground">gives to</span>
                           </td>
                           <td className="py-4 px-4">
-                            <div className="flex items-center gap-2">
-                              <span className="text-lg">🎄</span>
-                              <span className="font-medium">{assignment.receiver}</span>
-                            </div>
+                            <span className="font-medium">{assignment.receiver}</span>
                           </td>
                         </tr>
                       ))}

@@ -15,6 +15,7 @@ import { PlayersList } from '../components/players-list'
 import { ConstraintsForm } from '../components/constraints-form'
 import { ConstraintsList } from '../components/constraints-list'
 import { ResultsDisplay } from '../components/results-display'
+import { AssignmentAnimation } from '../components/assignment-animation'
 
 import type { Player, Constraint, Assignment } from '../lib/types'
 import {
@@ -37,6 +38,8 @@ function AssignPage() {
   const [players, setPlayers] = useState<Player[]>([])
   const [constraints, setConstraints] = useState<Constraint[]>([])
   const [assignments, setAssignments] = useState<Assignment[]>([])
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [animationComplete, setAnimationComplete] = useState(false)
   const [errorDialog, setErrorDialog] = useState<{
     open: boolean
     message: string
@@ -92,12 +95,25 @@ function AssignPage() {
       return
     }
 
+    // Start animation
+    setIsGenerating(true)
+    setAnimationComplete(false)
+
+    // Generate assignments immediately
     const result = generateAssignments(players, constraints)
 
     if (result.success && result.assignments) {
       saveAssignments(result.assignments)
       setAssignments(result.assignments)
+      
+      // Wait 3 seconds for animation, then show results
+      setTimeout(() => {
+        setIsGenerating(false)
+        setAnimationComplete(true)
+      }, 3000)
     } else {
+      // If generation failed, stop animation immediately
+      setIsGenerating(false)
       setErrorDialog({
         open: true,
         message: result.error || 'Failed to generate assignments',
@@ -109,22 +125,26 @@ function AssignPage() {
   const handleStartOver = () => {
     clearAssignments()
     setAssignments([])
+    setAnimationComplete(false)
   }
 
-  const hasAssignments = assignments.length > 0
+  const hasAssignments = assignments.length > 0 && animationComplete
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-8">
-        {hasAssignments ? (
-          <div className="max-w-4xl mx-auto">
-            <ResultsDisplay
-              assignments={assignments}
-              players={players}
-              onStartOver={handleStartOver}
-            />
-          </div>
-        ) : (
+      {isGenerating ? (
+        <AssignmentAnimation />
+      ) : (
+        <main className="container mx-auto px-4 py-8">
+          {hasAssignments ? (
+            <div className="max-w-4xl mx-auto">
+              <ResultsDisplay
+                assignments={assignments}
+                players={players}
+                onStartOver={handleStartOver}
+              />
+            </div>
+          ) : (
           <div className="max-w-6xl mx-auto space-y-8">
             <div className="text-center space-y-4">
               <div className="flex items-center justify-center gap-4 md:gap-6">
@@ -185,8 +205,9 @@ function AssignPage() {
               </div>
             )}
           </div>
-        )}
-      </main>
+          )}
+        </main>
+      )}
 
       {/* Error Dialog */}
       <Dialog open={errorDialog.open} onOpenChange={(open) => setErrorDialog({ ...errorDialog, open })}>
