@@ -1,5 +1,3 @@
-- clean up results page 
-    - allow for peeking at one participant's assignment vs. showing all 
 - clean up emails and formatting 
     - add recipient name in the subject line 
     - reveal assignment name with a fun effect? 
