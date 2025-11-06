@@ -77,9 +77,9 @@ export function ResultsDisplay({
           {/* Celebration Icon */}
           <div className="flex justify-center">
             <img
-              src="/santa-face.svg"
+              src="/santa.svg"
               alt="Secret Santa"
-              className="w-32 h-32 md:w-40 md:h-40"
+              className="w-40 h-40 md:w-48 md:h-48"
             />
           </div>
 
