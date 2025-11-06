@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as AssignRouteImport } from './routes/assign'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiSendEmailsRouteImport } from './routes/api/send-emails'
 
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResultsRoute = ResultsRouteImport.update({
   id: '/results',
   path: '/results',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assign': typeof AssignRoute
   '/results': typeof ResultsRoute
+  '/support': typeof SupportRoute
   '/api/send-emails': typeof ApiSendEmailsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assign': typeof AssignRoute
   '/results': typeof ResultsRoute
+  '/support': typeof SupportRoute
   '/api/send-emails': typeof ApiSendEmailsRoute
 }
 export interface FileRoutesById {
@@ -52,25 +60,40 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/assign': typeof AssignRoute
   '/results': typeof ResultsRoute
+  '/support': typeof SupportRoute
   '/api/send-emails': typeof ApiSendEmailsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/assign' | '/results' | '/api/send-emails'
+  fullPaths: '/' | '/assign' | '/results' | '/support' | '/api/send-emails'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/assign' | '/results' | '/api/send-emails'
-  id: '__root__' | '/' | '/assign' | '/results' | '/api/send-emails'
+  to: '/' | '/assign' | '/results' | '/support' | '/api/send-emails'
+  id:
+    | '__root__'
+    | '/'
+    | '/assign'
+    | '/results'
+    | '/support'
+    | '/api/send-emails'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssignRoute: typeof AssignRoute
   ResultsRoute: typeof ResultsRoute
+  SupportRoute: typeof SupportRoute
   ApiSendEmailsRoute: typeof ApiSendEmailsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/results': {
       id: '/results'
       path: '/results'
@@ -106,6 +129,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssignRoute: AssignRoute,
   ResultsRoute: ResultsRoute,
+  SupportRoute: SupportRoute,
   ApiSendEmailsRoute: ApiSendEmailsRoute,
 }
 export const routeTree = rootRouteImport
