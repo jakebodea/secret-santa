@@ -25,8 +25,10 @@ import {
   toggleAdmin,
   addConstraint,
   removeConstraint,
+  saveConstraints,
   saveAssignments,
   clearAssignments,
+  clearAllData,
 } from '../lib/storage'
 import { generateAssignments } from '../lib/secret-santa-assignments'
 
@@ -128,6 +130,19 @@ function AssignPage() {
     setAnimationComplete(false)
   }
 
+  const handleClearAll = () => {
+    clearAllData()
+    setPlayers([])
+    setConstraints([])
+    setAssignments([])
+    setAnimationComplete(false)
+  }
+
+  const handleClearConstraints = () => {
+    saveConstraints([])
+    setConstraints([])
+  }
+
   const hasAssignments = assignments.length > 0 && animationComplete
 
   return (
@@ -176,6 +191,7 @@ function AssignPage() {
                   players={players}
                   onRemovePlayer={handleRemovePlayer}
                   onToggleAdmin={handleToggleAdmin}
+                  onClearAll={handleClearAll}
                 />
               </div>
 
@@ -188,6 +204,7 @@ function AssignPage() {
                   constraints={constraints}
                   players={players}
                   onRemoveConstraint={handleRemoveConstraint}
+                  onClearAll={handleClearConstraints}
                 />
               </div>
             </div>

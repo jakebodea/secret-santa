@@ -9,18 +9,22 @@ interface ConstraintsListProps {
   constraints: Constraint[]
   players: Player[]
   onRemoveConstraint: (constraintId: string) => void
+  onClearAll: () => void
 }
 
 export function ConstraintsList({
   constraints,
   players,
   onRemoveConstraint,
+  onClearAll,
 }: ConstraintsListProps) {
   if (constraints.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-normal tracking-wide">Exclusion Rules ({constraints.length})</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-normal tracking-wide">Exclusion Rules ({constraints.length})</CardTitle>
+          </div>
         </CardHeader>
         <CardContent>
           <p className="text-base text-muted-foreground font-light tracking-wide text-center py-8">
@@ -35,7 +39,20 @@ export function ConstraintsList({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl font-normal tracking-wide">Exclusion Rules ({constraints.length})</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-2xl font-normal tracking-wide">Exclusion Rules ({constraints.length})</CardTitle>
+          {constraints.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClearAll}
+              className="text-muted-foreground hover:text-destructive hover:bg-destructive/5"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Clear Rules
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">

@@ -7,7 +7,6 @@
 - add venmo / zelle links for optional support 
 - import from spreadsheet (with fixed column names)
 - quicker keybindings to add participants 
-- make/find better secret santa svg 
 - add a party / group name and mention that in all emails, displays, etc 
 - tighten feature card text on the main page (too much spacing between lines)
 - fix mobile view 
