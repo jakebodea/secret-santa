@@ -27,6 +27,30 @@ export const Route = createRootRoute({
       {
         title: 'Secret Santa - Organize Your Gift Exchange',
       },
+      {
+        property: 'og:title',
+        content: 'Secret Santa - Organize Your Gift Exchange',
+      },
+      {
+        property: 'og:description',
+        content: 'Organize your Secret Santa gift exchange with ease',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        property: 'og:image',
+        content: '/santa.svg',
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary',
+      },
+      {
+        name: 'twitter:image',
+        content: '/santa.svg',
+      },
     ],
     links: [
       {
@@ -35,8 +59,16 @@ export const Route = createRootRoute({
       },
       {
         rel: 'icon',
-        href: '/gift.svg',
+        href: '/santa.svg',
         type: 'image/svg+xml',
+      },
+      {
+        rel: 'apple-touch-icon',
+        href: '/santa.svg',
+      },
+      {
+        rel: 'manifest',
+        href: '/manifest.json',
       },
     ],
   }),
