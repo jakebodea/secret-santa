@@ -11,7 +11,6 @@ import {
 } from '../components/ui/select'
 import {
   AlertCircle,
-  Gift,
   Eye,
   EyeOff,
 } from 'lucide-react'
