@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { Card, CardContent } from './ui/card'
 import {
@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from './ui/dialog'
 import { RotateCcw, Mail, XCircle } from 'lucide-react'
 import { SupportCard } from './support-card'
@@ -26,16 +27,52 @@ export function ResultsDisplay({
 }: ResultsDisplayProps) {
   const [isSending, setIsSending] = useState(false)
   const [emailsSent, setEmailsSent] = useState(false)
+  const [cooldownUntil, setCooldownUntil] = useState<number | null>(null)
+  const [nowTs, setNowTs] = useState<number>(Date.now())
   const [errorDialog, setErrorDialog] = useState<{
     open: boolean
     message: string
     details?: string
   }>({ open: false, message: '' })
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
 
-  const handleSendEmails = async () => {
+  // Load cooldown from localStorage and keep a ticking clock for remaining time
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const stored = localStorage.getItem('ss_email_cooldown_until')
+    if (stored) {
+      const parsed = Number(stored)
+      if (!Number.isNaN(parsed)) {
+        setCooldownUntil(parsed)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!cooldownUntil) return
+    const id = setInterval(() => {
+      setNowTs(Date.now())
+    }, 1000)
+    return () => clearInterval(id)
+  }, [cooldownUntil])
+
+  const COOLDOWN_MS = 60 * 60 * 1000
+  const remainingMs = cooldownUntil ? Math.max(0, cooldownUntil - nowTs) : 0
+  const isOnCooldown = remainingMs > 0
+
+  const handleSendEmails = async (opts?: { bypass?: boolean }) => {
+    if (isOnCooldown && !opts?.bypass) {
+      setConfirmDialogOpen(true)
+      return
+    }
     setIsSending(true)
     
     try {
+      // If user explicitly bypassed, clear client cooldown immediately
+      if (opts?.bypass && typeof window !== 'undefined') {
+        localStorage.removeItem('ss_email_cooldown_until')
+        setCooldownUntil(null)
+      }
       const response = await fetch('/api/send-emails', {
         method: 'POST',
         headers: {
@@ -45,15 +82,34 @@ export function ResultsDisplay({
           players,
           assignments,
           partyName,
+          bypassCooldown: opts?.bypass === true,
         }),
       })
 
       const data = await response.json()
 
       if (!response.ok) {
+        // If rate-limited, persist local cooldown based on Retry-After if present
+        if (response.status === 429) {
+          const retryAfter = response.headers.get('Retry-After')
+          const retrySeconds = retryAfter ? Number(retryAfter) : null
+          const until = retrySeconds && !Number.isNaN(retrySeconds)
+            ? Date.now() + retrySeconds * 1000
+            : Date.now() + COOLDOWN_MS
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('ss_email_cooldown_until', String(until))
+          }
+          setCooldownUntil(until)
+        }
         throw new Error(data.error || 'Failed to send emails')
       }
 
+      // Success: set client cooldown for one hour
+      const until = Date.now() + COOLDOWN_MS
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('ss_email_cooldown_until', String(until))
+      }
+      setCooldownUntil(until)
       setEmailsSent(true)
     } catch (error) {
       setErrorDialog({
@@ -63,6 +119,7 @@ export function ResultsDisplay({
       })
     } finally {
       setIsSending(false)
+      setConfirmDialogOpen(false)
     }
   }
 
@@ -240,7 +297,7 @@ export function ResultsDisplay({
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Button
-              onClick={handleSendEmails}
+              onClick={() => handleSendEmails()}
               disabled={isSending}
               className="h-11 sm:h-12 px-6 sm:px-8 text-base font-medium gap-3 tracking-wide"
             >
@@ -256,6 +313,35 @@ export function ResultsDisplay({
               Start Over
             </Button>
           </div>
+          {/* Confirmation Dialog for re-sending within cooldown */}
+          <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="text-xl sm:text-2xl">Send again so soon?</DialogTitle>
+                <DialogDescription className="pt-2 text-base">
+                  Are you sure you want to send emails again? Is this for a different party? No problem if so, go ahead. 
+                  <br />
+                  <br />
+                  Just keep in mind there are real costs to running this site (especially sending emails), and any support would be appreciated — even a few bucks helps! :)
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col sm:flex-row justify-end gap-2 pt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setConfirmDialogOpen(false)}
+                  className="w-full sm:w-auto"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={() => handleSendEmails({ bypass: true })}
+                  className="w-full sm:w-auto"
+                >
+                  Send anyway
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           {/* Admin Note */}
           {players.find((p) => p.isAdmin) && (

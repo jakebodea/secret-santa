@@ -6,10 +6,30 @@ import SecretSantaAssignment from '../../emails/secret-santa-assignment'
 import AdminSummary from '../../emails/admin-summary'
 import type { Player, Assignment } from '../../lib/types'
 
+const COOLDOWN_MS = 60 * 60 * 1000 // 1 hour
+const COOLDOWN_COOKIE = 'ss_send_cooldown'
+
+function parseCookies(header: string | null): Record<string, string> {
+  if (!header) return {}
+  return header.split(';').reduce<Record<string, string>>((acc, part) => {
+    const [key, ...rest] = part.trim().split('=')
+    if (!key) return acc
+    acc[key] = rest.join('=')
+    return acc
+  }, {})
+}
+
+function buildCooldownCookie(expiresAtMs: number): string {
+  // Use Max-Age rather than Expires for simplicity; set HttpOnly so JS can't mutate it easily
+  const maxAgeSec = Math.max(0, Math.ceil((expiresAtMs - Date.now()) / 1000))
+  return `${COOLDOWN_COOKIE}=${expiresAtMs}; Max-Age=${maxAgeSec}; Path=/; SameSite=Lax; Secure; HttpOnly`
+}
+
 interface RequestBody {
   players: Player[]
   assignments: Assignment[]
   partyName?: string
+  bypassCooldown?: boolean
 }
 
 // Helper to get name with initial for compact representation
@@ -46,8 +66,33 @@ export const Route = createFileRoute('/api/send-emails')({
     handlers: {
       POST: async ({ request }) => {
         try {
-          const { players, assignments, partyName } = (await request.json()) as RequestBody
+          const { players, assignments, partyName, bypassCooldown } = (await request.json()) as RequestBody
           const baseUrl = new URL(request.url).origin
+          // Basic per-browser-session cooldown using an HttpOnly cookie (unless bypass requested)
+          if (!bypassCooldown) {
+            const cookies = parseCookies(request.headers.get('cookie'))
+            const lastSentRaw = cookies[COOLDOWN_COOKIE]
+            if (lastSentRaw) {
+              const lastSent = Number(lastSentRaw)
+              if (!Number.isNaN(lastSent)) {
+                const now = Date.now()
+                const elapsed = now - lastSent
+                if (elapsed < COOLDOWN_MS) {
+                  const remainingMs = COOLDOWN_MS - elapsed
+                  const retryAfterSec = Math.max(1, Math.ceil(remainingMs / 1000))
+                  return json(
+                    { error: 'Please wait before sending emails again. Try once per hour.' },
+                    {
+                      status: 429,
+                      headers: {
+                        'Retry-After': String(retryAfterSec),
+                      },
+                    }
+                  )
+                }
+              }
+            }
+          }
 
           // Validate input
           if (!players || !assignments || players.length === 0 || assignments.length === 0) {
@@ -134,7 +179,13 @@ export const Route = createFileRoute('/api/send-emails')({
             message: `Successfully sent ${participantEmails.length} participant emails and ${adminEmails.length} admin emails`,
             participantCount: participantEmails.length,
             adminCount: adminEmails.length,
-          }, { status: 200 })
+          }, { 
+            status: 200,
+            headers: {
+              // Set cooldown cookie for one hour
+              'Set-Cookie': buildCooldownCookie(Date.now() + COOLDOWN_MS),
+            },
+          })
         } catch (error) {
           console.error('Error sending emails:', error)
           return json(

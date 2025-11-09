@@ -1,3 +1,2 @@
 - import from spreadsheet (with fixed column names)
 - quicker keybindings to add participants 
-- figure out a way to stop spam... maybe block to only once an hour per browser sessoin?
