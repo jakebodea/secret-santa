@@ -56,31 +56,31 @@ function HomePage() {
           </p>
 
           {/* Features */}
-          <div className="grid md:grid-cols-3 gap-8 pt-12">
-            <div className="flex flex-col items-center space-y-3 p-6">
+          <div className="grid md:grid-cols-3 gap-8 pt-6">
+            <div className="flex flex-col items-center space-y-2 p-6">
               <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
                 <Users className="w-7 h-7 text-primary" />
               </div>
               <h3 className="text-3xl font-medium text-foreground tracking-wide">Easy Setup</h3>
-              <p className="text-lg text-foreground/70 text-center font-normal leading-relaxed tracking-wide">
+              <p className="text-lg text-foreground/70 text-center font-normal leading-tight tracking-wide">
                 Add participants with just a name and email
               </p>
             </div>
-            <div className="flex flex-col items-center space-y-3 p-6">
+            <div className="flex flex-col items-center space-y-2 p-6">
               <div className="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center">
                 <Gift className="w-7 h-7 text-secondary" />
               </div>
               <h3 className="text-3xl font-medium text-foreground tracking-wide">Smart Rules</h3>
-              <p className="text-lg text-foreground/70 text-center font-normal leading-relaxed tracking-wide">
+              <p className="text-lg text-foreground/70 text-center font-normal leading-tight tracking-wide">
                 Set constraints for who can't give to whom
               </p>
             </div>
-            <div className="flex flex-col items-center space-y-3 p-6">
+            <div className="flex flex-col items-center space-y-2 p-6">
               <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center">
                 <Sparkles className="w-7 h-7 text-accent" />
               </div>
               <h3 className="text-3xl font-medium text-foreground tracking-wide">Auto Assign</h3>
-              <p className="text-lg text-foreground/70 text-center font-normal leading-relaxed tracking-wide">
+              <p className="text-lg text-foreground/70 text-center font-normal leading-tight tracking-wide">
                 Random assignments that respect all your rules
               </p>
             </div>
