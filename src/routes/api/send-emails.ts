@@ -86,7 +86,9 @@ export const Route = createFileRoute('/api/send-emails')({
             return {
               from: 'Secret Santa <noreply@supersimplesecretsanta.com>',
               to: giver.email,
-              subject: 'Open to see your secret santa assignment!',
+              subject: partyName 
+                ? `Hey ${giver.name}! You've been assigned for ${partyName}...`
+                : `Hey ${giver.name}! You've been assigned for Secret Santa...`,
               react: jsx(SecretSantaAssignment, {
                 giverName: giver.name,
                 receiverName: receiver.name,
@@ -108,7 +110,9 @@ export const Route = createFileRoute('/api/send-emails')({
           const adminEmails = admins.map(admin => ({
             from: 'Secret Santa <noreply@supersimplesecretsanta.com>',
             to: admin.email,
-            subject: 'Shhh the secret santa results are here',
+            subject: partyName
+              ? `Admin: ${partyName} Results`
+              : 'Admin: Secret Santa Results',
             react: jsx(AdminSummary, {
               adminName: admin.name,
               resultsUrl,

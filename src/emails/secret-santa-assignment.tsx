@@ -43,64 +43,65 @@ export default function SecretSantaAssignment({
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                 }}
               >
-                {/* Header with gifts */}
+                {/* Header */}
                 <tr>
-                  <td align="center" style={{ padding: '40px 40px 20px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
-                      <span style={{ fontSize: '48px' }}>🎁</span>
-                      <h1
-                        style={{
-                          margin: 0,
-                          fontSize: '36px',
-                          fontFamily: "'Instrument Serif', Georgia, serif",
-                          color: '#331a0d',
-                          fontWeight: 'normal',
-                        }}
-                      >
-                        Your Secret Santa Assignment
-                      </h1>
-                      <span style={{ fontSize: '48px' }}>🎁</span>
-                    </div>
+                  <td align="center" style={{ padding: '50px 40px 30px' }}>
                     {partyName && (
                       <p
                         style={{
-                          margin: '10px 0 0',
-                          fontSize: '18px',
-                          color: '#806656',
-                          fontStyle: 'italic',
+                          margin: '0 0 8px',
+                          fontSize: '24px',
+                          fontFamily: "'Instrument Serif', Georgia, serif",
+                          color: '#331a0d',
+                          fontWeight: 'normal',
+                          letterSpacing: '-0.5px',
                         }}
                       >
-                        {partyName}
+                        {partyName}:
                       </p>
                     )}
+                    <h1
+                      style={{
+                        margin: 0,
+                        fontSize: '38px',
+                        fontFamily: "'Instrument Serif', Georgia, serif",
+                        color: '#331a0d',
+                        fontWeight: 'normal',
+                        letterSpacing: '-0.5px',
+                      }}
+                    >
+                      Your Secret Santa Assignment
+                    </h1>
                   </td>
                 </tr>
 
                 {/* Greeting */}
                 <tr>
-                  <td align="center" style={{ padding: '20px 40px' }}>
+                  <td align="center" style={{ padding: '0 40px 30px' }}>
                     <p
                       style={{
                         margin: 0,
-                        fontSize: '20px',
-                        color: '#806656',
-                        lineHeight: '1.6',
+                        fontSize: '22px',
+                        color: '#331a0d',
+                        lineHeight: '1.5',
+                        fontWeight: '500',
                       }}
                     >
-                      Ho ho ho, {giverName}! 🎅
+                      Hi {giverName}!
                     </p>
                   </td>
                 </tr>
 
                 {/* Main content */}
                 <tr>
-                  <td align="center" style={{ padding: '20px 40px' }}>
+                  <td align="center" style={{ padding: '0 40px 40px' }}>
                     <p
                       style={{
-                        margin: '0 0 30px',
+                        margin: 0,
                         fontSize: '18px',
                         color: '#806656',
-                        lineHeight: '1.6',
+                        lineHeight: '1.7',
+                        maxWidth: '520px',
                       }}
                     >
                       The Secret Santa assignments have been revealed! You've been matched with...
@@ -110,53 +111,69 @@ export default function SecretSantaAssignment({
 
                 {/* Receiver reveal box */}
                 <tr>
-                  <td align="center" style={{ padding: '0 40px 30px' }}>
+                  <td align="center" style={{ padding: '0 40px 40px' }}>
                     <div
                       style={{
-                        backgroundColor: '#f5f0e8',
-                        border: '2px solid #c9985a',
-                        borderRadius: '8px',
-                        padding: '30px',
+                        backgroundColor: '#fff9f0',
+                        border: '3px solid #8c3e2b',
+                        borderRadius: '12px',
+                        padding: '40px 30px',
+                        boxShadow: '0 4px 12px rgba(140, 62, 43, 0.15)',
+                        maxWidth: '480px',
+                        margin: '0 auto',
                       }}
                     >
                       <p
                         style={{
-                          margin: '0 0 10px',
-                          fontSize: '16px',
+                          margin: '0 0 16px',
+                          fontSize: '14px',
                           color: '#806656',
                           textTransform: 'uppercase',
-                          letterSpacing: '1px',
+                          letterSpacing: '2px',
+                          fontWeight: '600',
                         }}
                       >
                         You're giving a gift to
                       </p>
-                      <p
+                      <div
                         style={{
-                          margin: 0,
-                          fontSize: '32px',
-                          fontFamily: "'Instrument Serif', Georgia, serif",
-                          color: '#8c3e2b',
-                          fontWeight: 'normal',
+                          borderTop: '2px solid #e5ddd0',
+                          paddingTop: '20px',
+                          marginTop: '20px',
                         }}
                       >
-                        {receiverName}
-                      </p>
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: '42px',
+                            fontFamily: "'Instrument Serif', Georgia, serif",
+                            color: '#8c3e2b',
+                            fontWeight: 'normal',
+                            letterSpacing: '-0.5px',
+                            lineHeight: '1.2',
+                          }}
+                        >
+                          {receiverName}
+                        </p>
+                      </div>
                     </div>
                   </td>
                 </tr>
 
                 {/* Reminder */}
                 <tr>
-                  <td align="center" style={{ padding: '0 40px 30px' }}>
+                  <td align="center" style={{ padding: '0 40px 40px' }}>
                     <p
                       style={{
                         margin: 0,
                         fontSize: '16px',
                         color: '#806656',
-                        lineHeight: '1.6',
+                        lineHeight: '1.7',
+                        maxWidth: '520px',
+                        fontStyle: 'italic',
                       }}
                     >
-                      Remember, this is a secret! 🤫 Don't let them know you're their Secret Santa until the big reveal!
+                      Remember, this is a secret! Don't let them know you're their Secret Santa until the big reveal!
                     </p>
                   </td>
                 </tr>

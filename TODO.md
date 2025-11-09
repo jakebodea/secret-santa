@@ -1,9 +1,5 @@
 - fix google search favicon, set the gift svg as the google search 
     - also optimize SEO to appear under secret santa, simple secret santa, secret santa free, etc 
-- clean up emails and formatting 
-    - add recipient name in the subject line 
-    - reveal assignment name with a fun effect? 
-    - emojis? 
 - import from spreadsheet (with fixed column names)
 - quicker keybindings to add participants 
 - tighten feature card text on the main page (too much spacing between lines)

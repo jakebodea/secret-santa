@@ -43,76 +43,64 @@ export default function AdminSummary({
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                 }}
               >
-                {/* Header with santa */}
+                {/* Header */}
                 <tr>
-                  <td align="center" style={{ padding: '40px 40px 20px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
-                      <span style={{ fontSize: '48px' }}>🎅</span>
-                      <h1
-                        style={{
-                          margin: 0,
-                          fontSize: '36px',
-                          fontFamily: "'Instrument Serif', Georgia, serif",
-                          color: '#331a0d',
-                          fontWeight: 'normal',
-                        }}
-                      >
-                        Shhh...
-                      </h1>
-                      <span style={{ fontSize: '48px' }}>🤫</span>
-                    </div>
-                    {partyName && (
-                      <p
-                        style={{
-                          margin: '10px 0 0',
-                          fontSize: '18px',
-                          color: '#806656',
-                          fontStyle: 'italic',
-                        }}
-                      >
-                        {partyName}
-                      </p>
-                    )}
+                  <td align="center" style={{ padding: '50px 40px 30px' }}>
+                    <h1
+                      style={{
+                        margin: 0,
+                        fontSize: '38px',
+                        fontFamily: "'Instrument Serif', Georgia, serif",
+                        color: '#331a0d',
+                        fontWeight: 'normal',
+                        letterSpacing: '-0.5px',
+                      }}
+                    >
+                      Shhh...
+                    </h1>
                   </td>
                 </tr>
 
                 {/* Greeting */}
                 <tr>
-                  <td align="center" style={{ padding: '20px 40px' }}>
+                  <td align="center" style={{ padding: '0 40px 30px' }}>
                     <p
                       style={{
                         margin: 0,
-                        fontSize: '20px',
-                        color: '#806656',
-                        lineHeight: '1.6',
+                        fontSize: '22px',
+                        color: '#331a0d',
+                        lineHeight: '1.5',
+                        fontWeight: '500',
                       }}
                     >
-                      Hey {adminName}!
+                      Hi {adminName}!
                     </p>
                   </td>
                 </tr>
 
                 {/* Main message */}
                 <tr>
-                  <td align="center" style={{ padding: '20px 40px' }}>
+                  <td align="center" style={{ padding: '0 40px 30px' }}>
                     <p
                       style={{
-                        margin: '0 0 20px',
+                        margin: '0 0 24px',
                         fontSize: '18px',
                         color: '#806656',
-                        lineHeight: '1.6',
+                        lineHeight: '1.7',
+                        maxWidth: '520px',
                       }}
                     >
                       {partyName 
-                        ? `The ${partyName} assignments have been generated and sent to all participants! 🎉`
-                        : 'The Secret Santa assignments have been generated and sent to all participants! 🎉'}
+                        ? `The ${partyName} assignments have been generated and sent to all participants!`
+                        : 'The Secret Santa assignments have been generated and sent to all participants!'}
                     </p>
                     <p
                       style={{
                         margin: 0,
                         fontSize: '18px',
                         color: '#806656',
-                        lineHeight: '1.6',
+                        lineHeight: '1.7',
+                        maxWidth: '520px',
                       }}
                     >
                       As the organizer, you have access to view all the assignments.
@@ -122,34 +110,38 @@ export default function AdminSummary({
 
                 {/* Warning box */}
                 <tr>
-                  <td align="center" style={{ padding: '20px 40px 30px' }}>
+                  <td align="center" style={{ padding: '0 40px 40px' }}>
                     <div
                       style={{
-                        backgroundColor: '#fef3e8',
-                        border: '2px solid #c9985a',
-                        borderRadius: '8px',
-                        padding: '20px',
+                        backgroundColor: '#fff9f0',
+                        border: '3px solid #c9985a',
+                        borderRadius: '12px',
+                        padding: '24px',
+                        maxWidth: '480px',
+                        margin: '0 auto',
                       }}
                     >
                       <p
                         style={{
-                          margin: '0 0 5px',
+                          margin: '0 0 12px',
                           fontSize: '16px',
                           color: '#8c3e2b',
                           fontWeight: 'bold',
+                          textTransform: 'uppercase',
+                          letterSpacing: '1px',
                         }}
                       >
-                        ⚠️ Warning
+                        Warning
                       </p>
                       <p
                         style={{
                           margin: 0,
-                          fontSize: '14px',
+                          fontSize: '15px',
                           color: '#806656',
-                          lineHeight: '1.5',
+                          lineHeight: '1.6',
                         }}
                       >
-                        Clicking the button below will show all the results! Keep this secret to maintain the surprise! 🎁
+                        Clicking the button below will show all the results! Keep this secret to maintain the surprise!
                       </p>
                     </div>
                   </td>
