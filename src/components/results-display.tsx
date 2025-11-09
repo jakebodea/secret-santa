@@ -197,7 +197,7 @@ export function ResultsDisplay({
 
             {/* Main Message */}
             <div className="space-y-4">
-              <div className="flex items-center justify-center gap-3 md:gap-4">
+              <div className="flex items-center justify-center gap-6 md:gap-8">
                 <img
                   src="/gift.svg"
                   alt="Gift"
@@ -283,7 +283,7 @@ export function ResultsDisplay({
 
           {/* Main Message */}
           <div className="space-y-4">
-            <div className="flex items-center justify-center gap-3 md:gap-4">
+            <div className="flex items-center justify-center gap-6 md:gap-8">
               <img
                 src="/gift.svg"
                 alt="Gift"

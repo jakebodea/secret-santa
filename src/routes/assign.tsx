@@ -278,7 +278,7 @@ function AssignPage() {
           ) : (
           <div className="max-w-6xl mx-auto space-y-8">
             <div className="text-center space-y-4">
-              <div className="flex items-center justify-center gap-3 md:gap-4">
+              <div className="flex items-center justify-center gap-6 md:gap-8">
                 <img
                   src="/gift.svg"
                   alt="Gift"

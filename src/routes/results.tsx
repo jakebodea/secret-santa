@@ -81,7 +81,7 @@ function ResultsPage() {
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-4 md:gap-6">
+            <div className="flex items-center justify-center gap-6 md:gap-8">
               <img
                 src="/gift.svg"
                 alt="Gift"
