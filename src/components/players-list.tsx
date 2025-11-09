@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Avatar, AvatarFallback } from './ui/avatar'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
@@ -9,7 +10,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from './ui/dropdown-menu'
-import { Trash2, Crown, MoreVertical } from 'lucide-react'
+import { Trash2, Crown, MoreVertical, ChevronDown } from 'lucide-react'
 import type { Player } from '../lib/types'
 
 interface PlayersListProps {
@@ -20,16 +21,18 @@ interface PlayersListProps {
 }
 
 export function PlayersList({ players, onRemovePlayer, onToggleAdmin, onClearAll }: PlayersListProps) {
+  const [isExpanded, setIsExpanded] = useState(true)
+
   if (players.length === 0) {
     return (
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-normal tracking-wide">Participants ({players.length})</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">Participants ({players.length})</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-base text-muted-foreground font-light tracking-wide text-center py-8">
+          <p className="text-sm sm:text-base text-muted-foreground font-light tracking-wide text-center py-8">
             No participants yet. Add your first player to get started!
           </p>
         </CardContent>
@@ -39,21 +42,34 @@ export function PlayersList({ players, onRemovePlayer, onToggleAdmin, onClearAll
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader 
+        className="cursor-pointer sm:cursor-default"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
         <div className="flex items-center justify-between">
-          <CardTitle className="text-2xl font-normal tracking-wide">
-            Participants ({players.length})
-            {players.length < 3 && (
-              <span className="text-base font-light text-muted-foreground ml-2">
-                (minimum 3 required)
-              </span>
-            )}
-          </CardTitle>
+          <div className="flex items-center gap-2 flex-1">
+            <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">
+              Participants ({players.length})
+              {players.length < 3 && (
+                <span className="text-sm sm:text-base font-light text-muted-foreground ml-2">
+                  (minimum 3 required)
+                </span>
+              )}
+            </CardTitle>
+            <ChevronDown 
+              className={`w-5 h-5 text-muted-foreground transition-transform sm:hidden ${
+                isExpanded ? 'rotate-180' : ''
+              }`}
+            />
+          </div>
           {players.length > 0 && (
             <Button
               variant="ghost"
               size="sm"
-              onClick={onClearAll}
+              onClick={(e) => {
+                e.stopPropagation()
+                onClearAll()
+              }}
               className="text-muted-foreground hover:text-destructive hover:bg-destructive/5"
             >
               <Trash2 className="w-4 h-4 mr-2" />
@@ -62,12 +78,12 @@ export function PlayersList({ players, onRemovePlayer, onToggleAdmin, onClearAll
           )}
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className={`sm:block ${isExpanded ? 'block' : 'hidden'}`}>
         <div className="space-y-3">
           {players.map((player) => (
             <div
               key={player.id}
-              className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+              className="flex items-center justify-between p-3 sm:p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
             >
               <div className="flex items-center gap-3">
                 <Avatar>

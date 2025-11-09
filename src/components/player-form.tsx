@@ -44,7 +44,7 @@ export function PlayerForm({ onAddPlayer, existingPlayers }: PlayerFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl font-normal tracking-wide">Add Participant</CardTitle>
+        <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">Add Participant</CardTitle>
       </CardHeader>
       <CardContent>
         <form
@@ -118,7 +118,7 @@ export function PlayerForm({ onAddPlayer, existingPlayers }: PlayerFormProps) {
             selector={(state) => [state.canSubmit, state.isSubmitting]}
           >
             {([canSubmit, isSubmitting]) => (
-              <Button type="submit" disabled={!canSubmit || isSubmitting}>
+              <Button type="submit" disabled={!canSubmit || isSubmitting} className="h-10 sm:h-11 px-4 sm:px-5">
                 {isSubmitting ? 'Adding...' : 'Add Player'}
               </Button>
             )}

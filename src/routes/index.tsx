@@ -26,23 +26,23 @@ export const Route = createFileRoute('/')({
 function HomePage() {
   return (
     <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-16 md:py-24">
+      <main className="container mx-auto px-4 py-10 sm:py-16 md:py-24">
         <div className="max-w-3xl mx-auto text-center space-y-8">
           {/* Icon */}
           <div className="flex justify-center">
             <img
               src="/santa.svg"
               alt="Secret Santa"
-              className="w-40 h-40 md:w-48 md:h-48"
+              className="w-28 h-28 sm:w-40 sm:h-40 md:w-48 md:h-48"
             />
           </div>
 
           {/* Heading */}
           <div className="space-y-6">
-            <h1 className="text-6xl md:text-7xl font-normal text-foreground tracking-tight leading-[1.1]">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-normal text-foreground tracking-tight leading-[1.1]">
               <span className="italic font-light"> <span className="underline decoration-primary decoration-4">Super</span> Simple</span> Secret Santa
             </h1>
-            <p className="text-2xl md:text-3xl text-muted-foreground font-light tracking-wide">
+            <p className="text-lg sm:text-2xl md:text-3xl text-muted-foreground font-light tracking-wide">
               Organize your gift exchange with ease
             </p>
           </div>
@@ -61,8 +61,8 @@ function HomePage() {
               <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
                 <Users className="w-7 h-7 text-primary" />
               </div>
-              <h3 className="text-3xl font-medium text-foreground tracking-wide">Easy Setup</h3>
-              <p className="text-lg text-foreground/70 text-center font-normal leading-tight tracking-wide">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-medium text-foreground tracking-wide">Easy Setup</h3>
+              <p className="text-sm sm:text-base md:text-lg text-foreground/70 text-center font-normal leading-tight tracking-wide">
                 Add participants with just a name and email
               </p>
             </div>
@@ -70,8 +70,8 @@ function HomePage() {
               <div className="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center">
                 <Gift className="w-7 h-7 text-secondary" />
               </div>
-              <h3 className="text-3xl font-medium text-foreground tracking-wide">Smart Rules</h3>
-              <p className="text-lg text-foreground/70 text-center font-normal leading-tight tracking-wide">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-medium text-foreground tracking-wide">Smart Rules</h3>
+              <p className="text-sm sm:text-base md:text-lg text-foreground/70 text-center font-normal leading-tight tracking-wide">
                 Set constraints for who can't give to whom
               </p>
             </div>
@@ -79,8 +79,8 @@ function HomePage() {
               <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center">
                 <Sparkles className="w-7 h-7 text-accent" />
               </div>
-              <h3 className="text-3xl font-medium text-foreground tracking-wide">Auto Assign</h3>
-              <p className="text-lg text-foreground/70 text-center font-normal leading-tight tracking-wide">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-medium text-foreground tracking-wide">Auto Assign</h3>
+              <p className="text-sm sm:text-base md:text-lg text-foreground/70 text-center font-normal leading-tight tracking-wide">
                 Random assignments that respect all your rules
               </p>
             </div>
@@ -89,7 +89,7 @@ function HomePage() {
           {/* CTA Button */}
           <div className="pt-12">
             <Link to="/assign">
-              <Button size="lg" className="text-base font-medium px-10 py-7 gap-2 tracking-wide">
+              <Button className="h-11 px-6 sm:h-12 sm:px-8 text-base font-medium gap-2 tracking-wide">
                 Get started
                 <ArrowRight className="w-5 h-5" />
               </Button>

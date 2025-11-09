@@ -9,11 +9,11 @@ export function SupportCard() {
         {/* Header */}
         <div className="text-center space-y-3">
           <div className="flex justify-center">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <Heart className="w-8 h-8 text-primary fill-primary" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-primary fill-primary" />
             </div>
           </div>
-          <h2 className="text-2xl md:text-3xl font-normal text-foreground tracking-tight">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-normal text-foreground tracking-tight">
             Support This Project
           </h2>
           <p className="text-base text-muted-foreground font-light tracking-wide">
@@ -32,7 +32,7 @@ export function SupportCard() {
           {/* Venmo Card */}
           <Card className="border-2 hover:border-accent transition-colors">
             <CardContent className="flex flex-col items-center space-y-3 p-4">
-              <div className="w-full aspect-square max-w-[150px] bg-white rounded-lg p-2 border">
+              <div className="w-full aspect-square max-w-[120px] sm:max-w-[150px] bg-white rounded-lg p-2 border">
                 <img
                   src="/venmo.png"
                   alt="Venmo QR Code"
@@ -45,7 +45,7 @@ export function SupportCard() {
                 rel="noopener noreferrer"
                 className="w-full"
               >
-                <Button className="w-full text-sm font-medium gap-2 tracking-wide">
+                <Button className="w-full h-10 sm:h-11 text-sm font-medium gap-2 tracking-wide">
                   Open in Venmo
                   <ExternalLink className="w-4 h-4" />
                 </Button>
@@ -56,7 +56,7 @@ export function SupportCard() {
           {/* Zelle Card */}
           <Card className="border-2 hover:border-accent transition-colors">
             <CardContent className="flex flex-col items-center space-y-3 p-4">
-              <div className="w-full aspect-square max-w-[150px] bg-white rounded-lg p-2 border">
+              <div className="w-full aspect-square max-w-[120px] sm:max-w-[150px] bg-white rounded-lg p-2 border">
                 <img
                   src="/zelle.png"
                   alt="Zelle QR Code"

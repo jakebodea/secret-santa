@@ -22,26 +22,26 @@ export const Route = createFileRoute('/support')({
 function SupportPage() {
   return (
     <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-16 md:py-24">
+      <main className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
         <div className="max-w-3xl mx-auto space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">
             <div className="flex justify-center">
-              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-                <Heart className="w-10 h-10 text-primary fill-primary" />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/10 flex items-center justify-center">
+                <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-primary fill-primary" />
               </div>
             </div>
-            <h1 className="text-5xl md:text-6xl font-normal text-foreground tracking-tight">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal text-foreground tracking-tight">
               Support This Project
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide max-w-2xl mx-auto">
+            <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide max-w-2xl mx-auto">
               Help keep Secret Santa free and ad-free for everyone
             </p>
           </div>
 
           {/* Thank You Message */}
           <div className="text-center space-y-4 pt-8">
-            <p className="text-lg text-foreground/80 leading-relaxed font-normal tracking-wide max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-foreground/80 leading-relaxed font-normal tracking-wide max-w-2xl mx-auto">
               If you find this tool helpful and would like to support its development, 
               any contribution is greatly appreciated! I will personally reach out to thank whoever donated.
             </p>
@@ -52,7 +52,7 @@ function SupportPage() {
             {/* Venmo Card */}
             <Card className="border-2 hover:border-accent transition-colors">
               <CardContent className="flex flex-col items-center space-y-4">
-              <div className="w-full aspect-square max-w-[200px] bg-white rounded-lg p-2 border">
+              <div className="w-full aspect-square max-w-[160px] sm:max-w-[200px] bg-white rounded-lg p-2 border">
                   <img
                     src="/venmo.png"
                     alt="Venmo QR Code"
@@ -65,7 +65,7 @@ function SupportPage() {
                   rel="noopener noreferrer"
                   className="w-full"
                 >
-                  <Button className="w-full text-base font-medium gap-2 tracking-wide">
+                  <Button className="w-full h-11 sm:h-12 text-base font-medium gap-2 tracking-wide">
                     Open in Venmo
                     <ExternalLink className="w-4 h-4" />
                   </Button>
@@ -76,14 +76,14 @@ function SupportPage() {
             {/* Zelle Card */}
             <Card className="border-2 hover:border-accent transition-colors">
               <CardContent className="flex flex-col items-center space-y-4">
-                <div className="w-full aspect-square max-w-[200px] bg-white rounded-lg p-2 border">
+                <div className="w-full aspect-square max-w-[160px] sm:max-w-[200px] bg-white rounded-lg p-2 border">
                   <img
                     src="/zelle.png"
                     alt="Zelle QR Code"
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <p className="text-sm text-muted-foreground text-center">
+                <p className="text-xs sm:text-sm text-muted-foreground text-center">
                   Scan with your bank's app
                 </p>
               </CardContent>

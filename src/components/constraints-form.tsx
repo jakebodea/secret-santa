@@ -60,14 +60,14 @@ export function ConstraintsForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl font-normal tracking-wide">Add Exclusion Rule</CardTitle>
+        <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">Add Exclusion Rule</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="giver">This player</Label>
             <Select value={giverId} onValueChange={setGiverId}>
-              <SelectTrigger id="giver">
+              <SelectTrigger id="giver" className="h-11">
                 <SelectValue placeholder="Select player" />
               </SelectTrigger>
               <SelectContent>
@@ -83,7 +83,7 @@ export function ConstraintsForm({
           <div className="space-y-2">
             <Label htmlFor="receiver">Cannot give to</Label>
             <Select value={receiverId} onValueChange={setReceiverId}>
-              <SelectTrigger id="receiver">
+              <SelectTrigger id="receiver" className="h-11">
                 <SelectValue placeholder="Select player" />
               </SelectTrigger>
               <SelectContent>
@@ -96,7 +96,7 @@ export function ConstraintsForm({
             </Select>
           </div>
 
-          <div className="flex items-center justify-between space-x-2 p-3 rounded-lg border">
+          <div className="flex items-center justify-between space-x-2 p-2.5 sm:p-3 rounded-lg border">
             <div className="space-y-0.5">
               <Label htmlFor="bidirectional">Apply both ways</Label>
               <p className="text-sm text-muted-foreground font-light tracking-wide">
@@ -110,7 +110,7 @@ export function ConstraintsForm({
             />
           </div>
 
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full h-10 sm:h-11">
             Add Rule
           </Button>
         </form>

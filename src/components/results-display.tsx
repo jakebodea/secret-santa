@@ -114,7 +114,7 @@ export function ResultsDisplay({
           
           {/* Text Message */}
           <div>
-            <h2 className="text-3xl md:text-4xl font-normal tracking-wide text-foreground">
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-normal tracking-wide text-foreground">
               Sending Emails...
             </h2>
           </div>
@@ -127,28 +127,28 @@ export function ResultsDisplay({
   if (emailsSent) {
     return (
       <>
-        <div className="min-h-screen bg-background flex items-center justify-center py-16">
+        <div className="min-h-screen bg-background flex items-center justify-center py-12 sm:py-16">
           <div className="max-w-4xl mx-auto px-4 text-center space-y-8">
             {/* Celebration Icon */}
             <div className="flex justify-center">
               <img
                 src="/santa.svg"
                 alt="Secret Santa"
-                className="w-40 h-40 md:w-48 md:h-48"
+                className="w-28 h-28 sm:w-40 sm:h-40 md:w-48 md:h-48"
               />
             </div>
 
             {/* Main Message */}
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
                 Emails Sent!
               </h1>
               {partyName && (
-                <p className="text-2xl md:text-3xl text-foreground font-light tracking-wide italic">
+                <p className="text-lg sm:text-2xl md:text-3xl text-foreground font-light tracking-wide italic">
                   {partyName}
                 </p>
               )}
-              <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
+              <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
                 Each participant has received an email with their assignment. Admins received a link to view all assignments.
               </p>
             </div>
@@ -162,9 +162,8 @@ export function ResultsDisplay({
             <div className="flex justify-center pt-4">
               <Button
                 variant="outline"
-                size="lg"
                 onClick={onStartOver}
-                className="text-lg font-medium px-12 py-8 gap-3 tracking-wide"
+                className="h-11 sm:h-12 px-6 sm:px-8 text-base font-medium gap-3 tracking-wide"
               >
                 <RotateCcw className="w-5 h-5" />
                 Start Over
@@ -202,20 +201,20 @@ export function ResultsDisplay({
   // Initial state - assignments generated, ready to send
   return (
     <>
-      <div className="min-h-screen bg-background flex items-center justify-center py-16">
+      <div className="min-h-screen bg-background flex items-center justify-center py-12 sm:py-16">
         <div className="max-w-3xl mx-auto px-4 text-center space-y-8">
           {/* Celebration Icon */}
           <div className="flex justify-center">
             <img
               src="/santa.svg"
               alt="Secret Santa"
-              className="w-40 h-40 md:w-48 md:h-48"
+              className="w-28 h-28 sm:w-40 sm:h-40 md:w-48 md:h-48"
             />
           </div>
 
           {/* Main Message */}
           <div className="space-y-4">
-            <h1 className="text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
               {partyName && (
                 <>
                   <span className="italic">{partyName}</span>
@@ -224,7 +223,7 @@ export function ResultsDisplay({
               )}
               Assignments Generated!
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
+            <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
               Your Secret Santa assignments are ready to send!
             </p>
           </div>
@@ -241,19 +240,17 @@ export function ResultsDisplay({
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Button
-              size="lg"
               onClick={handleSendEmails}
               disabled={isSending}
-              className="text-lg font-medium px-12 py-8 gap-3 tracking-wide"
+              className="h-11 sm:h-12 px-6 sm:px-8 text-base font-medium gap-3 tracking-wide"
             >
               <Mail className="w-5 h-5" />
               Send Emails
             </Button>
             <Button
               variant="outline"
-              size="lg"
               onClick={onStartOver}
-              className="text-lg font-medium px-12 py-8 gap-3 tracking-wide"
+              className="h-11 sm:h-12 px-6 sm:px-8 text-base font-medium gap-3 tracking-wide"
             >
               <RotateCcw className="w-5 h-5" />
               Start Over

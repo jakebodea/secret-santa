@@ -85,23 +85,23 @@ function ResultsPage() {
               <img
                 src="/gift.svg"
                 alt="Gift"
-                className="w-12 h-12 md:w-16 md:h-16"
+                className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
               />
-              <h1 className="text-5xl md:text-6xl font-normal tracking-tight leading-tight">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal tracking-tight leading-tight">
                 Secret Santa Results
               </h1>
               <img
                 src="/gift.svg"
                 alt="Gift"
-                className="w-12 h-12 md:w-16 md:h-16"
+                className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
               />
             </div>
             {decodedData?.partyName && (
-              <p className="text-2xl md:text-3xl text-foreground font-light tracking-wide italic">
+              <p className="text-lg sm:text-2xl md:text-3xl text-foreground font-light tracking-wide italic">
                 {decodedData.partyName}
               </p>
             )}
-            <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
+            <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
               View individual assignments or reveal all at once
             </p>
           </div>
@@ -151,7 +151,7 @@ function ResultsPage() {
                   }}
                   disabled={showAll}
                 >
-                  <SelectTrigger className="w-full sm:w-[280px]">
+                  <SelectTrigger className="w-full sm:w-[280px] h-11">
                     <SelectValue placeholder="Select a participant..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -172,8 +172,7 @@ function ResultsPage() {
                     }
                   }}
                   variant={showAll ? 'outline' : 'default'}
-                  size="lg"
-                  className="gap-2"
+                  className="h-11 px-4 sm:px-6 gap-2"
                 >
                   {showAll ? (
                     <>
@@ -202,7 +201,7 @@ function ResultsPage() {
                       <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium">
                         Gift Giver
                       </p>
-                      <p className="text-3xl md:text-4xl font-semibold text-foreground" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
+                      <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
                         {peekedAssignment.giver}
                       </p>
                     </div>
@@ -210,7 +209,7 @@ function ResultsPage() {
                       <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium opacity-0">
                         &nbsp;
                       </p>
-                      <p className="text-xl md:text-2xl text-muted-foreground font-normal italic mt-1" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
+                      <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-normal italic mt-1" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
                         is giving to
                       </p>
                     </div>
@@ -218,7 +217,7 @@ function ResultsPage() {
                       <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium">
                         Gift Receiver
                       </p>
-                      <p className="text-3xl md:text-4xl font-semibold text-primary" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
+                      <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-primary" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
                         {peekedAssignment.receiver}
                       </p>
                     </div>
@@ -230,17 +229,17 @@ function ResultsPage() {
               {showAll && (
                 <div className="py-8 px-6 bg-primary/5 border border-primary/20 rounded-lg">
                   <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 mb-6">
-                    <div className="text-center sm:text-right w-32 sm:w-40">
+                    <div className="text-center sm:text-right sm:w-40">
                       <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium">
                         Gift Giver
                       </p>
                     </div>
-                    <div className="text-center w-32 sm:w-40">
+                    <div className="text-center sm:w-40">
                       <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium opacity-0">
                         &nbsp;
                       </p>
                     </div>
-                    <div className="text-center sm:text-left w-32 sm:w-40">
+                    <div className="text-center sm:text-left sm:w-40">
                       <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium">
                         Gift Receiver
                       </p>
@@ -252,18 +251,18 @@ function ResultsPage() {
                         key={index}
                         className="flex flex-col sm:flex-row items-baseline justify-center gap-4 sm:gap-8"
                       >
-                        <div className="text-center sm:text-right w-32 sm:w-40">
-                          <p className="text-3xl md:text-4xl font-semibold text-foreground" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
+                        <div className="text-center sm:text-right sm:w-40">
+                          <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
                             {assignment.giver}
                           </p>
                         </div>
-                        <div className="text-center w-32 sm:w-40">
-                          <p className="text-xl md:text-2xl text-muted-foreground font-normal italic" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
+                        <div className="text-center sm:w-40">
+                          <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-normal italic" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
                             is giving to
                           </p>
                         </div>
-                        <div className="text-center sm:text-left w-32 sm:w-40">
-                          <p className="text-3xl md:text-4xl font-semibold text-primary" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
+                        <div className="text-center sm:text-left sm:w-40">
+                          <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-primary" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
                             {assignment.receiver}
                           </p>
                         </div>

@@ -2,5 +2,4 @@
     - also optimize SEO to appear under secret santa, simple secret santa, secret santa free, etc 
 - import from spreadsheet (with fixed column names)
 - quicker keybindings to add participants 
-- fix mobile view 
 - figure out a way to stop spam... maybe block to only once an hour per browser sessoin?

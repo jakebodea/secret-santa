@@ -23,7 +23,7 @@ export function ConstraintsList({
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-normal tracking-wide">Exclusion Rules ({constraints.length})</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">Exclusion Rules ({constraints.length})</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
@@ -40,7 +40,7 @@ export function ConstraintsList({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-2xl font-normal tracking-wide">Exclusion Rules ({constraints.length})</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">Exclusion Rules ({constraints.length})</CardTitle>
           {constraints.length > 0 && (
             <Button
               variant="ghost"
@@ -59,7 +59,7 @@ export function ConstraintsList({
           {constraints.map((constraint) => (
             <div
               key={constraint.id}
-              className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+              className="flex items-center justify-between p-2.5 sm:p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
             >
               <div className="flex items-center gap-3 flex-1">
                 <Badge variant="outline" className="font-normal">
