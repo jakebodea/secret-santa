@@ -3,7 +3,7 @@
   "name": "Secret Santa - Organize Your Gift Exchange",
   "icons": [
     {
-      "src": "santa.svg",
+      "src": "gift.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }

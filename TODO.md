@@ -1,5 +1,3 @@
-- fix google search favicon, set the gift svg as the google search 
-    - also optimize SEO to appear under secret santa, simple secret santa, secret santa free, etc 
 - import from spreadsheet (with fixed column names)
 - quicker keybindings to add participants 
 - figure out a way to stop spam... maybe block to only once an hour per browser sessoin?

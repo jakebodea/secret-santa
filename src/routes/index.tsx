@@ -16,7 +16,7 @@ export const Route = createFileRoute('/')({
       {
         name: 'keywords',
         content:
-          'secret santa, gift exchange, christmas, holiday, gift organizer, random assignment',
+          'secret santa, simple secret santa, secret santa free, free secret santa, secret santa generator, secret santa organizer, gift exchange, christmas, holiday, gift organizer, random assignment, secret santa app',
       },
     ],
   }),

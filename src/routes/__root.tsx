@@ -28,12 +28,20 @@ export const Route = createRootRoute({
         title: 'Secret Santa - Organize Your Gift Exchange',
       },
       {
+        name: 'description',
+        content: 'Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.',
+      },
+      {
+        name: 'keywords',
+        content: 'secret santa, simple secret santa, secret santa free, gift exchange, christmas, holiday, gift organizer, random assignment',
+      },
+      {
         property: 'og:title',
         content: 'Secret Santa - Organize Your Gift Exchange',
       },
       {
         property: 'og:description',
-        content: 'Organize your Secret Santa gift exchange with ease',
+        content: 'Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.',
       },
       {
         property: 'og:type',
@@ -41,15 +49,27 @@ export const Route = createRootRoute({
       },
       {
         property: 'og:image',
-        content: '/santa.svg',
+        content: '/gift.svg',
+      },
+      {
+        property: 'og:url',
+        content: 'https://supersecretsimplesanta.com',
       },
       {
         name: 'twitter:card',
         content: 'summary',
       },
       {
+        name: 'twitter:title',
+        content: 'Secret Santa - Organize Your Gift Exchange',
+      },
+      {
+        name: 'twitter:description',
+        content: 'Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.',
+      },
+      {
         name: 'twitter:image',
-        content: '/santa.svg',
+        content: '/gift.svg',
       },
     ],
     links: [
@@ -59,16 +79,20 @@ export const Route = createRootRoute({
       },
       {
         rel: 'icon',
-        href: '/santa.svg',
+        href: '/gift.svg',
         type: 'image/svg+xml',
       },
       {
         rel: 'apple-touch-icon',
-        href: '/santa.svg',
+        href: '/gift.svg',
       },
       {
         rel: 'manifest',
         href: '/manifest.json',
+      },
+      {
+        rel: 'canonical',
+        href: 'https://supersecretsimplesanta.com',
       },
     ],
   }),
@@ -77,10 +101,22 @@ export const Route = createRootRoute({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Secret Santa',
+    description: 'Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.',
+    url: 'https://supersecretsimplesanta.com',
+  }
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body>
         {children}
