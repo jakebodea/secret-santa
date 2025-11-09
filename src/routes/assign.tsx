@@ -24,6 +24,7 @@ import {
   addPlayer,
   removePlayer,
   toggleAdmin,
+  replacePlayers,
   addConstraint,
   removeConstraint,
   saveConstraints,
@@ -82,6 +83,23 @@ function AssignPage() {
     toggleAdmin(playerId)
     const data = getData()
     setPlayers(data.players)
+  }
+
+  const handleImportPlayers = (importedPlayers: Player[]) => {
+    if (importedPlayers.length < 3) {
+      setErrorDialog({
+        open: true,
+        message: 'Not enough participants',
+        details: 'Imported file must contain at least 3 participants.',
+      })
+      return
+    }
+    replacePlayers(importedPlayers)
+    const data = getData()
+    setPlayers(data.players)
+    setConstraints(data.constraints)
+    setAssignments(data.assignments)
+    setAnimationComplete(false)
   }
 
   const handleAddConstraint = (constraint: Constraint) => {
@@ -272,6 +290,7 @@ function AssignPage() {
               <div className="space-y-6">
                 <PlayerForm
                   onAddPlayer={handleAddPlayer}
+                  onImport={handleImportPlayers}
                   existingPlayers={players}
                 />
                 <PlayersList

@@ -85,6 +85,15 @@ export function toggleAdmin(playerId: string): void {
   saveData(data)
 }
 
+export function replacePlayers(players: Player[]): void {
+  const data = getData()
+  data.players = players
+  // Clear constraints and assignments when replacing players
+  data.constraints = []
+  data.assignments = []
+  saveData(data)
+}
+
 // Constraint operations
 export function getConstraints(): Constraint[] {
   return getData().constraints

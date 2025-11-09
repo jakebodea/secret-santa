@@ -1,2 +1,1 @@
-- import from spreadsheet (with fixed column names)
 - quicker keybindings to add participants 
