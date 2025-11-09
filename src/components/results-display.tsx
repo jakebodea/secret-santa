@@ -14,12 +14,14 @@ import type { Player, Assignment } from '../lib/types'
 interface ResultsDisplayProps {
   assignments: Assignment[]
   players: Player[]
+  partyName?: string
   onStartOver: () => void
 }
 
 export function ResultsDisplay({
   assignments,
   players,
+  partyName,
   onStartOver,
 }: ResultsDisplayProps) {
   const [isSending, setIsSending] = useState(false)
@@ -42,6 +44,7 @@ export function ResultsDisplay({
         body: JSON.stringify({
           players,
           assignments,
+          partyName,
         }),
       })
 
@@ -140,6 +143,11 @@ export function ResultsDisplay({
               <h1 className="text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
                 Emails Sent!
               </h1>
+              {partyName && (
+                <p className="text-2xl md:text-3xl text-foreground font-light tracking-wide italic">
+                  {partyName}
+                </p>
+              )}
               <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
                 Each participant has received an email with their assignment. Admins received a link to view all assignments.
               </p>
@@ -208,6 +216,12 @@ export function ResultsDisplay({
           {/* Main Message */}
           <div className="space-y-4">
             <h1 className="text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
+              {partyName && (
+                <>
+                  <span className="italic">{partyName}</span>
+                  <br />
+                </>
+              )}
               Assignments Generated!
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">

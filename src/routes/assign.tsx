@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import { Button } from '../components/ui/button'
+import { Input } from '../components/ui/input'
 import {
   Dialog,
   DialogContent,
@@ -29,8 +30,10 @@ import {
   saveAssignments,
   clearAssignments,
   clearAllData,
+  savePartyName,
 } from '../lib/storage'
 import { generateAssignments } from '../lib/secret-santa-assignments'
+import { toTitleCase } from '../lib/utils'
 
 export const Route = createFileRoute('/assign')({
   component: AssignPage,
@@ -40,6 +43,8 @@ function AssignPage() {
   const [players, setPlayers] = useState<Player[]>([])
   const [constraints, setConstraints] = useState<Constraint[]>([])
   const [assignments, setAssignments] = useState<Assignment[]>([])
+  const [partyName, setPartyName] = useState<string>('')
+  const [showPartyNamePage, setShowPartyNamePage] = useState<boolean>(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [animationComplete, setAnimationComplete] = useState(false)
   const [errorDialog, setErrorDialog] = useState<{
@@ -54,6 +59,10 @@ function AssignPage() {
     setPlayers(data.players)
     setConstraints(data.constraints)
     setAssignments(data.assignments)
+    const existingPartyName = data.partyName || ''
+    setPartyName(existingPartyName)
+    // Show party name page if no party name is set (before player assignments)
+    setShowPartyNamePage(!existingPartyName)
   }, [])
 
   const handleAddPlayer = (player: Player) => {
@@ -143,7 +152,96 @@ function AssignPage() {
     setConstraints([])
   }
 
+  const handlePartyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setPartyName(value)
+  }
+
+  const handlePartyNameSubmit = () => {
+    if (partyName.trim()) {
+      const formatted = toTitleCase(partyName.trim())
+      setPartyName(formatted)
+      savePartyName(formatted)
+    } else {
+      savePartyName('')
+    }
+    setShowPartyNamePage(false)
+  }
+
+  const handleSkipPartyName = () => {
+    savePartyName('')
+    setPartyName('')
+    setShowPartyNamePage(false)
+  }
+
+  const handlePartyNameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handlePartyNameSubmit()
+    }
+  }
+
   const hasAssignments = assignments.length > 0 && animationComplete
+
+  // Show full-screen party name entry page
+  if (showPartyNamePage) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="max-w-2xl mx-auto px-4 py-16 text-center space-y-12">
+          {/* Icon */}
+          <div className="flex justify-center">
+            <img
+              src="/gift.svg"
+              alt="Gift"
+              className="w-32 h-32 md:w-40 md:h-40"
+            />
+          </div>
+
+          {/* Heading */}
+          <div className="space-y-6">
+            <h1 className="text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
+              What's Your Secret Santa Called?
+            </h1>
+            <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
+              Give your gift exchange a name
+            </p>
+          </div>
+
+          {/* Input */}
+          <div className="space-y-6">
+            <Input
+              type="text"
+              value={partyName}
+              onChange={handlePartyNameChange}
+              onKeyDown={handlePartyNameKeyDown}
+              className="text-3xl md:text-4xl h-16 md:h-20 px-6 text-center"
+              style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+              autoFocus
+            />
+          </div>
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <Button
+              size="lg"
+              onClick={handlePartyNameSubmit}
+              disabled={!partyName.trim()}
+              className="text-lg font-medium px-12 py-8 tracking-wide min-w-[200px]"
+            >
+              Continue
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={handleSkipPartyName}
+              className="text-lg font-medium px-12 py-8 tracking-wide min-w-[200px]"
+            >
+              Skip
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -156,25 +254,16 @@ function AssignPage() {
               <ResultsDisplay
                 assignments={assignments}
                 players={players}
+                partyName={partyName}
                 onStartOver={handleStartOver}
               />
             </div>
           ) : (
           <div className="max-w-6xl mx-auto space-y-8">
             <div className="text-center space-y-4">
-              <div className="flex items-center justify-center gap-4 md:gap-6">
-                <img
-                  src="/gift.svg"
-                  alt="Gift"
-                  className="w-12 h-12 md:w-16 md:h-16"
-                />
-                <h1 className="text-5xl md:text-6xl font-normal tracking-tight leading-tight">Setup Your Secret Santa</h1>
-                <img
-                  src="/gift.svg"
-                  alt="Gift"
-                  className="w-12 h-12 md:w-16 md:h-16"
-                />
-              </div>
+              <h1 className="text-5xl md:text-6xl font-normal tracking-tight leading-tight">
+                Setup <span className="italic">{partyName || 'Your Secret Santa'}</span>
+              </h1>
               <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
                 Add participants and set any exclusion rules before generating
                 assignments

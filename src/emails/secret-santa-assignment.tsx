@@ -1,11 +1,13 @@
 interface SecretSantaAssignmentProps {
   giverName: string
   receiverName: string
+  partyName?: string
 }
 
 export default function SecretSantaAssignment({
   giverName,
   receiverName,
+  partyName,
 }: SecretSantaAssignmentProps) {
   return (
     <html>
@@ -59,6 +61,18 @@ export default function SecretSantaAssignment({
                       </h1>
                       <span style={{ fontSize: '48px' }}>🎁</span>
                     </div>
+                    {partyName && (
+                      <p
+                        style={{
+                          margin: '10px 0 0',
+                          fontSize: '18px',
+                          color: '#806656',
+                          fontStyle: 'italic',
+                        }}
+                      >
+                        {partyName}
+                      </p>
+                    )}
                   </td>
                 </tr>
 

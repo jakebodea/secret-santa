@@ -1,11 +1,13 @@
 interface AdminSummaryProps {
   adminName: string
   resultsUrl: string
+  partyName?: string
 }
 
 export default function AdminSummary({
   adminName,
   resultsUrl,
+  partyName,
 }: AdminSummaryProps) {
   return (
     <html>
@@ -59,6 +61,18 @@ export default function AdminSummary({
                       </h1>
                       <span style={{ fontSize: '48px' }}>🤫</span>
                     </div>
+                    {partyName && (
+                      <p
+                        style={{
+                          margin: '10px 0 0',
+                          fontSize: '18px',
+                          color: '#806656',
+                          fontStyle: 'italic',
+                        }}
+                      >
+                        {partyName}
+                      </p>
+                    )}
                   </td>
                 </tr>
 
@@ -89,7 +103,9 @@ export default function AdminSummary({
                         lineHeight: '1.6',
                       }}
                     >
-                      The Secret Santa assignments have been generated and sent to all participants! 🎉
+                      {partyName 
+                        ? `The ${partyName} assignments have been generated and sent to all participants! 🎉`
+                        : 'The Secret Santa assignments have been generated and sent to all participants! 🎉'}
                     </p>
                     <p
                       style={{

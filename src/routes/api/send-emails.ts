@@ -9,6 +9,7 @@ import type { Player, Assignment } from '../../lib/types'
 interface RequestBody {
   players: Player[]
   assignments: Assignment[]
+  partyName?: string
 }
 
 // Helper to get name with initial for compact representation
@@ -24,7 +25,8 @@ function getCompactName(name: string): string {
 // Helper to encode assignments for URL
 function encodeAssignments(
   assignments: Assignment[],
-  players: Player[]
+  players: Player[],
+  partyName?: string
 ): string {
   const playerMap = new Map(players.map(p => [p.id, p]))
   
@@ -33,6 +35,7 @@ function encodeAssignments(
       giver: getCompactName(playerMap.get(a.giverId)?.name || 'Unknown'),
       receiver: getCompactName(playerMap.get(a.receiverId)?.name || 'Unknown'),
     })),
+    partyName,
   }
   
   return Buffer.from(JSON.stringify(compactData)).toString('base64')
@@ -43,7 +46,7 @@ export const Route = createFileRoute('/api/send-emails')({
     handlers: {
       POST: async ({ request }) => {
         try {
-          const { players, assignments } = (await request.json()) as RequestBody
+          const { players, assignments, partyName } = (await request.json()) as RequestBody
           const baseUrl = new URL(request.url).origin
 
           // Validate input
@@ -68,7 +71,7 @@ export const Route = createFileRoute('/api/send-emails')({
           const playerMap = new Map(players.map(p => [p.id, p]))
 
           // Build the admin results URL with encoded data
-          const encodedData = encodeAssignments(assignments, players)
+          const encodedData = encodeAssignments(assignments, players, partyName)
           const resultsUrl = `${baseUrl}/results?data=${encodedData}`
 
           // Prepare emails for participants
@@ -87,6 +90,7 @@ export const Route = createFileRoute('/api/send-emails')({
               react: jsx(SecretSantaAssignment, {
                 giverName: giver.name,
                 receiverName: receiver.name,
+                partyName,
               }),
             }
           })
@@ -108,6 +112,7 @@ export const Route = createFileRoute('/api/send-emails')({
             react: jsx(AdminSummary, {
               adminName: admin.name,
               resultsUrl,
+              partyName,
             }),
           }))
 

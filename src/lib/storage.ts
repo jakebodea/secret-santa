@@ -7,6 +7,7 @@ const defaultData: SecretSantaData = {
   players: [],
   constraints: [],
   assignments: [],
+  partyName: undefined,
 }
 
 // Get all data from localStorage
@@ -121,6 +122,17 @@ export function saveAssignments(assignments: Assignment[]): void {
 export function clearAssignments(): void {
   const data = getData()
   data.assignments = []
+  saveData(data)
+}
+
+// Party name operations
+export function getPartyName(): string | undefined {
+  return getData().partyName
+}
+
+export function savePartyName(partyName: string): void {
+  const data = getData()
+  data.partyName = partyName
   saveData(data)
 }
 

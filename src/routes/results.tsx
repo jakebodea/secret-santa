@@ -22,6 +22,7 @@ interface CompactAssignment {
 
 interface DecodedData {
   assignments: CompactAssignment[]
+  partyName?: string
 }
 
 export const Route = createFileRoute('/results')({
@@ -95,6 +96,11 @@ function ResultsPage() {
                 className="w-12 h-12 md:w-16 md:h-16"
               />
             </div>
+            {decodedData?.partyName && (
+              <p className="text-2xl md:text-3xl text-foreground font-light tracking-wide italic">
+                {decodedData.partyName}
+              </p>
+            )}
             <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
               View individual assignments or reveal all at once
             </p>

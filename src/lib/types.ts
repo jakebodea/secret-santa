@@ -23,5 +23,6 @@ export interface SecretSantaData {
   players: Player[]
   constraints: Constraint[]
   assignments: Assignment[]
+  partyName?: string
 }
 

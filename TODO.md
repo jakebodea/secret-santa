@@ -6,7 +6,6 @@
     - emojis? 
 - import from spreadsheet (with fixed column names)
 - quicker keybindings to add participants 
-- add a party / group name and mention that in all emails, displays, etc 
 - tighten feature card text on the main page (too much spacing between lines)
 - fix mobile view 
 - figure out a way to stop spam... maybe block to only once an hour per browser sessoin?
