@@ -100,8 +100,16 @@ function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-border mt-20 py-10">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground font-light tracking-wide">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground font-light tracking-wide space-y-2">
           <p>Make your holiday gift exchange magical ✨</p>
+          <p>
+            <Link 
+              to="/support" 
+              className="text-foreground hover:text-primary transition-colors underline underline-offset-4"
+            >
+              Support this project
+            </Link>
+          </p>
         </div>
       </footer>
     </div>

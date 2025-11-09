@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button'
 import {
@@ -290,6 +290,20 @@ function ResultsPage() {
           )}
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-border mt-20 py-10">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground font-light tracking-wide">
+          <p>
+            <Link 
+              to="/support" 
+              className="text-foreground hover:text-primary transition-colors underline underline-offset-4"
+            >
+              Support this project
+            </Link>
+          </p>
+        </div>
+      </footer>
     </div>
   )
 }

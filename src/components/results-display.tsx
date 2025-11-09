@@ -7,7 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog'
-import { RotateCcw, Mail, Loader2, CheckCircle2, XCircle } from 'lucide-react'
+import { RotateCcw, Mail, XCircle } from 'lucide-react'
+import { SupportCard } from './support-card'
 import type { Player, Assignment } from '../lib/types'
 
 interface ResultsDisplayProps {
@@ -23,12 +24,11 @@ export function ResultsDisplay({
 }: ResultsDisplayProps) {
   const [isSending, setIsSending] = useState(false)
   const [emailsSent, setEmailsSent] = useState(false)
-  const [dialog, setDialog] = useState<{
+  const [errorDialog, setErrorDialog] = useState<{
     open: boolean
-    type: 'success' | 'error'
     message: string
     details?: string
-  }>({ open: false, type: 'success', message: '' })
+  }>({ open: false, message: '' })
 
   const handleSendEmails = async () => {
     setIsSending(true)
@@ -52,16 +52,9 @@ export function ResultsDisplay({
       }
 
       setEmailsSent(true)
-      setDialog({
-        open: true,
-        type: 'success',
-        message: 'Emails sent successfully!',
-        details: data.message,
-      })
     } catch (error) {
-      setDialog({
+      setErrorDialog({
         open: true,
-        type: 'error',
         message: 'Failed to send emails',
         details: error instanceof Error ? error.message : 'Unknown error occurred',
       })
@@ -70,6 +63,135 @@ export function ResultsDisplay({
     }
   }
 
+  // Loading state while sending emails
+  if (isSending) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-8">
+          {/* Bouncing Loading Dots */}
+          <div className="flex justify-center items-center gap-3 h-12">
+            <div 
+              className="w-3 h-3 bg-primary rounded-full" 
+              style={{
+                animation: 'bounce-high 1s ease-in-out infinite',
+                animationDelay: '0ms'
+              }}
+            ></div>
+            <div 
+              className="w-3 h-3 bg-primary rounded-full" 
+              style={{
+                animation: 'bounce-high 1s ease-in-out infinite',
+                animationDelay: '150ms'
+              }}
+            ></div>
+            <div 
+              className="w-3 h-3 bg-primary rounded-full" 
+              style={{
+                animation: 'bounce-high 1s ease-in-out infinite',
+                animationDelay: '300ms'
+              }}
+            ></div>
+          </div>
+          <style>{`
+            @keyframes bounce-high {
+              0% {
+                transform: translateY(0);
+              }
+              20% {
+                transform: translateY(-16px);
+              }
+              40% {
+                transform: translateY(0);
+              }
+              100% {
+                transform: translateY(0);
+              }
+            }
+          `}</style>
+          
+          {/* Text Message */}
+          <div>
+            <h2 className="text-3xl md:text-4xl font-normal tracking-wide text-foreground">
+              Sending Emails...
+            </h2>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Success state after emails are sent
+  if (emailsSent) {
+    return (
+      <>
+        <div className="min-h-screen bg-background flex items-center justify-center py-16">
+          <div className="max-w-4xl mx-auto px-4 text-center space-y-8">
+            {/* Celebration Icon */}
+            <div className="flex justify-center">
+              <img
+                src="/santa.svg"
+                alt="Secret Santa"
+                className="w-40 h-40 md:w-48 md:h-48"
+              />
+            </div>
+
+            {/* Main Message */}
+            <div className="space-y-4">
+              <h1 className="text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
+                Emails Sent!
+              </h1>
+              <p className="text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
+                Each participant has received an email with their assignment. Admins received a link to view all assignments.
+              </p>
+            </div>
+
+            {/* Support Card */}
+            <div className="pt-4">
+              <SupportCard />
+            </div>
+
+            {/* Action Button */}
+            <div className="flex justify-center pt-4">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={onStartOver}
+                className="text-lg font-medium px-12 py-8 gap-3 tracking-wide"
+              >
+                <RotateCcw className="w-5 h-5" />
+                Start Over
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Error Dialog */}
+        <Dialog open={errorDialog.open} onOpenChange={(open) => setErrorDialog({ ...errorDialog, open })}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <XCircle className="w-5 h-5" />
+                Error
+              </DialogTitle>
+            </DialogHeader>
+            <div className="pt-4">
+              <p className="mb-2">{errorDialog.message}</p>
+              {errorDialog.details && (
+                <p className="text-sm text-muted-foreground">{errorDialog.details}</p>
+              )}
+            </div>
+            <div className="flex justify-end pt-4">
+              <Button onClick={() => setErrorDialog({ open: false, message: '' })}>
+                Got it
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
+    )
+  }
+
+  // Initial state - assignments generated, ready to send
   return (
     <>
       <div className="min-h-screen bg-background flex items-center justify-center py-16">
@@ -94,47 +216,25 @@ export function ResultsDisplay({
           </div>
 
           {/* Status Message */}
-          {emailsSent ? (
-            <Card className="bg-primary/10 border-primary/50">
-              <CardContent>
-                <p className="text-lg font-normal tracking-wide mb-2">Emails Sent!</p>
-                <p className="text-base text-muted-foreground font-light tracking-wide">
-                  Each participant has received an email with their assignment. Admins received a link to view all assignments.
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="bg-accent/30 border-accent">
-              <CardContent>
-                <p className="text-base text-muted-foreground font-light tracking-wide">
-                  Click the button below to notify all participants of their assignments. Each person will receive an email with their assigned recipient.
-                </p>
-              </CardContent>
-            </Card>
-          )}
+          <Card className="bg-accent/30 border-accent">
+            <CardContent>
+              <p className="text-base text-muted-foreground font-light tracking-wide">
+                Click the button below to notify all participants of their assignments. Each person will receive an email with their assigned recipient.
+              </p>
+            </CardContent>
+          </Card>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            {!emailsSent && (
-              <Button
-                size="lg"
-                onClick={handleSendEmails}
-                disabled={isSending}
-                className="text-lg font-medium px-12 py-8 gap-3 tracking-wide"
-              >
-                {isSending ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Mail className="w-5 h-5" />
-                    Send Emails
-                  </>
-                )}
-              </Button>
-            )}
+            <Button
+              size="lg"
+              onClick={handleSendEmails}
+              disabled={isSending}
+              className="text-lg font-medium px-12 py-8 gap-3 tracking-wide"
+            >
+              <Mail className="w-5 h-5" />
+              Send Emails
+            </Button>
             <Button
               variant="outline"
               size="lg"
@@ -147,7 +247,7 @@ export function ResultsDisplay({
           </div>
 
           {/* Admin Note */}
-          {players.find((p) => p.isAdmin) && !emailsSent && (
+          {players.find((p) => p.isAdmin) && (
             <Card className="bg-muted/50 mt-8">
               <CardContent>
                 <p className="text-sm text-muted-foreground font-light tracking-wide">
@@ -162,37 +262,28 @@ export function ResultsDisplay({
         </div>
       </div>
 
-    {/* Feedback Dialog */}
-    <Dialog open={dialog.open} onOpenChange={(open) => setDialog({ ...dialog, open })}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            {dialog.type === 'success' ? (
-              <>
-                <CheckCircle2 className="w-5 h-5" />
-                Success
-              </>
-            ) : (
-              <>
-                <XCircle className="w-5 h-5" />
-                Error
-              </>
+      {/* Error Dialog */}
+      <Dialog open={errorDialog.open} onOpenChange={(open) => setErrorDialog({ ...errorDialog, open })}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <XCircle className="w-5 h-5" />
+              Error
+            </DialogTitle>
+          </DialogHeader>
+          <div className="pt-4">
+            <p className="mb-2">{errorDialog.message}</p>
+            {errorDialog.details && (
+              <p className="text-sm text-muted-foreground">{errorDialog.details}</p>
             )}
-          </DialogTitle>
-        </DialogHeader>
-        <div className="pt-4">
-          <p className="mb-2">{dialog.message}</p>
-          {dialog.details && (
-            <p className="text-sm text-muted-foreground">{dialog.details}</p>
-          )}
-        </div>
-        <div className="flex justify-end pt-4">
-          <Button onClick={() => setDialog({ open: false, type: 'success', message: '' })}>
-            Got it
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+          </div>
+          <div className="flex justify-end pt-4">
+            <Button onClick={() => setErrorDialog({ open: false, message: '' })}>
+              Got it
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { Heart, ExternalLink } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import { Card, CardContent } from '../components/ui/card'
@@ -94,9 +94,17 @@ function SupportPage() {
 
       {/* Footer */}
       <footer className="border-t border-border mt-20 py-10">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground font-light tracking-wide">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground font-light tracking-wide space-y-2">
           <p>Your support helps maintain and improve this tool for everyone.</p>
-          <p>Thank you for your generosity! :) </p>
+          <p>Thank you for your generosity! :)</p>
+          <p>
+            <Link 
+              to="/" 
+              className="text-foreground hover:text-primary transition-colors underline underline-offset-4"
+            >
+              Back to home
+            </Link>
+          </p>
         </div>
       </footer>
     </div>
