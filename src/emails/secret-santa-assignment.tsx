@@ -55,6 +55,9 @@ export default function SecretSantaAssignment({
                           color: '#331a0d',
                           fontWeight: 'normal',
                           letterSpacing: '-0.5px',
+                          textDecoration: 'underline',
+                          textDecorationColor: '#8c3e2b',
+                          textDecorationThickness: '4px',
                         }}
                       >
                         {partyName}:

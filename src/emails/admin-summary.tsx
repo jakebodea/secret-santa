@@ -91,7 +91,19 @@ export default function AdminSummary({
                       }}
                     >
                       {partyName 
-                        ? `The ${partyName} assignments have been generated and sent to all participants!`
+                        ? (
+                          <>
+                            The{' '}
+                            <span style={{
+                              textDecoration: 'underline',
+                              textDecorationColor: '#8c3e2b',
+                              textDecorationThickness: '4px',
+                            }}>
+                              {partyName}
+                            </span>
+                            {' '}assignments have been generated and sent to all participants!
+                          </>
+                        )
                         : 'The Secret Santa assignments have been generated and sent to all participants!'}
                     </p>
                     <p

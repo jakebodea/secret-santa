@@ -97,7 +97,7 @@ function ResultsPage() {
               />
             </div>
             {decodedData?.partyName && (
-              <p className="text-lg sm:text-2xl md:text-3xl text-foreground font-light tracking-wide italic">
+              <p className="text-lg sm:text-2xl md:text-3xl text-foreground font-light tracking-wide italic underline decoration-primary decoration-4">
                 {decodedData.partyName}
               </p>
             )}

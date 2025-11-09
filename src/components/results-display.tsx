@@ -197,11 +197,23 @@ export function ResultsDisplay({
 
             {/* Main Message */}
             <div className="space-y-4">
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
-                Emails Sent!
-              </h1>
+              <div className="flex items-center justify-center gap-3 md:gap-4">
+                <img
+                  src="/gift.svg"
+                  alt="Gift"
+                  className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+                />
+                <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
+                  Emails Sent!
+                </h1>
+                <img
+                  src="/gift.svg"
+                  alt="Gift"
+                  className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+                />
+              </div>
               {partyName && (
-                <p className="text-lg sm:text-2xl md:text-3xl text-foreground font-light tracking-wide italic">
+                <p className="text-lg sm:text-2xl md:text-3xl text-foreground font-light tracking-wide italic underline decoration-primary decoration-4">
                   {partyName}
                 </p>
               )}
@@ -271,15 +283,27 @@ export function ResultsDisplay({
 
           {/* Main Message */}
           <div className="space-y-4">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
-              {partyName && (
-                <>
-                  <span className="italic">{partyName}</span>
-                  <br />
-                </>
-              )}
-              Assignments Generated!
-            </h1>
+            <div className="flex items-center justify-center gap-3 md:gap-4">
+              <img
+                src="/gift.svg"
+                alt="Gift"
+                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+              />
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
+                {partyName && (
+                  <>
+                    <span className="italic underline decoration-primary decoration-4">{partyName}</span>
+                    <br />
+                  </>
+                )}
+                Assignments Generated!
+              </h1>
+              <img
+                src="/gift.svg"
+                alt="Gift"
+                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+              />
+            </div>
             <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
               Your Secret Santa assignments are ready to send!
             </p>

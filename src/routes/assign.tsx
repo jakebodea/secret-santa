@@ -278,9 +278,21 @@ function AssignPage() {
           ) : (
           <div className="max-w-6xl mx-auto space-y-8">
             <div className="text-center space-y-4">
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal tracking-tight leading-tight">
-                Setup <span className="italic">{partyName || 'Your Secret Santa'}</span>
-              </h1>
+              <div className="flex items-center justify-center gap-3 md:gap-4">
+                <img
+                  src="/gift.svg"
+                  alt="Gift"
+                  className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+                />
+                <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal tracking-tight leading-tight">
+                  Setup <span className="italic underline decoration-primary decoration-4">{partyName || 'Your Secret Santa'}</span>
+                </h1>
+                <img
+                  src="/gift.svg"
+                  alt="Gift"
+                  className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+                />
+              </div>
               <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
                 Add participants and set any exclusion rules before generating
                 assignments
