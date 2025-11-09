@@ -23,6 +23,7 @@ interface PlayerFormProps {
 
 export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const nameInputRef = useRef<HTMLInputElement>(null)
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [isImporting, setIsImporting] = useState(false)
   const [importError, setImportError] = useState<string | null>(null)
@@ -92,6 +93,15 @@ export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFor
     fileInputRef.current?.click()
   }
 
+  // Convert text to Title Case
+  const toTitleCase = (text: string): string => {
+    return text
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
+
   const form = useForm({
     defaultValues: {
       name: '',
@@ -110,8 +120,8 @@ export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFor
       // Create new player
       const newPlayer: Player = {
         id: crypto.randomUUID(),
-        name: value.name,
-        email: value.email,
+        name: toTitleCase(value.name.trim()),
+        email: value.email.trim().toLowerCase(),
         isAdmin: existingPlayers.length === 0, // First player is admin
       }
 
@@ -119,6 +129,11 @@ export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFor
 
       // Reset form
       form.reset()
+
+      // Focus on name input after adding player
+      setTimeout(() => {
+        nameInputRef.current?.focus()
+      }, 0)
     },
   })
 
@@ -161,11 +176,15 @@ export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFor
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
                 <Input
+                  ref={nameInputRef}
                   id="name"
                   type="text"
                   placeholder="Enter name"
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e) => {
+                    const normalizedValue = toTitleCase(e.target.value)
+                    field.handleChange(normalizedValue)
+                  }}
                   onBlur={field.handleBlur}
                 />
                 {field.state.meta.errors && (
@@ -197,7 +216,17 @@ export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFor
                   type="email"
                   placeholder="Enter email"
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onKeyDown={(e) => {
+                    // Prevent space key from being entered
+                    if (e.key === ' ') {
+                      e.preventDefault()
+                    }
+                  }}
+                  onChange={(e) => {
+                    // Remove spaces from email (handles paste and other cases)
+                    const valueWithoutSpaces = e.target.value.replace(/\s/g, '')
+                    field.handleChange(valueWithoutSpaces)
+                  }}
                   onBlur={field.handleBlur}
                 />
                 {field.state.meta.errors && (

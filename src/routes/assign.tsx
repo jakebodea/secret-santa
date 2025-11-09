@@ -172,7 +172,8 @@ function AssignPage() {
 
   const handlePartyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    setPartyName(value)
+    const normalizedValue = toTitleCase(value)
+    setPartyName(normalizedValue)
   }
 
   const handlePartyNameSubmit = () => {
