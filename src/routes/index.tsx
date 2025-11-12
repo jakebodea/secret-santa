@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import { Zap, Heart, ShieldCheck, ArrowRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { Button } from '../components/ui/button'
 import { FeatureCard } from '../components/feature-card'
 
 const featureRevealDelay = 2.65
 const buttonRevealDelay = featureRevealDelay + 0.25
+const animationsCompleteDelay = buttonRevealDelay + 0.7 // After button animation completes
 
 export const Route = createFileRoute('/')({
   head: () => ({
@@ -29,6 +31,17 @@ export const Route = createFileRoute('/')({
 })
 
 function HomePage() {
+  const [animationsComplete, setAnimationsComplete] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimationsComplete(true)
+    }, animationsCompleteDelay * 1000)
+
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-10 sm:py-16 md:py-24">
@@ -36,12 +49,38 @@ function HomePage() {
           {/* Icon */}
           <div className="flex justify-center">
             <motion.img
-              src="/santa.svg"
+              src={isHovered ? '/santa-playful.svg' : '/santa.svg'}
               alt="Secret Santa"
-              className="w-28 h-28 sm:w-40 sm:h-40 md:w-48 md:h-48"
+              className="w-28 h-28 sm:w-40 sm:h-40 md:w-48 md:h-48 cursor-pointer transition-all"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, ease: 'easeOut', delay: 0.1 }}
+              animate={{
+                opacity: 1,
+                scale: isHovered && animationsComplete ? 1.15 : 1,
+                x: isHovered && animationsComplete ? [0, -20, 20, -18, 18, -15, 15, -12, 12, -8, 8, -5, 5, 0] : 0,
+                rotate: isHovered && animationsComplete ? [0, -12, 12, -10, 10, -8, 8, -6, 6, -4, 4, -2, 2, 0] : 0,
+              }}
+              transition={{
+                opacity: { duration: 0.8, ease: 'easeOut', delay: 0.1 },
+                scale: { duration: 0.3, ease: 'easeOut' },
+                x: {
+                  duration: 2,
+                  ease: 'easeOut',
+                  times: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1],
+                },
+                rotate: {
+                  duration: 2,
+                  ease: 'easeOut',
+                  times: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1],
+                },
+              }}
+              onMouseEnter={() => {
+                if (animationsComplete) {
+                  setIsHovered(true)
+                }
+              }}
+              onMouseLeave={() => {
+                setIsHovered(false)
+              }}
             />
           </div>
 
