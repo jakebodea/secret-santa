@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import { Zap, Heart, ShieldCheck, ArrowRight } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '../components/ui/button'
 import { FeatureCard } from '../components/feature-card'
 import { clearAllData } from '../lib/storage'
@@ -34,20 +34,114 @@ export const Route = createFileRoute('/')({
 function HomePage() {
   const [animationsComplete, setAnimationsComplete] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const [isHoverCapable, setIsHoverCapable] = useState(false)
   const navigate = useNavigate()
+  const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const imageResetTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  const clearAnimationTimeouts = () => {
+    if (resetTimeoutRef.current) {
+      clearTimeout(resetTimeoutRef.current)
+      resetTimeoutRef.current = null
+    }
+    if (imageResetTimeoutRef.current) {
+      clearTimeout(imageResetTimeoutRef.current)
+      imageResetTimeoutRef.current = null
+    }
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationsComplete(true)
     }, animationsCompleteDelay * 1000)
 
-    return () => clearTimeout(timer)
+    return () => {
+      clearTimeout(timer)
+      clearAnimationTimeouts()
+    }
   }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) {
+      return
+    }
+
+    const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
+
+    const handleChange = (event: MediaQueryListEvent) => {
+      setIsHoverCapable(event.matches)
+    }
+
+    setIsHoverCapable(mediaQuery.matches)
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', handleChange)
+      return () => mediaQuery.removeEventListener('change', handleChange)
+    }
+
+    mediaQuery.addListener(handleChange)
+    return () => mediaQuery.removeListener(handleChange)
+  }, [])
+
+  useEffect(() => {
+    if (isHoverCapable) {
+      clearAnimationTimeouts()
+      setIsAnimating(false)
+      setIsHovered(false)
+    }
+  }, [isHoverCapable])
+
+  const startAnimation = () => {
+    if (!animationsComplete || isHoverCapable) {
+      return
+    }
+
+    clearAnimationTimeouts()
+    
+    // Show playful santa and start animation
+    setIsHovered(true)
+    setIsAnimating(true)
+    
+    // After 1.5 seconds, stop the animation (scale will shrink back over 0.3s)
+    resetTimeoutRef.current = setTimeout(() => {
+      setIsAnimating(false)
+      resetTimeoutRef.current = null
+    }, 1500)
+    
+    // After scale animation completes (1.5s + 0.3s), switch back to normal santa
+    imageResetTimeoutRef.current = setTimeout(() => {
+      setIsHovered(false)
+      imageResetTimeoutRef.current = null
+    }, 1800)
+  }
+
+  const handleHoverStart = () => {
+    if (!isHoverCapable || !animationsComplete) {
+      return
+    }
+
+    clearAnimationTimeouts()
+    setIsHovered(true)
+    setIsAnimating(true)
+  }
+
+  const handleHoverEnd = () => {
+    if (!isHoverCapable) {
+      return
+    }
+
+    clearAnimationTimeouts()
+    setIsAnimating(false)
+    setIsHovered(false)
+  }
 
   const handleGetStarted = () => {
     clearAllData()
     navigate({ to: '/assign' })
   }
+
+  const wiggleDuration = isHoverCapable ? 2 : 1.5
 
   return (
     <div className="min-h-screen bg-background">
@@ -62,31 +156,28 @@ function HomePage() {
               initial={{ opacity: 0 }}
               animate={{
                 opacity: 1,
-                scale: isHovered && animationsComplete ? 1.15 : 1,
-                x: isHovered && animationsComplete ? [0, -20, 20, -18, 18, -15, 15, -12, 12, -8, 8, -5, 5, 0] : 0,
-                rotate: isHovered && animationsComplete ? [0, -12, 12, -10, 10, -8, 8, -6, 6, -4, 4, -2, 2, 0] : 0,
+                scale: isAnimating && animationsComplete ? 1.15 : 1,
+                x: isAnimating && animationsComplete ? [0, -20, 20, -18, 18, -15, 15, -12, 12, -8, 8, -5, 5, 0] : 0,
+                rotate: isAnimating && animationsComplete ? [0, -12, 12, -10, 10, -8, 8, -6, 6, -4, 4, -2, 2, 0] : 0,
               }}
               transition={{
                 opacity: { duration: 0.8, ease: 'easeOut', delay: 0.1 },
                 scale: { duration: 0.3, ease: 'easeOut' },
                 x: {
-                  duration: 2,
+                  duration: wiggleDuration,
                   ease: 'easeOut',
                   times: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1],
                 },
                 rotate: {
-                  duration: 2,
+                  duration: wiggleDuration,
                   ease: 'easeOut',
                   times: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1],
                 },
               }}
-              onMouseEnter={() => {
-                if (animationsComplete) {
-                  setIsHovered(true)
-                }
-              }}
-              onMouseLeave={() => {
-                setIsHovered(false)
+              onMouseEnter={handleHoverStart}
+              onMouseLeave={handleHoverEnd}
+              onClick={() => {
+                startAnimation()
               }}
             />
           </div>
