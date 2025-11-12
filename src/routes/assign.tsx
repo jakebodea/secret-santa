@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import {
@@ -53,9 +53,11 @@ function AssignPage() {
     message: string
     details?: string
   }>({ open: false, message: '' })
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  // Load data on mount
+  // Clear cache and load data on mount
   useEffect(() => {
+    clearAllData()
     const data = getData()
     setPlayers(data.players)
     setConstraints(data.constraints)
@@ -65,6 +67,44 @@ function AssignPage() {
     // Show party name page if no party name is set (before player assignments)
     setShowPartyNamePage(!existingPartyName)
   }, [])
+
+  // Keep input focused when party name page is shown
+  useEffect(() => {
+    if (showPartyNamePage && inputRef.current) {
+      // Focus immediately when page is shown
+      inputRef.current.focus()
+
+      const handleBlur = () => {
+        // Refocus after a short delay, unless user clicked a button
+        setTimeout(() => {
+          if (inputRef.current && showPartyNamePage && document.activeElement?.tagName !== 'BUTTON') {
+            inputRef.current.focus()
+          }
+        }, 10)
+      }
+
+      const handleClick = (e: MouseEvent) => {
+        const target = e.target as HTMLElement
+        // Only refocus if not clicking on a button or inside a button
+        if (target.tagName !== 'BUTTON' && !target.closest('button')) {
+          setTimeout(() => {
+            if (inputRef.current && showPartyNamePage) {
+              inputRef.current.focus()
+            }
+          }, 10)
+        }
+      }
+
+      const input = inputRef.current
+      input.addEventListener('blur', handleBlur)
+      document.addEventListener('click', handleClick, true)
+
+      return () => {
+        input.removeEventListener('blur', handleBlur)
+        document.removeEventListener('click', handleClick, true)
+      }
+    }
+  }, [showPartyNamePage])
 
   const handleAddPlayer = (player: Player) => {
     addPlayer(player)
@@ -218,22 +258,23 @@ function AssignPage() {
           {/* Heading */}
           <div className="space-y-6">
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
-              What's Your Secret Santa Called?
+              What's your Gift Exchange Called?
             </h1>
             <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
-              Give your gift exchange a name
+              Give your secret santa party a name
             </p>
           </div>
 
           {/* Input */}
           <div className="space-y-6">
             <Input
+              ref={inputRef}
               type="text"
               value={partyName}
               onChange={handlePartyNameChange}
               onKeyDown={handlePartyNameKeyDown}
-              className="text-xl sm:text-3xl md:text-4xl h-12 sm:h-16 md:h-20 px-6 text-center"
-              style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+              className="text-xl sm:text-3xl md:text-4xl h-12 sm:h-16 md:h-20 px-6 text-center border-0 bg-transparent dark:bg-transparent focus-visible:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none outline-none"
+              style={{ fontFamily: "'Instrument Serif', Georgia, serif", backgroundColor: 'transparent' }}
               autoFocus
             />
           </div>
@@ -285,7 +326,7 @@ function AssignPage() {
                   className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
                 />
                 <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal tracking-tight leading-tight">
-                  Setup <span className="italic underline decoration-primary decoration-4">{partyName || 'Your Secret Santa'}</span>
+                  Setup <span className="italic underline decoration-primary decoration-4">{partyName || 'Your Secret Santa'}!</span>
                 </h1>
                 <img
                   src="/gift.svg"

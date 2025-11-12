@@ -1,9 +1,10 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import { Zap, Heart, ShieldCheck, ArrowRight } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { Button } from '../components/ui/button'
 import { FeatureCard } from '../components/feature-card'
+import { clearAllData } from '../lib/storage'
 
 const featureRevealDelay = 2.65
 const buttonRevealDelay = featureRevealDelay + 0.25
@@ -33,6 +34,7 @@ export const Route = createFileRoute('/')({
 function HomePage() {
   const [animationsComplete, setAnimationsComplete] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -41,6 +43,11 @@ function HomePage() {
 
     return () => clearTimeout(timer)
   }, [])
+
+  const handleGetStarted = () => {
+    clearAllData()
+    navigate({ to: '/assign' })
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -168,12 +175,13 @@ function HomePage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7, ease: 'easeOut', delay: buttonRevealDelay }}
           >
-            <Link to="/assign">
-              <Button className="h-11 px-6 sm:h-12 sm:px-8 text-base font-medium gap-2 tracking-wide">
-                Get started
-                <ArrowRight className="w-5 h-5" />
-              </Button>
-            </Link>
+            <Button 
+              onClick={handleGetStarted}
+              className="h-11 px-6 sm:h-12 sm:px-8 text-base font-medium gap-2 tracking-wide"
+            >
+              Get started
+              <ArrowRight className="w-5 h-5" />
+            </Button>
           </motion.div>
         </div>
       </main>
