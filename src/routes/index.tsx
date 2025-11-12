@@ -44,8 +44,8 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-10 sm:py-16 md:py-24">
-        <div className="max-w-3xl mx-auto text-center space-y-8">
+      <main className="container mx-auto px-4 py-6 sm:py-16 md:py-24">
+        <div className="max-w-3xl mx-auto text-center space-y-6 sm:space-y-8">
           {/* Icon */}
           <div className="flex justify-center">
             <motion.img
@@ -106,7 +106,7 @@ function HomePage() {
 
           {/* Features */}
           <motion.div
-            className="grid md:grid-cols-3 gap-8 pt-6"
+            className="grid md:grid-cols-3 gap-2 sm:gap-8 pt-0 sm:pt-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: featureRevealDelay, duration: 0.6, ease: 'easeOut' }}
@@ -163,7 +163,7 @@ function HomePage() {
 
           {/* CTA Button */}
           <motion.div
-            className="pt-12"
+            className="pt-8 sm:pt-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7, ease: 'easeOut', delay: buttonRevealDelay }}
@@ -179,7 +179,7 @@ function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-20 py-10">
+      <footer className="border-t border-border mt-12 sm:mt-20 py-6 sm:py-10">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground font-light tracking-wide space-y-2">
           <p>
             <Link 
