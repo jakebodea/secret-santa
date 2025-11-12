@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Gift, Users, Sparkles, ArrowRight } from 'lucide-react'
+import { Zap, Heart, ShieldCheck, ArrowRight } from 'lucide-react'
 import { Button } from '../components/ui/button'
+import { FeatureCard } from '../components/feature-card'
 
 export const Route = createFileRoute('/')({
   head: () => ({
@@ -43,47 +44,42 @@ function HomePage() {
               <span className="italic font-light"> <span className="underline decoration-primary decoration-4">Super</span> Simple</span> Secret Santa
             </h1>
             <p className="text-lg sm:text-2xl md:text-3xl text-muted-foreground font-light tracking-wide">
-              Organize your gift exchange with ease
+              Organize your gift exchange with this super simple tool!
             </p>
           </div>
 
-          {/* Description */}
-          <p className="text-base md:text-lg text-foreground/80 max-w-2xl mx-auto leading-relaxed font-normal tracking-wide">
-            Planning a Secret Santa? We make it simple! Add your participants,
-            set any rules (like who shouldn't give to whom), and let us handle
-            the rest. Everyone gets assigned randomly while respecting your
-            constraints.
-          </p>
-
           {/* Features */}
           <div className="grid md:grid-cols-3 gap-8 pt-6">
-            <div className="flex flex-col items-center space-y-2 p-6">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-                <Users className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-medium text-foreground tracking-wide">Easy Setup</h3>
-              <p className="text-sm sm:text-base md:text-lg text-foreground/70 text-center font-normal leading-tight tracking-wide">
-                Add participants with just a name and email
-              </p>
-            </div>
-            <div className="flex flex-col items-center space-y-2 p-6">
-              <div className="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center">
-                <Gift className="w-7 h-7 text-secondary" />
-              </div>
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-medium text-foreground tracking-wide">Smart Rules</h3>
-              <p className="text-sm sm:text-base md:text-lg text-foreground/70 text-center font-normal leading-tight tracking-wide">
-                Set constraints for who can't give to whom
-              </p>
-            </div>
-            <div className="flex flex-col items-center space-y-2 p-6">
-              <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center">
-                <Sparkles className="w-7 h-7 text-accent" />
-              </div>
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-medium text-foreground tracking-wide">Auto Assign</h3>
-              <p className="text-sm sm:text-base md:text-lg text-foreground/70 text-center font-normal leading-tight tracking-wide">
-                Random assignments that respect all your rules
-              </p>
-            </div>
+            <FeatureCard
+              icon={Zap}
+              title="No Accounts"
+              description={
+                <>
+                  No signups, no logins, no hassle. Just add names and emails and <span className="underline">go</span>.
+                </>
+              }
+              colorClass="primary"
+            />
+            <FeatureCard
+              icon={Heart}
+              title="Absolutely Free"
+              description={
+                <>
+                  No hidden costs, no premium tiers, no upsells. <span className="underline">Free</span> forever, for everyone.
+                </>
+              }
+              colorClass="secondary"
+            />
+            <FeatureCard
+              icon={ShieldCheck}
+              title="Privacy First"
+              description={
+                <>
+                  Zero data stored or sold. Your info is <span className="underline">only</span> used to send assignments, then it's gone.
+                </>
+              }
+              colorClass="accent"
+            />
           </div>
 
           {/* CTA Button */}
