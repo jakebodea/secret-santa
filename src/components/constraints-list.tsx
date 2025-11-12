@@ -1,6 +1,5 @@
 import { Button } from './ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { Badge } from './ui/badge'
 import { Trash2, ArrowRight, ArrowLeftRight } from 'lucide-react'
 import type { Player, Constraint } from '../lib/types'
 import { getPlayerName } from '../lib/secret-santa-assignments'
@@ -23,7 +22,7 @@ export function ConstraintsList({
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">Exclusion Rules ({constraints.length})</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">Exclusion Rules</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
@@ -40,7 +39,7 @@ export function ConstraintsList({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">Exclusion Rules ({constraints.length})</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">Exclusion Rules</CardTitle>
           {constraints.length > 0 && (
             <Button
               variant="ghost"
@@ -59,31 +58,28 @@ export function ConstraintsList({
           {constraints.map((constraint) => (
             <div
               key={constraint.id}
-              className="flex items-center justify-between p-2.5 sm:p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+              className="flex items-center justify-center gap-4 py-2 relative"
             >
-              <div className="flex items-center gap-3 flex-1">
-                <Badge variant="outline" className="font-normal">
+              <div className="flex items-center gap-4">
+                <span className="text-lg font-normal tracking-wide">
                   {getPlayerName(players, constraint.giverId)}
-                </Badge>
-                {constraint.bidirectional ? (
-                  <ArrowLeftRight className="w-4 h-4 text-muted-foreground" />
-                ) : (
-                  <ArrowRight className="w-4 h-4 text-muted-foreground" />
-                )}
-                <Badge variant="outline" className="font-normal">
+                </span>
+                <div className="flex items-center justify-center px-2">
+                  {constraint.bidirectional ? (
+                    <ArrowLeftRight className="w-5 h-5 text-muted-foreground" />
+                  ) : (
+                    <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                  )}
+                </div>
+                <span className="text-lg font-normal tracking-wide">
                   {getPlayerName(players, constraint.receiverId)}
-                </Badge>
-                {constraint.bidirectional && (
-                  <span className="text-sm text-muted-foreground font-light tracking-wide ml-2">
-                    (both ways)
-                  </span>
-                )}
+                </span>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => onRemoveConstraint(constraint.id)}
-                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                className="absolute right-0 text-destructive hover:text-destructive hover:bg-destructive/10"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>

@@ -323,15 +323,15 @@ function AssignPage() {
                 <img
                   src="/gift.svg"
                   alt="Gift"
-                  className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+                  className="hidden md:block w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
                 />
-                <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal tracking-tight leading-tight">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight leading-tight">
                   Setup <span className="italic underline decoration-primary decoration-4">{partyName || 'Your Secret Santa'}!</span>
                 </h1>
                 <img
                   src="/gift.svg"
                   alt="Gift"
-                  className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+                  className="hidden md:block w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
                 />
               </div>
               <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
@@ -375,7 +375,6 @@ function AssignPage() {
                   onClick={handleGenerateAssignments}
                   className="h-12 px-8 text-base font-medium gap-2 tracking-wide"
                 >
-                  <Sparkles className="w-5 h-5" />
                   Generate Assignments
                 </Button>
               </div>
