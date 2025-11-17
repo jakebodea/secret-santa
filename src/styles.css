@@ -116,3 +116,28 @@ code {
     background-color: oklch(0.75 0.15 85 / 0.4);
   }
 }
+
+/* Changelog Content Styles */
+.changelog-content h3 {
+  @apply text-sm font-normal text-foreground mb-2 mt-4 first:mt-0 underline decoration-primary decoration-1;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+.changelog-content ul {
+  @apply list-none space-y-1.5 ml-0 pl-5;
+}
+
+.changelog-content li {
+  @apply text-sm font-light tracking-wide text-foreground/90 pl-0 relative;
+}
+
+.changelog-content li::before {
+  content: "•";
+  @apply absolute text-foreground/75 font-medium;
+  left: -1.25rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  top: 50%;
+  transform: translateY(-55%);
+}

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestSupportRouteImport } from './routes/test-support'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as ResultsRouteImport } from './routes/results'
+import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as AssignRouteImport } from './routes/assign'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiSendEmailsRouteImport } from './routes/api/send-emails'
@@ -29,6 +30,11 @@ const SupportRoute = SupportRouteImport.update({
 const ResultsRoute = ResultsRouteImport.update({
   id: '/results',
   path: '/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChangelogRoute = ChangelogRouteImport.update({
+  id: '/changelog',
+  path: '/changelog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AssignRoute = AssignRouteImport.update({
@@ -50,6 +56,7 @@ const ApiSendEmailsRoute = ApiSendEmailsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assign': typeof AssignRoute
+  '/changelog': typeof ChangelogRoute
   '/results': typeof ResultsRoute
   '/support': typeof SupportRoute
   '/test-support': typeof TestSupportRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assign': typeof AssignRoute
+  '/changelog': typeof ChangelogRoute
   '/results': typeof ResultsRoute
   '/support': typeof SupportRoute
   '/test-support': typeof TestSupportRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/assign': typeof AssignRoute
+  '/changelog': typeof ChangelogRoute
   '/results': typeof ResultsRoute
   '/support': typeof SupportRoute
   '/test-support': typeof TestSupportRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/assign'
+    | '/changelog'
     | '/results'
     | '/support'
     | '/test-support'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/assign'
+    | '/changelog'
     | '/results'
     | '/support'
     | '/test-support'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/assign'
+    | '/changelog'
     | '/results'
     | '/support'
     | '/test-support'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssignRoute: typeof AssignRoute
+  ChangelogRoute: typeof ChangelogRoute
   ResultsRoute: typeof ResultsRoute
   SupportRoute: typeof SupportRoute
   TestSupportRoute: typeof TestSupportRoute
@@ -131,6 +144,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResultsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/changelog': {
+      id: '/changelog'
+      path: '/changelog'
+      fullPath: '/changelog'
+      preLoaderRoute: typeof ChangelogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/assign': {
       id: '/assign'
       path: '/assign'
@@ -158,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssignRoute: AssignRoute,
+  ChangelogRoute: ChangelogRoute,
   ResultsRoute: ResultsRoute,
   SupportRoute: SupportRoute,
   TestSupportRoute: TestSupportRoute,
