@@ -1,3 +1,2 @@
 - add stripe support options 
-- center exclusion list around arrows 
 - fix mobile view for results page 

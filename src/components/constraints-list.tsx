@@ -56,22 +56,19 @@ export function ConstraintsList({
       <CardContent>
         <div className="space-y-2">
           {constraints.map((constraint) => (
-            <div
-              key={constraint.id}
-              className="flex items-center justify-center gap-4 py-2 relative"
-            >
-              <div className="flex items-center gap-4">
-                <span className="text-lg font-normal tracking-wide">
+            <div key={constraint.id} className="flex items-center justify-center py-2 relative">
+              <div className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-4 px-4">
+                <span className="text-lg font-normal tracking-wide text-right">
                   {getPlayerName(players, constraint.giverId)}
                 </span>
-                <div className="flex items-center justify-center px-2">
+                <div className="flex items-center justify-center">
                   {constraint.bidirectional ? (
                     <ArrowLeftRight className="w-5 h-5 text-muted-foreground" />
                   ) : (
                     <ArrowRight className="w-5 h-5 text-muted-foreground" />
                   )}
                 </div>
-                <span className="text-lg font-normal tracking-wide">
+                <span className="text-lg font-normal tracking-wide text-left">
                   {getPlayerName(players, constraint.receiverId)}
                 </span>
               </div>
