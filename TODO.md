@@ -1,4 +1,3 @@
 - add stripe support options 
-- rethink support layouts.. maybe just buttons with optional QR code modals? 
 - center exclusion list around arrows 
 - fix mobile view for results page 
