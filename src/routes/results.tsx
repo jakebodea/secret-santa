@@ -81,14 +81,20 @@ function ResultsPage() {
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header */}
           <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-6 md:gap-8">
+            <div className="flex items-center justify-center gap-10 md:gap-16">
               <img
                 src="/gift.svg"
                 alt="Gift"
                 className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
               />
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal tracking-tight leading-tight">
-                Secret Santa Results
+                Secret Santa Results:
+                {decodedData?.partyName && (
+                  <>
+                    <br />
+                    <span className="italic underline decoration-primary decoration-4">{decodedData.partyName}</span>
+                  </>
+                )}
               </h1>
               <img
                 src="/gift.svg"
@@ -96,11 +102,6 @@ function ResultsPage() {
                 className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
               />
             </div>
-            {decodedData?.partyName && (
-              <p className="text-lg sm:text-2xl md:text-3xl text-foreground font-light tracking-wide italic underline decoration-primary decoration-4">
-                {decodedData.partyName}
-              </p>
-            )}
             <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
               View individual assignments or reveal all at once
             </p>
@@ -227,47 +228,47 @@ function ResultsPage() {
 
               {/* Show All Mode - All Assignments */}
               {showAll && (
-                <div className="py-8 px-6 bg-primary/5 border border-primary/20 rounded-lg">
-                  <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 mb-6">
-                    <div className="text-center sm:text-right sm:w-40">
-                      <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium">
+                <div className="py-8 px-4 sm:px-6 bg-primary/5 border border-primary/20 rounded-lg">
+                  <div className="max-w-4xl mx-auto">
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-3 sm:gap-8 mb-4 sm:mb-6 items-center">
+                      <p className="text-[0.65rem] sm:text-xs text-muted-foreground uppercase tracking-wide font-medium text-left sm:text-right">
                         Gift Giver
                       </p>
-                    </div>
-                    <div className="text-center sm:w-40">
-                      <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium opacity-0">
-                        &nbsp;
+                      <p className="text-[0.65rem] sm:text-xs text-muted-foreground uppercase tracking-wide font-medium text-center opacity-0">
+                        Spacer
                       </p>
-                    </div>
-                    <div className="text-center sm:text-left sm:w-40">
-                      <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium">
+                      <p className="text-[0.65rem] sm:text-xs text-muted-foreground uppercase tracking-wide font-medium text-right sm:text-left">
                         Gift Receiver
                       </p>
                     </div>
-                  </div>
-                  <div className="space-y-6">
-                    {assignmentsToShow.map((assignment, index) => (
-                      <div
-                        key={index}
-                        className="flex flex-col sm:flex-row items-baseline justify-center gap-4 sm:gap-8"
-                      >
-                        <div className="text-center sm:text-right sm:w-40">
-                          <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
+
+                    <div className="space-y-5 sm:space-y-6">
+                      {assignmentsToShow.map((assignment, index) => (
+                        <div
+                          key={index}
+                          className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 sm:gap-8 border-b border-primary/10 pb-5 sm:pb-6 last:border-b-0 last:pb-0"
+                        >
+                          <p
+                            className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground text-left sm:text-right"
+                            style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+                          >
                             {assignment.giver}
                           </p>
-                        </div>
-                        <div className="text-center sm:w-40">
-                          <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-normal italic" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
+                          <p
+                            className="text-base sm:text-xl md:text-2xl text-muted-foreground font-normal italic text-center"
+                            style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+                          >
                             is giving to
                           </p>
-                        </div>
-                        <div className="text-center sm:text-left sm:w-40">
-                          <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-primary" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
+                          <p
+                            className="text-2xl sm:text-3xl md:text-4xl font-semibold text-primary text-right sm:text-left"
+                            style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+                          >
                             {assignment.receiver}
                           </p>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
