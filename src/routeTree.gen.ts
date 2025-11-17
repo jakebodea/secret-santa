@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestSupportRouteImport } from './routes/test-support'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as AssignRouteImport } from './routes/assign'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiSendEmailsRouteImport } from './routes/api/send-emails'
 
+const TestSupportRoute = TestSupportRouteImport.update({
+  id: '/test-support',
+  path: '/test-support',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/assign': typeof AssignRoute
   '/results': typeof ResultsRoute
   '/support': typeof SupportRoute
+  '/test-support': typeof TestSupportRoute
   '/api/send-emails': typeof ApiSendEmailsRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/assign': typeof AssignRoute
   '/results': typeof ResultsRoute
   '/support': typeof SupportRoute
+  '/test-support': typeof TestSupportRoute
   '/api/send-emails': typeof ApiSendEmailsRoute
 }
 export interface FileRoutesById {
@@ -61,19 +69,33 @@ export interface FileRoutesById {
   '/assign': typeof AssignRoute
   '/results': typeof ResultsRoute
   '/support': typeof SupportRoute
+  '/test-support': typeof TestSupportRoute
   '/api/send-emails': typeof ApiSendEmailsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/assign' | '/results' | '/support' | '/api/send-emails'
+  fullPaths:
+    | '/'
+    | '/assign'
+    | '/results'
+    | '/support'
+    | '/test-support'
+    | '/api/send-emails'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/assign' | '/results' | '/support' | '/api/send-emails'
+  to:
+    | '/'
+    | '/assign'
+    | '/results'
+    | '/support'
+    | '/test-support'
+    | '/api/send-emails'
   id:
     | '__root__'
     | '/'
     | '/assign'
     | '/results'
     | '/support'
+    | '/test-support'
     | '/api/send-emails'
   fileRoutesById: FileRoutesById
 }
@@ -82,11 +104,19 @@ export interface RootRouteChildren {
   AssignRoute: typeof AssignRoute
   ResultsRoute: typeof ResultsRoute
   SupportRoute: typeof SupportRoute
+  TestSupportRoute: typeof TestSupportRoute
   ApiSendEmailsRoute: typeof ApiSendEmailsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test-support': {
+      id: '/test-support'
+      path: '/test-support'
+      fullPath: '/test-support'
+      preLoaderRoute: typeof TestSupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/support': {
       id: '/support'
       path: '/support'
@@ -130,6 +160,7 @@ const rootRouteChildren: RootRouteChildren = {
   AssignRoute: AssignRoute,
   ResultsRoute: ResultsRoute,
   SupportRoute: SupportRoute,
+  TestSupportRoute: TestSupportRoute,
   ApiSendEmailsRoute: ApiSendEmailsRoute,
 }
 export const routeTree = rootRouteImport

@@ -1,8 +1,19 @@
-import { Heart, ExternalLink } from 'lucide-react'
+import { useState } from 'react'
+import { Heart, ExternalLink, QrCode } from 'lucide-react'
 import { Button } from './ui/button'
 import { Card, CardContent } from './ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from './ui/dialog'
 
 export function SupportCard() {
+  const [paypalQrOpen, setPaypalQrOpen] = useState(false)
+  const [venmoQrOpen, setVenmoQrOpen] = useState(false)
+  const [zelleQrOpen, setZelleQrOpen] = useState(false)
+
   return (
     <Card className="border-2 border-primary/20 bg-primary/5">
       <CardContent className="p-6 space-y-6">
@@ -32,73 +43,160 @@ export function SupportCard() {
           {/* PayPal Card */}
           <Card className="border-2 hover:border-accent transition-colors">
             <CardContent className="flex h-full flex-col items-center space-y-3 p-4">
-              <div className="w-full max-w-[100px] sm:max-w-[120px] bg-white rounded-lg p-3 border mx-auto flex flex-col items-center gap-2">
-                <img
-                  src="/paypal.png"
-                  alt="PayPal QR Code"
-                  className="w-full h-auto object-contain"
-                />
+              <div className="flex items-center justify-center mb-2">
                 <img
                   src="/paypal-logo.png"
                   alt="PayPal"
-                  className="h-7 object-contain"
+                  className="h-8 sm:h-10 object-contain"
                 />
               </div>
-              <a 
-                href="https://www.paypal.com/donate/?business=XC32HWX8F5XGN&no_recurring=0&currency_code=USD"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full mt-auto"
-              >
-                <Button className="w-full h-10 sm:h-11 text-sm font-medium gap-2 tracking-wide">
-                  Open in PayPal
-                  <ExternalLink className="w-4 h-4" />
+              <div className="flex flex-col gap-2 w-full mt-auto">
+                <a 
+                  href="https://www.paypal.com/donate/?business=XC32HWX8F5XGN&no_recurring=0&currency_code=USD"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full"
+                >
+                  <Button className="w-full h-10 sm:h-11 text-sm font-medium gap-2 tracking-wide">
+                    Open in PayPal
+                    <ExternalLink className="w-4 h-4" />
+                  </Button>
+                </a>
+                <Button 
+                  variant="outline"
+                  className="w-full h-10 sm:h-11 text-sm font-medium gap-2 tracking-wide"
+                  onClick={() => setPaypalQrOpen(true)}
+                >
+                  <QrCode className="w-4 h-4" />
+                  Show QR Code
                 </Button>
-              </a>
+              </div>
             </CardContent>
           </Card>
 
           {/* Venmo Card */}
           <Card className="border-2 hover:border-accent transition-colors">
             <CardContent className="flex h-full flex-col items-center space-y-3 p-4">
-              <div className="w-full aspect-square max-w-[120px] sm:max-w-[150px] bg-white rounded-lg p-2 border">
+              <div className="flex items-center justify-center mb-2 overflow-hidden" style={{ height: '3.5rem', maxWidth: '220px' }}>
                 <img
-                  src="/venmo.png"
-                  alt="Venmo QR Code"
-                  className="w-full h-full object-contain"
+                  src="/venmo-logo.png"
+                  alt="Venmo"
+                  className="h-full w-auto object-contain object-center"
                 />
               </div>
-              <a 
-                href="https://venmo.com/code?user_id=2243841549664256210"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full mt-auto"
-              >
-                <Button className="w-full h-10 sm:h-11 text-sm font-medium gap-2 tracking-wide">
-                  Open in Venmo
-                  <ExternalLink className="w-4 h-4" />
+              <div className="flex flex-col gap-2 w-full mt-auto">
+                <a 
+                  href="https://venmo.com/code?user_id=2243841549664256210"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full"
+                >
+                  <Button className="w-full h-10 sm:h-11 text-sm font-medium gap-2 tracking-wide">
+                    Open in Venmo
+                    <ExternalLink className="w-4 h-4" />
+                  </Button>
+                </a>
+                <Button 
+                  variant="outline"
+                  className="w-full h-10 sm:h-11 text-sm font-medium gap-2 tracking-wide"
+                  onClick={() => setVenmoQrOpen(true)}
+                >
+                  <QrCode className="w-4 h-4" />
+                  Show QR Code
                 </Button>
-              </a>
+              </div>
             </CardContent>
           </Card>
 
           {/* Zelle Card */}
           <Card className="border-2 hover:border-accent transition-colors">
-            <CardContent className="flex flex-col items-center space-y-3 p-4">
-              <div className="w-full aspect-square max-w-[120px] sm:max-w-[150px] bg-white rounded-lg p-2 border">
+            <CardContent className="flex h-full flex-col items-center space-y-3 p-4">
+              <div className="flex items-center justify-center mb-2 overflow-hidden" style={{ height: '3.5rem', maxWidth: '220px' }}>
                 <img
-                  src="/zelle.png"
-                  alt="Zelle QR Code"
-                  className="w-full h-full object-contain"
+                  src="/zelle-logo.png"
+                  alt="Zelle"
+                  className="h-full w-auto object-contain object-center"
                 />
               </div>
-              <p className="text-xs text-muted-foreground text-center">
+              <p className="text-xs text-muted-foreground text-center mt-auto mb-auto">
                 Scan with your bank's app
               </p>
+              <div className="flex flex-col gap-2 w-full mt-auto">
+                <Button 
+                  variant="outline"
+                  className="w-full h-10 sm:h-11 text-sm font-medium gap-2 tracking-wide"
+                  onClick={() => setZelleQrOpen(true)}
+                >
+                  <QrCode className="w-4 h-4" />
+                  Show QR Code
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
       </CardContent>
+
+      {/* PayPal QR Code Modal */}
+      <Dialog open={paypalQrOpen} onOpenChange={setPaypalQrOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>PayPal QR Code</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center gap-4 py-4">
+            <div className="w-full max-w-[280px] bg-white rounded-lg p-4 border mx-auto flex flex-col items-center gap-3">
+              <img
+                src="/paypal.png"
+                alt="PayPal QR Code"
+                className="w-full h-auto object-contain"
+              />
+              <img
+                src="/paypal-logo.png"
+                alt="PayPal"
+                className="h-8 object-contain"
+              />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Venmo QR Code Modal */}
+      <Dialog open={venmoQrOpen} onOpenChange={setVenmoQrOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Venmo QR Code</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center gap-4 py-4">
+            <div className="w-full aspect-square max-w-[300px] bg-white rounded-lg p-3 border mx-auto">
+              <img
+                src="/venmo.png"
+                alt="Venmo QR Code"
+                className="w-full h-full object-contain"
+              />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Zelle QR Code Modal */}
+      <Dialog open={zelleQrOpen} onOpenChange={setZelleQrOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Zelle QR Code</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center gap-4 py-4">
+            <div className="w-full aspect-square max-w-[300px] bg-white rounded-lg p-3 border mx-auto">
+              <img
+                src="/zelle.png"
+                alt="Zelle QR Code"
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <p className="text-sm text-muted-foreground text-center">
+              Scan with your bank's app
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 }
