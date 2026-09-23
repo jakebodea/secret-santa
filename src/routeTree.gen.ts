@@ -9,32 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestSupportRouteImport } from './routes/test-support'
-import { Route as SupportRouteImport } from './routes/support'
-import { Route as ResultsRouteImport } from './routes/results'
-import { Route as ChangelogRouteImport } from './routes/changelog'
-import { Route as AssignRouteImport } from './routes/assign'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AssignRouteImport } from './routes/assign'
+import { Route as ChangelogRouteImport } from './routes/changelog'
+import { Route as ResultsRouteImport } from './routes/results'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as TestSupportRouteImport } from './routes/test-support'
 import { Route as ApiSendEmailsRouteImport } from './routes/api/send-emails'
 
-const TestSupportRoute = TestSupportRouteImport.update({
-  id: '/test-support',
-  path: '/test-support',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SupportRoute = SupportRouteImport.update({
-  id: '/support',
-  path: '/support',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResultsRoute = ResultsRouteImport.update({
-  id: '/results',
-  path: '/results',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChangelogRoute = ChangelogRouteImport.update({
-  id: '/changelog',
-  path: '/changelog',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AssignRoute = AssignRouteImport.update({
@@ -42,9 +27,24 @@ const AssignRoute = AssignRouteImport.update({
   path: '/assign',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ChangelogRoute = ChangelogRouteImport.update({
+  id: '/changelog',
+  path: '/changelog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResultsRoute = ResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestSupportRoute = TestSupportRouteImport.update({
+  id: '/test-support',
+  path: '/test-support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSendEmailsRoute = ApiSendEmailsRouteImport.update({
@@ -123,32 +123,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test-support': {
-      id: '/test-support'
-      path: '/test-support'
-      fullPath: '/test-support'
-      preLoaderRoute: typeof TestSupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/support': {
-      id: '/support'
-      path: '/support'
-      fullPath: '/support'
-      preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/results': {
-      id: '/results'
-      path: '/results'
-      fullPath: '/results'
-      preLoaderRoute: typeof ResultsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/changelog': {
-      id: '/changelog'
-      path: '/changelog'
-      fullPath: '/changelog'
-      preLoaderRoute: typeof ChangelogRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/assign': {
@@ -158,11 +137,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssignRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/changelog': {
+      id: '/changelog'
+      path: '/changelog'
+      fullPath: '/changelog'
+      preLoaderRoute: typeof ChangelogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/results': {
+      id: '/results'
+      path: '/results'
+      fullPath: '/results'
+      preLoaderRoute: typeof ResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test-support': {
+      id: '/test-support'
+      path: '/test-support'
+      fullPath: '/test-support'
+      preLoaderRoute: typeof TestSupportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/send-emails': {
