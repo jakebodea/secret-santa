@@ -1,108 +1,134 @@
-import { useState } from 'react'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
-import { Button } from '../components/ui/button'
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+
+import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Label } from "../components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../components/ui/select'
-import {
-  AlertCircle,
-  Eye,
-  EyeOff,
-} from 'lucide-react'
+} from "../components/ui/select";
 
 interface CompactAssignment {
-  giver: string
-  receiver: string
+  giver: string;
+  receiver: string;
 }
 
 interface DecodedData {
-  assignments: CompactAssignment[]
-  partyName?: string
+  assignments: CompactAssignment[];
+  partyName?: string;
 }
 
-export const Route = createFileRoute('/results')({
+export const Route = createFileRoute("/results")({
   component: ResultsPage,
-  validateSearch: (search: Record<string, unknown>): { data?: string } => {
-    return {
-      data: typeof search.data === 'string' ? search.data : undefined,
-    }
-  },
-})
+  validateSearch: (search: Record<string, unknown>): { data?: string } => ({
+    data: typeof search.data === "string" ? search.data : undefined,
+  }),
+});
+
+function decodeResultsData(data: string | undefined): {
+  decodedData: DecodedData | null;
+  error: string | null;
+} {
+  if (!data) {
+    return { decodedData: null, error: "No data provided in URL" };
+  }
+  try {
+    // Decode base64 using browser-native atob()
+    return { decodedData: JSON.parse(atob(data)) as DecodedData, error: null };
+  } catch (decodeError) {
+    console.error("Failed to decode data:", decodeError);
+    return { decodedData: null, error: "Invalid or corrupted data in URL" };
+  }
+}
+
+function getAssignmentsToShow(
+  decodedData: DecodedData | null,
+  showAll: boolean,
+  selectedParticipant: string | null
+): CompactAssignment[] {
+  if (!decodedData) {
+    return [];
+  }
+  if (showAll) {
+    return decodedData.assignments;
+  }
+  if (selectedParticipant) {
+    return decodedData.assignments.filter(
+      (a) => a.giver === selectedParticipant
+    );
+  }
+  return [];
+}
 
 function ResultsPage() {
-  const { data } = Route.useSearch()
-  const [showAll, setShowAll] = useState(false)
-  const [selectedParticipant, setSelectedParticipant] = useState<string | null>(null)
+  const { data } = Route.useSearch();
+  const [showAll, setShowAll] = useState(false);
+  const [selectedParticipant, setSelectedParticipant] = useState<string | null>(
+    null
+  );
 
-  let decodedData: DecodedData | null = null
-  let error: string | null = null
-
-  if (data) {
-    try {
-      // Decode base64 using browser-native atob()
-      const decoded = atob(data)
-      decodedData = JSON.parse(decoded) as DecodedData
-    } catch (e) {
-      error = 'Invalid or corrupted data in URL'
-      console.error('Failed to decode data:', e)
-    }
-  } else {
-    error = 'No data provided in URL'
-  }
+  const { decodedData, error } = decodeResultsData(data);
 
   // Extract unique participant names
   const participants =
     decodedData?.assignments
       .map((a) => a.giver)
       .filter((name, index, self) => self.indexOf(name) === index)
-      .sort() || []
+      .toSorted() || [];
 
   // Get assignments to display
-  const assignmentsToShow = showAll
-    ? decodedData?.assignments || []
-    : selectedParticipant
-      ? decodedData?.assignments.filter((a) => a.giver === selectedParticipant) || []
-      : []
+  const assignmentsToShow = getAssignmentsToShow(
+    decodedData,
+    showAll,
+    selectedParticipant
+  );
 
   // Get selected assignment for peek mode
   const peekedAssignment =
     !showAll && selectedParticipant
       ? decodedData?.assignments.find((a) => a.giver === selectedParticipant)
-      : null
+      : null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto space-y-8">
+        <div className="mx-auto max-w-6xl space-y-8">
           {/* Header */}
-          <div className="text-center space-y-4">
+          <div className="space-y-4 text-center">
             <div className="flex items-center justify-center gap-10 md:gap-16">
               <img
                 src="/gift.svg"
                 alt="Gift"
-                className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
+                className="h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16"
               />
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal tracking-tight leading-tight">
+              <h1 className="text-3xl leading-tight font-normal tracking-tight sm:text-5xl md:text-6xl">
                 Secret Santa Results:
                 {decodedData?.partyName && (
                   <>
                     <br />
-                    <span className="italic underline decoration-primary decoration-4">{decodedData.partyName}</span>
+                    <span className="decoration-primary italic underline decoration-4">
+                      {decodedData.partyName}
+                    </span>
                   </>
                 )}
               </h1>
               <img
                 src="/gift.svg"
                 alt="Gift"
-                className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
+                className="h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16"
               />
             </div>
-            <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
+            <p className="text-muted-foreground text-base font-light tracking-wide sm:text-xl md:text-2xl">
               View individual assignments or reveal all at once
             </p>
           </div>
@@ -111,14 +137,14 @@ function ResultsPage() {
           <Card className="border-destructive/50 bg-destructive/5 shadow-sm">
             <CardContent>
               <div className="flex items-center gap-4">
-                <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0" />
+                <AlertCircle className="text-destructive h-5 w-5 flex-shrink-0" />
                 <div>
-                  <p className="font-medium text-destructive">
+                  <p className="text-destructive font-medium">
                     Warning: This page shows Secret Santa assignments!
                   </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Keep this information confidential to maintain the surprise for all
-                    participants.
+                  <p className="text-muted-foreground mt-1 text-sm">
+                    Keep this information confidential to maintain the surprise
+                    for all participants.
                   </p>
                 </div>
               </div>
@@ -129,7 +155,9 @@ function ResultsPage() {
           {error && (
             <Card className="shadow-sm">
               <CardHeader>
-                <CardTitle className="text-destructive">Error Loading Results</CardTitle>
+                <CardTitle className="text-destructive">
+                  Error Loading Results
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">{error}</p>
@@ -138,21 +166,27 @@ function ResultsPage() {
           )}
 
           {/* Controls */}
-          {decodedData && decodedData.assignments && !error && (
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <div className="flex-1 w-full sm:w-auto">
-                <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                  Peek at a participant's assignment:
-                </label>
+          {decodedData && (
+            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+              <div className="w-full flex-1 sm:w-auto">
+                <Label
+                  htmlFor="peek-participant"
+                  className="text-muted-foreground mb-2 block text-sm font-medium"
+                >
+                  Peek at a participant’s assignment:
+                </Label>
                 <Select
                   value={selectedParticipant || undefined}
                   onValueChange={(value) => {
-                    setSelectedParticipant(value)
-                    setShowAll(false)
+                    setSelectedParticipant(value);
+                    setShowAll(false);
                   }}
                   disabled={showAll}
                 >
-                  <SelectTrigger className="w-full sm:w-[280px] h-11">
+                  <SelectTrigger
+                    id="peek-participant"
+                    className="h-11 w-full sm:w-[280px]"
+                  >
                     <SelectValue placeholder="Select a participant..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -167,22 +201,22 @@ function ResultsPage() {
               <div className="flex items-end">
                 <Button
                   onClick={() => {
-                    setShowAll(!showAll)
+                    setShowAll(!showAll);
                     if (showAll) {
-                      setSelectedParticipant(null)
+                      setSelectedParticipant(null);
                     }
                   }}
-                  variant={showAll ? 'outline' : 'default'}
-                  className="h-11 px-4 sm:px-6 gap-2"
+                  variant={showAll ? "outline" : "default"}
+                  className="h-11 gap-2 px-4 sm:px-6"
                 >
                   {showAll ? (
                     <>
-                      <EyeOff className="w-4 h-4" />
+                      <EyeOff className="h-4 w-4" />
                       Hide All
                     </>
                   ) : (
                     <>
-                      <Eye className="w-4 h-4" />
+                      <Eye className="h-4 w-4" />
                       Show All
                     </>
                   )}
@@ -192,100 +226,30 @@ function ResultsPage() {
           )}
 
           {/* Assignment Display */}
-          {decodedData && decodedData.assignments && !error && (
+          {decodedData && (
             <>
               {/* Peek Mode - Single Assignment */}
               {!showAll && peekedAssignment && (
-                <div className="py-8 px-6 bg-primary/5 border border-primary/20 rounded-lg">
-                  <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8">
-                    <div className="text-center sm:text-left flex flex-col">
-                      <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium">
-                        Gift Giver
-                      </p>
-                      <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
-                        {peekedAssignment.giver}
-                      </p>
-                    </div>
-                    <div className="text-center sm:text-left flex flex-col">
-                      <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium opacity-0">
-                        &nbsp;
-                      </p>
-                      <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-normal italic mt-1" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
-                        is giving to
-                      </p>
-                    </div>
-                    <div className="text-center sm:text-left flex flex-col">
-                      <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide font-medium">
-                        Gift Receiver
-                      </p>
-                      <p className="text-2xl sm:text-3xl md:text-4xl font-semibold text-primary" style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}>
-                        {peekedAssignment.receiver}
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                <PeekedAssignment assignment={peekedAssignment} />
               )}
 
               {/* Show All Mode - All Assignments */}
-              {showAll && (
-                <div className="py-8 px-4 sm:px-6 bg-primary/5 border border-primary/20 rounded-lg">
-                  <div className="max-w-4xl mx-auto">
-                    <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-3 sm:gap-8 mb-4 sm:mb-6 items-center">
-                      <p className="text-[0.65rem] sm:text-xs text-muted-foreground uppercase tracking-wide font-medium text-left sm:text-right">
-                        Gift Giver
-                      </p>
-                      <p className="text-[0.65rem] sm:text-xs text-muted-foreground uppercase tracking-wide font-medium text-center opacity-0">
-                        Spacer
-                      </p>
-                      <p className="text-[0.65rem] sm:text-xs text-muted-foreground uppercase tracking-wide font-medium text-right sm:text-left">
-                        Gift Receiver
-                      </p>
-                    </div>
-
-                    <div className="space-y-5 sm:space-y-6">
-                      {assignmentsToShow.map((assignment, index) => (
-                        <div
-                          key={index}
-                          className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 sm:gap-8 border-b border-primary/10 pb-5 sm:pb-6 last:border-b-0 last:pb-0"
-                        >
-                          <p
-                            className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground text-left sm:text-right"
-                            style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
-                          >
-                            {assignment.giver}
-                          </p>
-                          <p
-                            className="text-base sm:text-xl md:text-2xl text-muted-foreground font-normal italic text-center"
-                            style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
-                          >
-                            is giving to
-                          </p>
-                          <p
-                            className="text-2xl sm:text-3xl md:text-4xl font-semibold text-primary text-right sm:text-left"
-                            style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
-                          >
-                            {assignment.receiver}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
+              {showAll && <AllAssignments assignments={assignmentsToShow} />}
 
               {/* Empty State - No Selection */}
               {!showAll && !selectedParticipant && (
-                <Card className="border-dashed border-2 border-muted-foreground/20">
+                <Card className="border-muted-foreground/20 border-2 border-dashed">
                   <CardContent className="pt-12 pb-12">
-                    <div className="text-center space-y-4">
-                      <Eye className="w-12 h-12 text-muted-foreground/40 mx-auto" />
+                    <div className="space-y-4 text-center">
+                      <Eye className="text-muted-foreground/40 mx-auto h-12 w-12" />
                       <div>
-                        <p className="text-lg font-medium text-foreground mb-1">
+                        <p className="text-foreground mb-1 text-lg font-medium">
                           Select a participant to peek
                         </p>
-                        <p className="text-sm text-muted-foreground">
-                          Choose someone from the dropdown above to see their assignment, or click
-                          "Show All" to reveal everything at once.
+                        <p className="text-muted-foreground text-sm">
+                          Choose someone from the dropdown above to see their
+                          assignment, or click “Show All” to reveal everything
+                          at once.
                         </p>
                       </div>
                     </div>
@@ -298,12 +262,12 @@ function ResultsPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-20 py-10">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground font-light tracking-wide">
+      <footer className="border-border mt-20 border-t py-10">
+        <div className="text-muted-foreground container mx-auto px-4 text-center text-sm font-light tracking-wide">
           <p>
-            <Link 
-              to="/support" 
-              className="text-foreground hover:text-primary transition-colors underline underline-offset-4"
+            <Link
+              to="/support"
+              className="text-foreground hover:text-primary underline underline-offset-4 transition-colors"
             >
               Support this project
             </Link>
@@ -311,6 +275,115 @@ function ResultsPage() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
+function PeekedAssignment({
+  assignment: peekedAssignment,
+}: {
+  assignment: CompactAssignment;
+}) {
+  return (
+    <div className="bg-primary/5 border-primary/20 rounded-lg border px-6 py-8">
+      <div className="flex flex-col justify-center gap-4 sm:flex-row sm:gap-8">
+        <div className="flex flex-col text-center sm:text-left">
+          <p className="text-muted-foreground mb-2 text-xs font-medium tracking-wide uppercase">
+            Gift Giver
+          </p>
+          <p
+            className="text-foreground text-2xl font-semibold sm:text-3xl md:text-4xl"
+            style={{
+              fontFamily: "'Instrument Serif', Georgia, serif",
+            }}
+          >
+            {peekedAssignment.giver}
+          </p>
+        </div>
+        <div className="flex flex-col text-center sm:text-left">
+          <p className="text-muted-foreground mb-2 text-xs font-medium tracking-wide uppercase opacity-0">
+            &nbsp;
+          </p>
+          <p
+            className="text-muted-foreground mt-1 text-base font-normal italic sm:text-xl md:text-2xl"
+            style={{
+              fontFamily: "'Instrument Serif', Georgia, serif",
+            }}
+          >
+            is giving to
+          </p>
+        </div>
+        <div className="flex flex-col text-center sm:text-left">
+          <p className="text-muted-foreground mb-2 text-xs font-medium tracking-wide uppercase">
+            Gift Receiver
+          </p>
+          <p
+            className="text-primary text-2xl font-semibold sm:text-3xl md:text-4xl"
+            style={{
+              fontFamily: "'Instrument Serif', Georgia, serif",
+            }}
+          >
+            {peekedAssignment.receiver}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AllAssignments({
+  assignments: assignmentsToShow,
+}: {
+  assignments: CompactAssignment[];
+}) {
+  return (
+    <div className="bg-primary/5 border-primary/20 rounded-lg border px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-4xl">
+        <div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 sm:mb-6 sm:gap-8">
+          <p className="text-muted-foreground text-left text-[0.65rem] font-medium tracking-wide uppercase sm:text-right sm:text-xs">
+            Gift Giver
+          </p>
+          <p className="text-muted-foreground text-center text-[0.65rem] font-medium tracking-wide uppercase opacity-0 sm:text-xs">
+            Spacer
+          </p>
+          <p className="text-muted-foreground text-right text-[0.65rem] font-medium tracking-wide uppercase sm:text-left sm:text-xs">
+            Gift Receiver
+          </p>
+        </div>
+
+        <div className="space-y-5 sm:space-y-6">
+          {assignmentsToShow.map((assignment, index) => (
+            <div
+              key={index}
+              className="border-primary/10 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b pb-5 last:border-b-0 last:pb-0 sm:gap-8 sm:pb-6"
+            >
+              <p
+                className="text-foreground text-left text-2xl font-semibold sm:text-right sm:text-3xl md:text-4xl"
+                style={{
+                  fontFamily: "'Instrument Serif', Georgia, serif",
+                }}
+              >
+                {assignment.giver}
+              </p>
+              <p
+                className="text-muted-foreground text-center text-base font-normal italic sm:text-xl md:text-2xl"
+                style={{
+                  fontFamily: "'Instrument Serif', Georgia, serif",
+                }}
+              >
+                is giving to
+              </p>
+              <p
+                className="text-primary text-right text-2xl font-semibold sm:text-left sm:text-3xl md:text-4xl"
+                style={{
+                  fontFamily: "'Instrument Serif', Georgia, serif",
+                }}
+              >
+                {assignment.receiver}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

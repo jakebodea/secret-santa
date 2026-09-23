@@ -1,72 +1,72 @@
 /* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap");
 
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@import 'tw-animate-css';
+@import "tw-animate-css";
 
 body {
   @apply m-0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
   font-family:
-    source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 :root {
   /* Christmas Theme - Warm Cream Background */
   --background: oklch(0.98 0.01 70);
   --foreground: oklch(0.2 0.02 30);
-  
+
   /* Cards with subtle cream tone */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.2 0.02 30);
-  
+
   /* Popovers */
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2 0.02 30);
-  
+
   /* Primary - Christmas Red */
   --primary: oklch(0.55 0.22 25);
   --primary-foreground: oklch(0.99 0 0);
-  
+
   /* Secondary - Forest Green */
   --secondary: oklch(0.55 0.15 160);
   --secondary-foreground: oklch(0.99 0 0);
-  
+
   /* Muted tones */
   --muted: oklch(0.95 0.01 70);
   --muted-foreground: oklch(0.5 0.02 30);
-  
+
   /* Accent - Gold */
   --accent: oklch(0.88 0.08 85);
   --accent-foreground: oklch(0.2 0.02 30);
   --gold: oklch(0.68 0.14 75);
-  
+
   /* Destructive */
   --destructive: oklch(0.55 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
-  
+
   /* Borders and inputs */
   --border: oklch(0.88 0.02 70);
   --input: oklch(0.88 0.02 70);
   --ring: oklch(0.75 0.15 85);
-  
+
   /* Charts - Christmas colors */
   --chart-1: oklch(0.55 0.22 25);
   --chart-2: oklch(0.55 0.15 160);
   --chart-3: oklch(0.75 0.15 85);
   --chart-4: oklch(0.65 0.18 40);
   --chart-5: oklch(0.5 0.12 140);
-  
+
   --radius: 0.625rem;
 }
-
 
 @theme inline {
   --color-background: var(--background);
@@ -107,8 +107,15 @@ code {
   body {
     @apply bg-background text-foreground;
   }
-  h1, h2, h3, h4, h5, h6, [data-slot="card-title"], [data-slot="dialog-title"] {
-    font-family: 'Instrument Serif', Georgia, serif;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  [data-slot="card-title"],
+  [data-slot="dialog-title"] {
+    font-family: "Instrument Serif", Georgia, serif;
   }
   ::selection {
     background-color: oklch(0.85 0.08 85 / 0.5);
@@ -121,22 +128,23 @@ code {
 
 /* Changelog Content Styles */
 .changelog-content h3 {
-  @apply text-sm font-normal text-foreground mb-2 mt-4 first:mt-0 underline decoration-primary decoration-1;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  @apply text-foreground decoration-primary mt-4 mb-2 text-sm font-normal underline decoration-1 first:mt-0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 }
 
 .changelog-content ul {
-  @apply list-none space-y-1.5 ml-0 pl-5;
+  @apply ml-0 list-none space-y-1.5 pl-5;
 }
 
 .changelog-content li {
-  @apply text-sm font-light tracking-wide text-foreground/90 pl-0 relative;
+  @apply text-foreground/90 relative pl-0 text-sm font-light tracking-wide;
 }
 
 .changelog-content li::before {
   content: "•";
-  @apply absolute text-foreground/75 font-medium;
+  @apply text-foreground/75 absolute font-medium;
   left: -1.25rem;
   font-size: 1.25rem;
   line-height: 1;

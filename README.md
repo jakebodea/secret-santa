@@ -18,4 +18,3 @@ bun run dev
 ```
 
 That's it!
-

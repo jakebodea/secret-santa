@@ -1,32 +1,33 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { SupportCard } from '../components/support-card'
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/test-support')({
+import { SupportCard } from "../components/support-card";
+
+export const Route = createFileRoute("/test-support")({
+  component: TestSupportPage,
   head: () => ({
     meta: [
       {
-        title: 'Test Support - Secret Santa',
+        title: "Test Support - Secret Santa",
       },
       {
-        name: 'description',
-        content: 'Test page for the support card component',
+        content: "Test page for the support card component",
+        name: "description",
       },
     ],
   }),
-  component: TestSupportPage,
-})
+});
 
 function TestSupportPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <main className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl font-normal text-foreground tracking-tight mb-8 text-center">
+        <div className="mx-auto max-w-4xl">
+          <h1 className="text-foreground mb-8 text-center text-3xl font-normal tracking-tight sm:text-4xl">
             Test Support Card
           </h1>
           <SupportCard />
         </div>
       </main>
     </div>
-  )
+  );
 }
