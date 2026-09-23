@@ -1,2 +1,2 @@
-- add stripe support options 
-- fix mobile view for results page 
+- add stripe support options
+- fix mobile view for results page

@@ -1,7 +1,7 @@
 interface SecretSantaAssignmentProps {
-  giverName: string
-  receiverName: string
-  partyName?: string
+  giverName: string;
+  receiverName: string;
+  partyName?: string;
 }
 
 export default function SecretSantaAssignment({
@@ -10,7 +10,7 @@ export default function SecretSantaAssignment({
   partyName,
 }: SecretSantaAssignmentProps) {
   return (
-    <html>
+    <html lang="en">
       <head>
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
@@ -18,46 +18,46 @@ export default function SecretSantaAssignment({
       </head>
       <body
         style={{
-          margin: 0,
-          padding: 0,
-          backgroundColor: '#faf9f7',
+          backgroundColor: "#faf9f7",
           fontFamily:
             "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+          margin: 0,
+          padding: 0,
         }}
       >
         <table
           width="100%"
           cellPadding="0"
           cellSpacing="0"
-          style={{ backgroundColor: '#faf9f7' }}
+          style={{ backgroundColor: "#faf9f7" }}
         >
           <tr>
-            <td align="center" style={{ padding: '40px 20px' }}>
+            <td align="center" style={{ padding: "40px 20px" }}>
               <table
                 width="600"
                 cellPadding="0"
                 cellSpacing="0"
                 style={{
-                  backgroundColor: '#ffffff',
-                  borderRadius: '10px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                  backgroundColor: "#ffffff",
+                  borderRadius: "10px",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
                 }}
               >
                 {/* Header */}
                 <tr>
-                  <td align="center" style={{ padding: '50px 40px 30px' }}>
+                  <td align="center" style={{ padding: "50px 40px 30px" }}>
                     {partyName && (
                       <p
                         style={{
-                          margin: '0 0 8px',
-                          fontSize: '24px',
+                          color: "#331a0d",
                           fontFamily: "'Instrument Serif', Georgia, serif",
-                          color: '#331a0d',
-                          fontWeight: 'normal',
-                          letterSpacing: '-0.5px',
-                          textDecoration: 'underline',
-                          textDecorationColor: '#8c3e2b',
-                          textDecorationThickness: '4px',
+                          fontSize: "24px",
+                          fontWeight: "normal",
+                          letterSpacing: "-0.5px",
+                          margin: "0 0 8px",
+                          textDecoration: "underline",
+                          textDecorationColor: "#8c3e2b",
+                          textDecorationThickness: "4px",
                         }}
                       >
                         {partyName}:
@@ -65,12 +65,12 @@ export default function SecretSantaAssignment({
                     )}
                     <h1
                       style={{
-                        margin: 0,
-                        fontSize: '38px',
+                        color: "#331a0d",
                         fontFamily: "'Instrument Serif', Georgia, serif",
-                        color: '#331a0d',
-                        fontWeight: 'normal',
-                        letterSpacing: '-0.5px',
+                        fontSize: "38px",
+                        fontWeight: "normal",
+                        letterSpacing: "-0.5px",
+                        margin: 0,
                       }}
                     >
                       Your Secret Santa Assignment
@@ -80,14 +80,14 @@ export default function SecretSantaAssignment({
 
                 {/* Greeting */}
                 <tr>
-                  <td align="center" style={{ padding: '0 40px 30px' }}>
+                  <td align="center" style={{ padding: "0 40px 30px" }}>
                     <p
                       style={{
+                        color: "#331a0d",
+                        fontSize: "22px",
+                        fontWeight: "500",
+                        lineHeight: "1.5",
                         margin: 0,
-                        fontSize: '22px',
-                        color: '#331a0d',
-                        lineHeight: '1.5',
-                        fontWeight: '500',
                       }}
                     >
                       Hi {giverName}!
@@ -97,63 +97,64 @@ export default function SecretSantaAssignment({
 
                 {/* Main content */}
                 <tr>
-                  <td align="center" style={{ padding: '0 40px 40px' }}>
+                  <td align="center" style={{ padding: "0 40px 40px" }}>
                     <p
                       style={{
+                        color: "#806656",
+                        fontSize: "18px",
+                        lineHeight: "1.7",
                         margin: 0,
-                        fontSize: '18px',
-                        color: '#806656',
-                        lineHeight: '1.7',
-                        maxWidth: '520px',
+                        maxWidth: "520px",
                       }}
                     >
-                      The Secret Santa assignments have been revealed! You've been matched with...
+                      The Secret Santa assignments have been revealed! You’ve
+                      been matched with...
                     </p>
                   </td>
                 </tr>
 
                 {/* Receiver reveal box */}
                 <tr>
-                  <td align="center" style={{ padding: '0 40px 40px' }}>
+                  <td align="center" style={{ padding: "0 40px 40px" }}>
                     <div
                       style={{
-                        backgroundColor: '#fff9f0',
-                        border: '3px solid #8c3e2b',
-                        borderRadius: '12px',
-                        padding: '40px 30px',
-                        boxShadow: '0 4px 12px rgba(140, 62, 43, 0.15)',
-                        maxWidth: '480px',
-                        margin: '0 auto',
+                        backgroundColor: "#fff9f0",
+                        border: "3px solid #8c3e2b",
+                        borderRadius: "12px",
+                        boxShadow: "0 4px 12px rgba(140, 62, 43, 0.15)",
+                        margin: "0 auto",
+                        maxWidth: "480px",
+                        padding: "40px 30px",
                       }}
                     >
                       <p
                         style={{
-                          margin: '0 0 16px',
-                          fontSize: '14px',
-                          color: '#806656',
-                          textTransform: 'uppercase',
-                          letterSpacing: '2px',
-                          fontWeight: '600',
+                          color: "#806656",
+                          fontSize: "14px",
+                          fontWeight: "600",
+                          letterSpacing: "2px",
+                          margin: "0 0 16px",
+                          textTransform: "uppercase",
                         }}
                       >
-                        You're giving a gift to
+                        You’re giving a gift to
                       </p>
                       <div
                         style={{
-                          borderTop: '2px solid #e5ddd0',
-                          paddingTop: '20px',
-                          marginTop: '20px',
+                          borderTop: "2px solid #e5ddd0",
+                          marginTop: "20px",
+                          paddingTop: "20px",
                         }}
                       >
                         <p
                           style={{
-                            margin: 0,
-                            fontSize: '42px',
+                            color: "#8c3e2b",
                             fontFamily: "'Instrument Serif', Georgia, serif",
-                            color: '#8c3e2b',
-                            fontWeight: 'normal',
-                            letterSpacing: '-0.5px',
-                            lineHeight: '1.2',
+                            fontSize: "42px",
+                            fontWeight: "normal",
+                            letterSpacing: "-0.5px",
+                            lineHeight: "1.2",
+                            margin: 0,
                           }}
                         >
                           {receiverName}
@@ -165,18 +166,19 @@ export default function SecretSantaAssignment({
 
                 {/* Reminder */}
                 <tr>
-                  <td align="center" style={{ padding: '0 40px 40px' }}>
+                  <td align="center" style={{ padding: "0 40px 40px" }}>
                     <p
                       style={{
+                        color: "#806656",
+                        fontSize: "16px",
+                        fontStyle: "italic",
+                        lineHeight: "1.7",
                         margin: 0,
-                        fontSize: '16px',
-                        color: '#806656',
-                        lineHeight: '1.7',
-                        maxWidth: '520px',
-                        fontStyle: 'italic',
+                        maxWidth: "520px",
                       }}
                     >
-                      Remember, this is a secret! Don't let them know you're their Secret Santa until the big reveal!
+                      Remember, this is a secret! Don’t let them know you’re
+                      their Secret Santa until the big reveal!
                     </p>
                   </td>
                 </tr>
@@ -186,15 +188,15 @@ export default function SecretSantaAssignment({
                   <td
                     align="center"
                     style={{
-                      padding: '30px 40px 40px',
-                      borderTop: '1px solid #e5ddd0',
+                      borderTop: "1px solid #e5ddd0",
+                      padding: "30px 40px 40px",
                     }}
                   >
                     <p
                       style={{
+                        color: "#806656",
+                        fontSize: "14px",
                         margin: 0,
-                        fontSize: '14px',
-                        color: '#806656',
                       }}
                     >
                       Happy gift giving! 🎄✨
@@ -207,6 +209,5 @@ export default function SecretSantaAssignment({
         </table>
       </body>
     </html>
-  )
+  );
 }
-

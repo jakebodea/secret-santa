@@ -1,183 +1,188 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { motion } from 'framer-motion'
-import { Zap, Heart, ShieldCheck, ArrowRight } from 'lucide-react'
-import { useState, useEffect, useRef } from 'react'
-import { Button } from '../components/ui/button'
-import { FeatureCard } from '../components/feature-card'
-import { clearAllData } from '../lib/storage'
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { motion } from "framer-motion";
+import { Zap, Heart, ShieldCheck, ArrowRight } from "lucide-react";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 
-const buttonRevealDelay = 0.75
-const featureRevealDelay = buttonRevealDelay + 0.2
-const animationsCompleteDelay = featureRevealDelay + 0.5 // After feature animation completes
+import { FeatureCard } from "../components/feature-card";
+import { Button } from "../components/ui/button";
+import { clearAllData } from "../lib/storage";
 
-export const Route = createFileRoute('/')({
+const buttonRevealDelay = 0.75;
+const featureRevealDelay = buttonRevealDelay + 0.2;
+// After feature animation completes
+const animationsCompleteDelay = featureRevealDelay + 0.5;
+
+export const Route = createFileRoute("/")({
+  component: HomePage,
   head: () => ({
     meta: [
       {
-        title: 'Secret Santa - Organize Your Gift Exchange',
+        title: "Secret Santa - Organize Your Gift Exchange",
       },
       {
-        name: 'description',
         content:
-          'Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.',
+          "Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.",
+        name: "description",
       },
       {
-        name: 'keywords',
         content:
-          'secret santa, simple secret santa, secret santa free, free secret santa, secret santa generator, secret santa organizer, gift exchange, christmas, holiday, gift organizer, random assignment, secret santa app',
+          "secret santa, simple secret santa, secret santa free, free secret santa, secret santa generator, secret santa organizer, gift exchange, christmas, holiday, gift organizer, random assignment, secret santa app",
+        name: "keywords",
       },
     ],
   }),
-  component: HomePage,
-})
+});
+
+const HOVER_QUERY = "(hover: hover) and (pointer: fine)";
+
+function subscribeToHoverCapability(onChange: () => void) {
+  const mediaQuery = window.matchMedia(HOVER_QUERY);
+  mediaQuery.addEventListener("change", onChange);
+  return () => mediaQuery.removeEventListener("change", onChange);
+}
+
+function getHoverCapability() {
+  return window.matchMedia(HOVER_QUERY).matches;
+}
 
 function HomePage() {
-  const [animationsComplete, setAnimationsComplete] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
-  const [isAnimating, setIsAnimating] = useState(false)
-  const [isHoverCapable, setIsHoverCapable] = useState(false)
-  const navigate = useNavigate()
-  const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const imageResetTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [animationsComplete, setAnimationsComplete] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const isHoverCapable = useSyncExternalStore(
+    subscribeToHoverCapability,
+    getHoverCapability,
+    () => false
+  );
+  const navigate = useNavigate();
+  const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const imageResetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const clearAnimationTimeouts = () => {
     if (resetTimeoutRef.current) {
-      clearTimeout(resetTimeoutRef.current)
-      resetTimeoutRef.current = null
+      clearTimeout(resetTimeoutRef.current);
+      resetTimeoutRef.current = null;
     }
     if (imageResetTimeoutRef.current) {
-      clearTimeout(imageResetTimeoutRef.current)
-      imageResetTimeoutRef.current = null
+      clearTimeout(imageResetTimeoutRef.current);
+      imageResetTimeoutRef.current = null;
     }
-  }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setAnimationsComplete(true)
-    }, animationsCompleteDelay * 1000)
+      setAnimationsComplete(true);
+    }, animationsCompleteDelay * 1000);
 
     return () => {
-      clearTimeout(timer)
-      clearAnimationTimeouts()
-    }
-  }, [])
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) {
-      return
-    }
-
-    const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
-
-    const handleChange = (event: MediaQueryListEvent) => {
-      setIsHoverCapable(event.matches)
-    }
-
-    setIsHoverCapable(mediaQuery.matches)
-
-    if (typeof mediaQuery.addEventListener === 'function') {
-      mediaQuery.addEventListener('change', handleChange)
-      return () => mediaQuery.removeEventListener('change', handleChange)
-    }
-
-    mediaQuery.addListener(handleChange)
-    return () => mediaQuery.removeListener(handleChange)
-  }, [])
-
-  useEffect(() => {
-    if (isHoverCapable) {
-      clearAnimationTimeouts()
-      setIsAnimating(false)
-      setIsHovered(false)
-    }
-  }, [isHoverCapable])
+      clearTimeout(timer);
+      if (resetTimeoutRef.current) {
+        clearTimeout(resetTimeoutRef.current);
+      }
+      if (imageResetTimeoutRef.current) {
+        clearTimeout(imageResetTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const startAnimation = () => {
     if (!animationsComplete || isHoverCapable) {
-      return
+      return;
     }
 
-    clearAnimationTimeouts()
-    
+    clearAnimationTimeouts();
+
     // Show playful santa and start animation
-    setIsHovered(true)
-    setIsAnimating(true)
-    
+    setIsHovered(true);
+    setIsAnimating(true);
+
     // After 1.5 seconds, stop the animation (scale will shrink back over 0.3s)
     resetTimeoutRef.current = setTimeout(() => {
-      setIsAnimating(false)
-      resetTimeoutRef.current = null
-    }, 1500)
-    
+      setIsAnimating(false);
+      resetTimeoutRef.current = null;
+    }, 1500);
+
     // After scale animation completes (1.5s + 0.3s), switch back to normal santa
     imageResetTimeoutRef.current = setTimeout(() => {
-      setIsHovered(false)
-      imageResetTimeoutRef.current = null
-    }, 1800)
-  }
+      setIsHovered(false);
+      imageResetTimeoutRef.current = null;
+    }, 1800);
+  };
 
   const handleHoverStart = () => {
     if (!isHoverCapable || !animationsComplete) {
-      return
+      return;
     }
 
-    clearAnimationTimeouts()
-    setIsHovered(true)
-    setIsAnimating(true)
-  }
+    clearAnimationTimeouts();
+    setIsHovered(true);
+    setIsAnimating(true);
+  };
 
   const handleHoverEnd = () => {
     if (!isHoverCapable) {
-      return
+      return;
     }
 
-    clearAnimationTimeouts()
-    setIsAnimating(false)
-    setIsHovered(false)
-  }
+    clearAnimationTimeouts();
+    setIsAnimating(false);
+    setIsHovered(false);
+  };
 
   const handleGetStarted = () => {
-    clearAllData()
-    navigate({ to: '/assign' })
-  }
+    clearAllData();
+    navigate({ to: "/assign" });
+  };
 
-  const wiggleDuration = isHoverCapable ? 2 : 1.5
+  const wiggleDuration = isHoverCapable ? 2 : 1.5;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <main className="container mx-auto px-4 py-6 sm:py-12 md:py-16">
-        <div className="max-w-3xl mx-auto text-center space-y-6 sm:space-y-8">
+        <div className="mx-auto max-w-3xl space-y-6 text-center sm:space-y-8">
           {/* Icon */}
           <div className="flex justify-center">
             <motion.img
-              src={isHovered ? '/santa-playful.svg' : '/santa.svg'}
+              src={isHovered ? "/santa-playful.svg" : "/santa.svg"}
               alt="Secret Santa"
-              className="w-28 h-28 sm:w-40 sm:h-40 md:w-48 md:h-48 cursor-pointer transition-all"
+              className="h-28 w-28 cursor-pointer transition-all sm:h-40 sm:w-40 md:h-48 md:w-48"
               initial={{ opacity: 0 }}
               animate={{
                 opacity: 1,
+                rotate:
+                  isAnimating && animationsComplete
+                    ? [0, -12, 12, -10, 10, -8, 8, -6, 6, -4, 4, -2, 2, 0]
+                    : 0,
                 scale: isAnimating && animationsComplete ? 1.15 : 1,
-                x: isAnimating && animationsComplete ? [0, -20, 20, -18, 18, -15, 15, -12, 12, -8, 8, -5, 5, 0] : 0,
-                rotate: isAnimating && animationsComplete ? [0, -12, 12, -10, 10, -8, 8, -6, 6, -4, 4, -2, 2, 0] : 0,
+                x:
+                  isAnimating && animationsComplete
+                    ? [0, -20, 20, -18, 18, -15, 15, -12, 12, -8, 8, -5, 5, 0]
+                    : 0,
               }}
               transition={{
-                opacity: { duration: 0.5, ease: 'easeOut' },
-                scale: { duration: 0.3, ease: 'easeOut' },
-                x: {
-                  duration: wiggleDuration,
-                  ease: 'easeOut',
-                  times: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1],
-                },
+                opacity: { duration: 0.5, ease: "easeOut" },
                 rotate: {
                   duration: wiggleDuration,
-                  ease: 'easeOut',
-                  times: [0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1],
+                  ease: "easeOut",
+                  times: [
+                    0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
+                    0.95, 1,
+                  ],
+                },
+                scale: { duration: 0.3, ease: "easeOut" },
+                x: {
+                  duration: wiggleDuration,
+                  ease: "easeOut",
+                  times: [
+                    0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
+                    0.95, 1,
+                  ],
                 },
               }}
               onMouseEnter={handleHoverStart}
               onMouseLeave={handleHoverEnd}
               onClick={() => {
-                startAnimation()
+                startAnimation();
               }}
             />
           </div>
@@ -185,18 +190,33 @@ function HomePage() {
           {/* Heading */}
           <div className="space-y-6">
             <motion.h1
-              className="text-4xl sm:text-6xl md:text-7xl font-normal text-foreground tracking-tight leading-[1.1]"
+              className="text-foreground text-4xl leading-[1.1] font-normal tracking-tight sm:text-6xl md:text-7xl"
               initial={{ opacity: 0, y: -16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1], delay: 0.1 }}
+              transition={{
+                delay: 0.1,
+                duration: 0.6,
+                ease: [0.23, 1, 0.32, 1],
+              }}
             >
-              <span className="italic font-light"> <span className="underline decoration-primary decoration-4">Super</span> Simple</span> Secret Santa
+              <span className="font-light italic">
+                {" "}
+                <span className="decoration-primary underline decoration-4">
+                  Super
+                </span>{" "}
+                Simple
+              </span>{" "}
+              Secret Santa
             </motion.h1>
             <motion.p
-              className="text-lg sm:text-2xl md:text-3xl text-muted-foreground font-light tracking-wide"
+              className="text-muted-foreground text-lg font-light tracking-wide sm:text-2xl md:text-3xl"
               initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1], delay: 0.4 }}
+              transition={{
+                delay: 0.4,
+                duration: 0.6,
+                ease: [0.23, 1, 0.32, 1],
+              }}
             >
               Organize your gift exchange with this super simple tool!
             </motion.p>
@@ -204,40 +224,53 @@ function HomePage() {
 
           {/* CTA Button */}
           <motion.div
-            className="pt-2 space-y-3"
+            className="space-y-3 pt-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, ease: 'easeOut', delay: buttonRevealDelay }}
+            transition={{
+              delay: buttonRevealDelay,
+              duration: 0.7,
+              ease: "easeOut",
+            }}
           >
-            <Button 
+            <Button
               onClick={handleGetStarted}
-              className="h-11 px-6 sm:h-12 sm:px-8 text-base font-medium gap-2 tracking-wide"
+              className="h-11 gap-2 px-6 text-base font-medium tracking-wide sm:h-12 sm:px-8"
             >
               Get started
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="h-5 w-5" />
             </Button>
-            <p className="text-sm text-muted-foreground font-light tracking-wide">
+            <p className="text-muted-foreground text-sm font-light tracking-wide">
               Takes about two minutes
             </p>
           </motion.div>
           {/* Features */}
           <motion.div
-            className="grid md:grid-cols-3 gap-2 sm:gap-8 pt-6 sm:pt-12"
+            className="grid gap-2 pt-6 sm:gap-8 sm:pt-12 md:grid-cols-3"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: featureRevealDelay, duration: 0.6, ease: 'easeOut' }}
+            transition={{
+              delay: featureRevealDelay,
+              duration: 0.6,
+              ease: "easeOut",
+            }}
           >
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: featureRevealDelay, duration: 0.6, ease: 'easeOut' }}
+              transition={{
+                delay: featureRevealDelay,
+                duration: 0.6,
+                ease: "easeOut",
+              }}
             >
               <FeatureCard
                 icon={Zap}
                 title="No Accounts"
                 description={
                   <>
-                    No signups, no logins, no hassle. Just add names and emails and <span className="underline">go</span>.
+                    No signups, no logins, no hassle. Just add names and emails
+                    and <span className="underline">go</span>.
                   </>
                 }
                 colorClass="primary"
@@ -246,14 +279,20 @@ function HomePage() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: featureRevealDelay, duration: 0.6, ease: 'easeOut' }}
+              transition={{
+                delay: featureRevealDelay,
+                duration: 0.6,
+                ease: "easeOut",
+              }}
             >
               <FeatureCard
                 icon={Heart}
                 title="Absolutely Free"
                 description={
                   <>
-                    No hidden costs, no premium tiers, no upsells. <span className="underline">Free</span> forever, for everyone.
+                    No hidden costs, no premium tiers, no upsells.{" "}
+                    <span className="underline">Free</span> forever, for
+                    everyone.
                   </>
                 }
                 colorClass="secondary"
@@ -262,31 +301,36 @@ function HomePage() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: featureRevealDelay, duration: 0.6, ease: 'easeOut' }}
+              transition={{
+                delay: featureRevealDelay,
+                duration: 0.6,
+                ease: "easeOut",
+              }}
             >
               <FeatureCard
                 icon={ShieldCheck}
                 title="Privacy First"
                 description={
                   <>
-                    Zero data stored or sold. Your info is <span className="underline">only</span> used to send assignments, then it's gone.
+                    Zero data stored or sold. Your info is{" "}
+                    <span className="underline">only</span> used to send
+                    assignments, then it’s gone.
                   </>
                 }
                 colorClass="accent"
               />
             </motion.div>
           </motion.div>
-
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-8 sm:mt-16 py-6 sm:py-10">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground font-light tracking-wide space-y-2">
+      <footer className="border-border mt-8 border-t py-6 sm:mt-16 sm:py-10">
+        <div className="text-muted-foreground container mx-auto space-y-2 px-4 text-center text-sm font-light tracking-wide">
           <p>
-            <Link 
-              to="/support" 
-              className="text-foreground hover:text-primary transition-colors underline underline-offset-4"
+            <Link
+              to="/support"
+              className="text-foreground hover:text-primary underline underline-offset-4 transition-colors"
             >
               Support this project
             </Link>
@@ -294,5 +338,5 @@ function HomePage() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

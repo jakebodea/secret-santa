@@ -1,16 +1,15 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Separator } from '@/components/ui/separator'
+import { createFileRoute } from "@tanstack/react-router";
 
-type TimelineEntry = {
-  date: string
-  title: string
-  content: string
+import { Separator } from "@/components/ui/separator";
+
+interface TimelineEntry {
+  date: string;
+  title: string;
+  content: string;
 }
 
 const timelineData: TimelineEntry[] = [
   {
-    date: 'November 17, 2025',
-    title: 'Changelog Page',
     content: `
       <h3>New Features</h3>
       <ul>
@@ -18,10 +17,10 @@ const timelineData: TimelineEntry[] = [
         <li>Implemented timeline view to showcase project evolution</li>
       </ul>
     `,
+    date: "November 17, 2025",
+    title: "Changelog Page",
   },
   {
-    date: 'November 17, 2025',
-    title: 'Mobile Experience Improvements',
     content: `
       <h3>Results Page Enhancement</h3>
       <ul>
@@ -29,10 +28,10 @@ const timelineData: TimelineEntry[] = [
         <li>Better integration of party names throughout the results page</li>
       </ul>
     `,
+    date: "November 17, 2025",
+    title: "Mobile Experience Improvements",
   },
   {
-    date: 'November 16, 2025',
-    title: 'Support Page & UI Polish',
     content: `
       <h3>Support & Donations</h3>
       <ul>
@@ -46,10 +45,10 @@ const timelineData: TimelineEntry[] = [
         <li>Refined dialog header styling for improved readability</li>
       </ul>
     `,
+    date: "November 16, 2025",
+    title: "Support Page & UI Polish",
   },
   {
-    date: 'November 12, 2025',
-    title: 'Interactive Santa Easter Egg',
     content: `
       <h3>Playful Additions</h3>
       <ul>
@@ -58,10 +57,10 @@ const timelineData: TimelineEntry[] = [
         <li>Refined Santa illustration details for a more polished appearance</li>
       </ul>
     `,
+    date: "November 12, 2025",
+    title: "Interactive Santa Easter Egg",
   },
   {
-    date: 'November 11, 2025',
-    title: 'Major UI Overhaul & Animations',
     content: `
       <h3>Home Page Redesign</h3>
       <ul>
@@ -81,10 +80,10 @@ const timelineData: TimelineEntry[] = [
         <li>Improved post-email confirmation display</li>
       </ul>
     `,
+    date: "November 11, 2025",
+    title: "Major UI Overhaul & Animations",
   },
   {
-    date: 'November 9, 2025',
-    title: 'Import Features & Input Enhancements',
     content: `
       <h3>File Import Support</h3>
       <ul>
@@ -105,10 +104,10 @@ const timelineData: TimelineEntry[] = [
         <li>Enhanced mobile view responsiveness</li>
       </ul>
     `,
+    date: "November 9, 2025",
+    title: "Import Features & Input Enhancements",
   },
   {
-    date: 'November 8, 2025',
-    title: 'Party Names & Support Integration',
     content: `
       <h3>New Features</h3>
       <ul>
@@ -123,10 +122,10 @@ const timelineData: TimelineEntry[] = [
         <li>Refined feature card text on the main page</li>
       </ul>
     `,
+    date: "November 8, 2025",
+    title: "Party Names & Support Integration",
   },
   {
-    date: 'November 6, 2025',
-    title: 'User Control & Branding Updates',
     content: `
       <h3>New Functionality</h3>
       <ul>
@@ -139,10 +138,10 @@ const timelineData: TimelineEntry[] = [
         <li>Integrated Santa branding throughout the application</li>
       </ul>
     `,
+    date: "November 6, 2025",
+    title: "User Control & Branding Updates",
   },
   {
-    date: 'November 3, 2025',
-    title: 'Results Page Redesign',
     content: `
       <h3>Enhanced Privacy & Usability</h3>
       <ul>
@@ -151,10 +150,10 @@ const timelineData: TimelineEntry[] = [
         <li>Cleaned up results display for better readability</li>
       </ul>
     `,
+    date: "November 3, 2025",
+    title: "Results Page Redesign",
   },
   {
-    date: 'November 1, 2025',
-    title: 'Assignment Flow Improvements',
     content: `
       <h3>User Experience Enhancement</h3>
       <ul>
@@ -163,10 +162,10 @@ const timelineData: TimelineEntry[] = [
         <li>Improved overall flow and transitions</li>
       </ul>
     `,
+    date: "November 1, 2025",
+    title: "Assignment Flow Improvements",
   },
   {
-    date: 'October 28, 2025',
-    title: 'Email Functionality Launch',
     content: `
       <h3>Major Feature: Email Integration</h3>
       <ul>
@@ -176,10 +175,10 @@ const timelineData: TimelineEntry[] = [
         <li>Added comprehensive project planning documentation</li>
       </ul>
     `,
+    date: "October 28, 2025",
+    title: "Email Functionality Launch",
   },
   {
-    date: 'October 27, 2025',
-    title: 'Code Organization',
     content: `
       <h3>Technical Improvements</h3>
       <ul>
@@ -187,10 +186,10 @@ const timelineData: TimelineEntry[] = [
         <li>Improved overall code organization and maintainability</li>
       </ul>
     `,
+    date: "October 27, 2025",
+    title: "Code Organization",
   },
   {
-    date: 'October 16, 2025',
-    title: 'Production Optimization',
     content: `
       <h3>Build & Deploy Improvements</h3>
       <ul>
@@ -200,10 +199,10 @@ const timelineData: TimelineEntry[] = [
         <li>Enhanced overall styling throughout the application</li>
       </ul>
     `,
+    date: "October 16, 2025",
+    title: "Production Optimization",
   },
   {
-    date: 'October 15, 2025',
-    title: 'Deployment Setup',
     content: `
       <h3>Infrastructure</h3>
       <ul>
@@ -211,10 +210,10 @@ const timelineData: TimelineEntry[] = [
         <li>Set up continuous deployment pipeline</li>
       </ul>
     `,
+    date: "October 15, 2025",
+    title: "Deployment Setup",
   },
   {
-    date: 'October 14, 2025',
-    title: 'Initial Release',
     content: `
       <h3>Core Features Launched</h3>
       <ul>
@@ -234,61 +233,64 @@ const timelineData: TimelineEntry[] = [
         <li>Created beautiful, intuitive user experience</li>
       </ul>
     `,
+    date: "October 14, 2025",
+    title: "Initial Release",
   },
-]
+];
 
-export const Route = createFileRoute('/changelog')({
+export const Route = createFileRoute("/changelog")({
+  component: ChangelogPage,
   head: () => ({
     meta: [
       {
-        title: 'Changelog - Secret Santa',
+        title: "Changelog - Secret Santa",
       },
       {
-        name: 'description',
-        content: 'View the changelog and version history for Secret Santa.',
+        content: "View the changelog and version history for Secret Santa.",
+        name: "description",
       },
     ],
   }),
-  component: ChangelogPage,
-})
+});
 
 function ChangelogPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <main className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
         <section className="bg-background py-8">
           <div className="container">
-            <div className="flex flex-col items-center mb-10">
+            <div className="mb-10 flex flex-col items-center">
               <img
                 src="/santa-playful.svg"
                 alt="Playful Santa"
-                className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mb-4"
+                className="mb-4 h-24 w-24 sm:h-32 sm:w-32 md:h-40 md:w-40"
               />
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal text-foreground tracking-tight text-center">
+              <h1 className="text-foreground text-center text-3xl font-normal tracking-tight sm:text-5xl md:text-6xl">
                 Changelog
               </h1>
             </div>
             <div className="relative mx-auto max-w-4xl">
               <Separator
                 orientation="vertical"
-                className="bg-foreground/30 absolute left-2 top-4"
+                className="bg-foreground/30 absolute top-4 left-2"
               />
               {timelineData.map((entry, index) => (
                 <div key={index} className="relative mb-12 pl-8">
-                  <div className="bg-secondary absolute left-0 top-3.5 flex size-4 items-center justify-center rounded-full" />
-                  <h4 className="text-2xl sm:text-3xl leading-none font-medium py-2 xl:mb-2 xl:px-3">
+                  <div className="bg-secondary absolute top-3.5 left-0 flex size-4 items-center justify-center rounded-full" />
+                  <h4 className="py-2 text-2xl leading-none font-medium sm:text-3xl xl:mb-2 xl:px-3">
                     {entry.title}
                   </h4>
 
-                  <h5 className="text-2xl sm:text-3xl text-muted-foreground tracking-tight mb-4 xl:mb-0 xl:absolute xl:-left-44 xl:top-2 xl:w-36 xl:text-right xl:leading-none">
+                  <h5 className="text-muted-foreground mb-4 text-2xl tracking-tight sm:text-3xl xl:absolute xl:top-2 xl:-left-44 xl:mb-0 xl:w-36 xl:text-right xl:leading-none">
                     {entry.date}
                   </h5>
 
-                  <div className="my-4 xl:px-3 space-y-4">
-                      <div
+                  <div className="my-4 space-y-4 xl:px-3">
+                    <div
                       className="changelog-content text-foreground"
-                        dangerouslySetInnerHTML={{ __html: entry.content }}
-                      />
+                      // oxlint-disable-next-line react/no-danger -- hardcoded changelog HTML above
+                      dangerouslySetInnerHTML={{ __html: entry.content }}
+                    />
                   </div>
                 </div>
               ))}
@@ -297,6 +299,5 @@ function ChangelogPage() {
         </section>
       </main>
     </div>
-  )
+  );
 }
-
