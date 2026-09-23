@@ -46,6 +46,7 @@ code {
   /* Accent - Gold */
   --accent: oklch(0.88 0.08 85);
   --accent-foreground: oklch(0.2 0.02 30);
+  --gold: oklch(0.68 0.14 75);
   
   /* Destructive */
   --destructive: oklch(0.55 0.22 25);
@@ -82,6 +83,7 @@ code {
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-gold: var(--gold);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -105,7 +107,7 @@ code {
   body {
     @apply bg-background text-foreground;
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1, h2, h3, h4, h5, h6, [data-slot="card-title"], [data-slot="dialog-title"] {
     font-family: 'Instrument Serif', Georgia, serif;
   }
   ::selection {

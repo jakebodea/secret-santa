@@ -22,13 +22,13 @@ export function ConstraintsList({
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">Exclusion Rules</CardTitle>
+            <CardTitle className="text-2xl sm:text-3xl font-normal tracking-tight">Exclusion Rules</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-base text-muted-foreground font-light tracking-wide text-center py-8">
-            No exclusion rules yet. Add rules if certain players shouldn't give to
-            each other (e.g., spouses, close family members).
+          <p className="text-sm sm:text-base text-muted-foreground font-light tracking-wide text-center py-6">
+            No rules yet. Optional, but handy for couples or housemates who
+            shouldn't draw each other.
           </p>
         </CardContent>
       </Card>
@@ -39,7 +39,7 @@ export function ConstraintsList({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">Exclusion Rules</CardTitle>
+          <CardTitle className="text-2xl sm:text-3xl font-normal tracking-tight">Exclusion Rules</CardTitle>
           {constraints.length > 0 && (
             <Button
               variant="ghost"
@@ -47,8 +47,8 @@ export function ConstraintsList({
               onClick={onClearAll}
               className="text-muted-foreground hover:text-destructive hover:bg-destructive/5"
             >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Clear Rules
+              <Trash2 className="w-4 h-4" />
+              Clear
             </Button>
           )}
         </div>
@@ -56,9 +56,9 @@ export function ConstraintsList({
       <CardContent>
         <div className="space-y-2">
           {constraints.map((constraint) => (
-            <div key={constraint.id} className="flex items-center justify-center py-2 relative">
-              <div className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-4 px-4">
-                <span className="text-lg font-normal tracking-wide text-right">
+            <div key={constraint.id} className="flex items-center justify-center py-2.5 pr-10 relative rounded-lg border bg-card">
+              <div className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-4 pl-10">
+                <span className="font-normal tracking-wide text-right truncate">
                   {getPlayerName(players, constraint.giverId)}
                 </span>
                 <div className="flex items-center justify-center">
@@ -68,7 +68,7 @@ export function ConstraintsList({
                     <ArrowRight className="w-5 h-5 text-muted-foreground" />
                   )}
                 </div>
-                <span className="text-lg font-normal tracking-wide text-left">
+                <span className="font-normal tracking-wide text-left truncate">
                   {getPlayerName(players, constraint.receiverId)}
                 </span>
               </div>
@@ -76,7 +76,8 @@ export function ConstraintsList({
                 variant="ghost"
                 size="icon"
                 onClick={() => onRemoveConstraint(constraint.id)}
-                className="absolute right-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                aria-label="Remove rule"
+                className="absolute right-1 h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>

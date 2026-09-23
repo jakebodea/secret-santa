@@ -126,7 +126,7 @@ export function ResultsDisplay({
   // Loading state while sending emails
   if (isSending) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center space-y-8">
           {/* Bouncing Loading Dots */}
           <div className="flex justify-center items-center gap-3 h-12">
@@ -184,7 +184,7 @@ export function ResultsDisplay({
   if (emailsSent) {
     return (
       <>
-        <div className="min-h-screen bg-background flex items-center justify-center py-12 sm:py-16">
+        <div className="flex items-center justify-center py-6 sm:py-12">
           <div className="max-w-4xl mx-auto px-4 text-center space-y-8">
             {/* Celebration Icon */}
             <div className="flex justify-center">
@@ -201,7 +201,7 @@ export function ResultsDisplay({
                 <img
                   src="/gift.svg"
                   alt="Gift"
-                  className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+                  className="hidden sm:block w-10 h-10 md:w-12 md:h-12"
                 />
                 <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
                   Emails Sent!
@@ -209,7 +209,7 @@ export function ResultsDisplay({
                 <img
                   src="/gift.svg"
                   alt="Gift"
-                  className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+                  className="hidden sm:block w-10 h-10 md:w-12 md:h-12"
                 />
               </div>
               {partyName && (
@@ -270,7 +270,7 @@ export function ResultsDisplay({
   // Initial state - assignments generated, ready to send
   return (
     <>
-      <div className="min-h-screen bg-background flex items-center justify-center py-12 sm:py-16">
+      <div className="flex items-center justify-center py-6 sm:py-12">
         <div className="max-w-3xl mx-auto px-4 text-center space-y-8">
           {/* Celebration Icon */}
           <div className="flex justify-center">
@@ -287,7 +287,7 @@ export function ResultsDisplay({
               <img
                 src="/gift.svg"
                 alt="Gift"
-                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+                className="hidden sm:block w-10 h-10 md:w-12 md:h-12"
               />
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
                 {partyName && (
@@ -301,29 +301,20 @@ export function ResultsDisplay({
               <img
                 src="/gift.svg"
                 alt="Gift"
-                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
+                className="hidden sm:block w-10 h-10 md:w-12 md:h-12"
               />
             </div>
             <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
-              Your Secret Santa assignments are ready to send!
+              Each of your {players.length} participants will get an email with the person they're buying for.
             </p>
           </div>
 
-          {/* Status Message */}
-          <Card className="bg-accent/30 border-accent">
-            <CardContent>
-              <p className="text-base text-muted-foreground font-light tracking-wide">
-                Click the button below to notify all participants of their assignments. Each person will receive an email with their assigned recipient.
-              </p>
-            </CardContent>
-          </Card>
-
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <Button
               onClick={() => handleSendEmails()}
               disabled={isSending}
-              className="h-11 sm:h-12 px-6 sm:px-8 text-base font-medium gap-3 tracking-wide"
+              className="w-full sm:w-auto h-11 sm:h-12 px-6 sm:px-8 text-base font-medium gap-3 tracking-wide"
             >
               <Mail className="w-5 h-5" />
               Send Emails
@@ -331,7 +322,7 @@ export function ResultsDisplay({
             <Button
               variant="outline"
               onClick={onStartOver}
-              className="h-11 sm:h-12 px-6 sm:px-8 text-base font-medium gap-3 tracking-wide"
+              className="w-full sm:w-auto h-11 sm:h-12 px-6 sm:px-8 text-base font-medium gap-3 tracking-wide"
             >
               <RotateCcw className="w-5 h-5" />
               Start Over
@@ -369,7 +360,7 @@ export function ResultsDisplay({
 
           {/* Admin Note */}
           {players.find((p) => p.isAdmin) && (
-            <Card className="bg-muted/50 mt-8">
+            <Card className="bg-muted/50 shadow-none">
               <CardContent>
                 <p className="text-sm text-muted-foreground font-light tracking-wide">
                   <strong className="text-foreground font-normal">
