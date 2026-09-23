@@ -6,9 +6,9 @@ import { Button } from '../components/ui/button'
 import { FeatureCard } from '../components/feature-card'
 import { clearAllData } from '../lib/storage'
 
-const featureRevealDelay = 2.65
-const buttonRevealDelay = featureRevealDelay + 0.25
-const animationsCompleteDelay = buttonRevealDelay + 0.7 // After button animation completes
+const buttonRevealDelay = 0.75
+const featureRevealDelay = buttonRevealDelay + 0.2
+const animationsCompleteDelay = featureRevealDelay + 0.5 // After feature animation completes
 
 export const Route = createFileRoute('/')({
   head: () => ({
@@ -145,7 +145,7 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-6 sm:py-16 md:py-24">
+      <main className="container mx-auto px-4 py-6 sm:py-12 md:py-16">
         <div className="max-w-3xl mx-auto text-center space-y-6 sm:space-y-8">
           {/* Icon */}
           <div className="flex justify-center">
@@ -161,7 +161,7 @@ function HomePage() {
                 rotate: isAnimating && animationsComplete ? [0, -12, 12, -10, 10, -8, 8, -6, 6, -4, 4, -2, 2, 0] : 0,
               }}
               transition={{
-                opacity: { duration: 0.8, ease: 'easeOut', delay: 0.1 },
+                opacity: { duration: 0.5, ease: 'easeOut' },
                 scale: { duration: 0.3, ease: 'easeOut' },
                 x: {
                   duration: wiggleDuration,
@@ -186,25 +186,43 @@ function HomePage() {
           <div className="space-y-6">
             <motion.h1
               className="text-4xl sm:text-6xl md:text-7xl font-normal text-foreground tracking-tight leading-[1.1]"
-              initial={{ opacity: 0, y: -24 }}
+              initial={{ opacity: 0, y: -16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: 'easeOut', delay: 0.25 }}
+              transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1], delay: 0.1 }}
             >
               <span className="italic font-light"> <span className="underline decoration-primary decoration-4">Super</span> Simple</span> Secret Santa
             </motion.h1>
             <motion.p
               className="text-lg sm:text-2xl md:text-3xl text-muted-foreground font-light tracking-wide"
-              initial={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: 'easeOut', delay: 1.45 }}
+              transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1], delay: 0.4 }}
             >
               Organize your gift exchange with this super simple tool!
             </motion.p>
           </div>
 
+          {/* CTA Button */}
+          <motion.div
+            className="pt-2 space-y-3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, ease: 'easeOut', delay: buttonRevealDelay }}
+          >
+            <Button 
+              onClick={handleGetStarted}
+              className="h-11 px-6 sm:h-12 sm:px-8 text-base font-medium gap-2 tracking-wide"
+            >
+              Get started
+              <ArrowRight className="w-5 h-5" />
+            </Button>
+            <p className="text-sm text-muted-foreground font-light tracking-wide">
+              Takes about two minutes
+            </p>
+          </motion.div>
           {/* Features */}
           <motion.div
-            className="grid md:grid-cols-3 gap-2 sm:gap-8 pt-0 sm:pt-2"
+            className="grid md:grid-cols-3 gap-2 sm:gap-8 pt-6 sm:pt-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: featureRevealDelay, duration: 0.6, ease: 'easeOut' }}
@@ -259,26 +277,11 @@ function HomePage() {
             </motion.div>
           </motion.div>
 
-          {/* CTA Button */}
-          <motion.div
-            className="pt-8 sm:pt-12"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, ease: 'easeOut', delay: buttonRevealDelay }}
-          >
-            <Button 
-              onClick={handleGetStarted}
-              className="h-11 px-6 sm:h-12 sm:px-8 text-base font-medium gap-2 tracking-wide"
-            >
-              Get started
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-          </motion.div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-12 sm:mt-20 py-6 sm:py-10">
+      <footer className="border-t border-border mt-8 sm:mt-16 py-6 sm:py-10">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground font-light tracking-wide space-y-2">
           <p>
             <Link 

@@ -245,7 +245,7 @@ function AssignPage() {
   if (showPartyNamePage) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="max-w-2xl mx-auto px-4 py-12 sm:py-16 text-center space-y-10 sm:space-y-12">
+        <div className="w-full max-w-2xl mx-auto px-4 py-12 sm:py-16 text-center space-y-10 sm:space-y-12">
           {/* Icon */}
           <div className="flex justify-center">
             <img
@@ -258,25 +258,30 @@ function AssignPage() {
           {/* Heading */}
           <div className="space-y-6">
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-normal text-foreground tracking-tight leading-tight">
-              What's your Gift Exchange Called?
+              What's your gift exchange called?
             </h1>
             <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
-              Give your secret santa party a name
+              Give your Secret Santa a name, or skip this step
             </p>
           </div>
 
           {/* Input */}
-          <div className="space-y-6">
+          <div className="space-y-3">
             <Input
               ref={inputRef}
               type="text"
               value={partyName}
               onChange={handlePartyNameChange}
               onKeyDown={handlePartyNameKeyDown}
-              className="text-xl sm:text-3xl md:text-4xl h-12 sm:h-16 md:h-20 px-6 text-center border-0 bg-transparent dark:bg-transparent focus-visible:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none outline-none"
-              style={{ fontFamily: "'Instrument Serif', Georgia, serif", backgroundColor: 'transparent' }}
+              placeholder="e.g. Office Party 2026"
+              aria-label="Gift exchange name"
+              className="text-2xl sm:text-4xl md:text-5xl h-14 sm:h-20 px-2 text-center rounded-none border-0 border-b-2 border-border bg-transparent dark:bg-transparent shadow-none placeholder:text-muted-foreground/40 focus-visible:border-primary focus-visible:ring-0 transition-colors"
+              style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
               autoFocus
             />
+            <p className="hidden sm:block text-sm text-muted-foreground font-light tracking-wide">
+              Press <kbd className="px-1.5 py-0.5 rounded border bg-card text-xs font-sans">Enter</kbd> to continue
+            </p>
           </div>
 
           {/* Buttons */}
@@ -326,7 +331,7 @@ function AssignPage() {
                   className="hidden md:block w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12"
                 />
                 <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight leading-tight">
-                  Setup <span className="italic underline decoration-primary decoration-4">{partyName || 'Your Secret Santa'}!</span>
+                  Set up <span className="italic underline decoration-primary decoration-4">{partyName || 'Your Secret Santa'}!</span>
                 </h1>
                 <img
                   src="/gift.svg"
@@ -335,8 +340,7 @@ function AssignPage() {
                 />
               </div>
               <p className="text-base sm:text-xl md:text-2xl text-muted-foreground font-light tracking-wide">
-                Add participants and set any exclusion rules before generating
-                assignments
+                Add everyone who's playing, then set any rules for who can't draw whom
               </p>
             </div>
 
@@ -369,16 +373,21 @@ function AssignPage() {
               </div>
             </div>
 
-            {players.length >= 3 && (
-              <div className="hidden sm:flex justify-center pt-8">
-                <Button
-                  onClick={handleGenerateAssignments}
-                  className="h-12 px-8 text-base font-medium gap-2 tracking-wide"
-                >
-                  Generate Assignments
-                </Button>
-              </div>
-            )}
+            <div className="hidden sm:flex flex-col items-center gap-3 pt-8">
+              <Button
+                onClick={handleGenerateAssignments}
+                disabled={players.length < 3}
+                className="h-12 px-8 text-base font-medium gap-2 tracking-wide"
+              >
+                <Sparkles className="w-5 h-5" />
+                Generate Assignments
+              </Button>
+              {players.length < 3 && (
+                <p className="text-sm text-muted-foreground font-light tracking-wide">
+                  Add {3 - players.length} more participant{3 - players.length === 1 ? '' : 's'} to generate assignments
+                </p>
+              )}
+            </div>
           </div>
           )}
         </main>
@@ -412,7 +421,7 @@ function AssignPage() {
       </Dialog>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-20 py-10">
+      <footer className="border-t border-border mt-12 sm:mt-20 py-8 sm:py-10">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground font-light tracking-wide">
           <p>
             <Link 

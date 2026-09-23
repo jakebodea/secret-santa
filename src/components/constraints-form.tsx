@@ -25,18 +25,17 @@ export function ConstraintsForm({
   const [receiverId, setReceiverId] = useState<string>('')
   const [bidirectional, setBidirectional] = useState(true)
 
+  const canSubmit = !!giverId && !!receiverId && giverId !== receiverId
+
+  const handleGiverChange = (id: string) => {
+    setGiverId(id)
+    if (id === receiverId) setReceiverId('')
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!giverId || !receiverId) {
-      alert('Please select both players')
-      return
-    }
-
-    if (giverId === receiverId) {
-      alert('A player cannot be constrained from themselves')
-      return
-    }
+    if (!canSubmit) return
 
     const newConstraint: Constraint = {
       id: crypto.randomUUID(),
@@ -60,14 +59,15 @@ export function ConstraintsForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">Add Exclusion Rule</CardTitle>
+        <CardTitle className="text-2xl sm:text-3xl font-normal tracking-tight">Add Exclusion Rule</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="giver">This player</Label>
-            <Select value={giverId} onValueChange={setGiverId}>
-              <SelectTrigger id="giver" className="h-11">
+            <Select value={giverId} onValueChange={handleGiverChange}>
+              <SelectTrigger id="giver" className="w-full h-11">
                 <SelectValue placeholder="Select player" />
               </SelectTrigger>
               <SelectContent>
@@ -83,24 +83,27 @@ export function ConstraintsForm({
           <div className="space-y-2">
             <Label htmlFor="receiver">Cannot give to</Label>
             <Select value={receiverId} onValueChange={setReceiverId}>
-              <SelectTrigger id="receiver" className="h-11">
+              <SelectTrigger id="receiver" className="w-full h-11">
                 <SelectValue placeholder="Select player" />
               </SelectTrigger>
               <SelectContent>
-                {players.map((player) => (
-                  <SelectItem key={player.id} value={player.id}>
-                    {player.name}
-                  </SelectItem>
-                ))}
+                {players
+                  .filter((player) => player.id !== giverId)
+                  .map((player) => (
+                    <SelectItem key={player.id} value={player.id}>
+                      {player.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
+          </div>
           </div>
 
           <div className="flex items-center justify-between space-x-2 p-2.5 sm:p-3 rounded-lg border">
             <div className="space-y-0.5">
               <Label htmlFor="bidirectional">Apply both ways</Label>
               <p className="text-sm text-muted-foreground font-light tracking-wide">
-                Both players cannot give to each other
+                Neither can draw the other
               </p>
             </div>
             <Switch
@@ -110,7 +113,7 @@ export function ConstraintsForm({
             />
           </div>
 
-          <Button type="submit" className="w-full h-10 sm:h-11">
+          <Button type="submit" disabled={!canSubmit} className="w-full h-10 sm:h-11">
             Add Rule
           </Button>
         </form>

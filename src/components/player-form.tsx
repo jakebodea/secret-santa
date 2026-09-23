@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog'
-import { Upload, FileSpreadsheet } from 'lucide-react'
+import { Upload, FileSpreadsheet, UserPlus } from 'lucide-react'
 import { importParticipants } from '../lib/import-utils'
 import type { Player } from '../lib/types'
 
@@ -28,6 +28,7 @@ export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFor
   const [isImporting, setIsImporting] = useState(false)
   const [importError, setImportError] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
+  const [duplicateError, setDuplicateError] = useState<string | null>(null)
 
   const processFile = async (file: File) => {
     setIsImporting(true)
@@ -113,7 +114,7 @@ export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFor
         (p) => p.name.toLowerCase() === value.name.toLowerCase()
       )
       if (duplicate) {
-        alert('A player with this name already exists!')
+        setDuplicateError(`${duplicate.name} is already on the list`)
         return
       }
 
@@ -141,7 +142,7 @@ export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFor
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-xl sm:text-2xl font-normal tracking-wide">Add Participant</CardTitle>
+          <CardTitle className="text-2xl sm:text-3xl font-normal tracking-tight">Add Participants</CardTitle>
           <div className="flex items-center gap-2">
             <Button
               type="button"
@@ -150,8 +151,8 @@ export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFor
               onClick={() => setIsImportDialogOpen(true)}
               className="text-muted-foreground hover:text-foreground"
             >
-              <Upload className="w-4 h-4 mr-2" />
-              Import
+              <Upload className="w-4 h-4" />
+              Import CSV
             </Button>
           </div>
         </div>
@@ -179,17 +180,20 @@ export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFor
                   ref={nameInputRef}
                   id="name"
                   type="text"
-                  placeholder="Enter name"
+                  placeholder="Jane Doe"
+                  autoComplete="off"
+                  aria-invalid={!!duplicateError || undefined}
                   value={field.state.value}
                   onChange={(e) => {
                     const normalizedValue = toTitleCase(e.target.value)
+                    setDuplicateError(null)
                     field.handleChange(normalizedValue)
                   }}
                   onBlur={field.handleBlur}
                 />
-                {field.state.meta.errors && (
+                {(duplicateError || field.state.meta.errors.length > 0) && (
                   <p className="text-sm text-destructive">
-                    {field.state.meta.errors.join(', ')}
+                    {duplicateError ?? field.state.meta.errors.join(', ')}
                   </p>
                 )}
               </div>
@@ -214,7 +218,8 @@ export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFor
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter email"
+                  placeholder="jane@example.com"
+                  autoComplete="off"
                   value={field.state.value}
                   onKeyDown={(e) => {
                     // Prevent space key from being entered
@@ -229,7 +234,7 @@ export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFor
                   }}
                   onBlur={field.handleBlur}
                 />
-                {field.state.meta.errors && (
+                {field.state.meta.errors.length > 0 && (
                   <p className="text-sm text-destructive">
                     {field.state.meta.errors.join(', ')}
                   </p>
@@ -242,8 +247,9 @@ export function PlayerForm({ onAddPlayer, onImport, existingPlayers }: PlayerFor
             selector={(state) => [state.canSubmit, state.isSubmitting]}
           >
             {([canSubmit, isSubmitting]) => (
-              <Button type="submit" disabled={!canSubmit || isSubmitting} className="h-10 sm:h-11 px-4 sm:px-5">
-                {isSubmitting ? 'Adding...' : 'Add Player'}
+              <Button type="submit" disabled={!canSubmit || isSubmitting} className="w-full h-10 sm:h-11 gap-2">
+                <UserPlus className="w-4 h-4" />
+                {isSubmitting ? 'Adding...' : 'Add Participant'}
               </Button>
             )}
           </form.Subscribe>
