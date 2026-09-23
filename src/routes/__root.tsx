@@ -33,7 +33,7 @@ export const Route = createRootRoute({
         rel: "manifest",
       },
       {
-        href: "https://supersecretsimplesanta.com",
+        href: "https://supersimplesecretsanta.com",
         rel: "canonical",
       },
     ],
@@ -76,7 +76,7 @@ export const Route = createRootRoute({
         property: "og:image",
       },
       {
-        content: "https://supersecretsimplesanta.com",
+        content: "https://supersimplesecretsanta.com",
         property: "og:url",
       },
       {
@@ -109,7 +109,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     description:
       "Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.",
     name: "Secret Santa",
-    url: "https://supersecretsimplesanta.com",
+    url: "https://supersimplesecretsanta.com",
   };
 
   return (

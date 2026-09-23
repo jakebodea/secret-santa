@@ -2,4 +2,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://supersecretsimplesanta.com/sitemap.xml
+Sitemap: https://supersimplesecretsanta.com/sitemap.xml
