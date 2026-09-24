@@ -1,25 +1,53 @@
 import { defineConfig } from "oxlint";
 import core from "ultracite/oxlint/core";
+import { jsPluginSettings, selectJsPlugins } from "ultracite/oxlint/js-plugins";
 import react from "ultracite/oxlint/react";
+import shadcn from "ultracite/oxlint/shadcn";
+import tanstack from "ultracite/oxlint/tanstack";
+import tanstackJsPlugins from "ultracite/oxlint/tanstack/js-plugins";
+import vitest from "ultracite/oxlint/vitest";
+
+// eslint-plugin-github and eslint-plugin-sonarjs load typescript-eslint, which
+// does not support TS 7 yet — re-enable when those plugins support Project Corsa.
+const jsPlugins = selectJsPlugins(["react-doctor"]);
 
 export default defineConfig({
-  extends: [core, react],
-  ignorePatterns: [...(core.ignorePatterns ?? []), "src/routeTree.gen.ts"],
+  extends: [
+    core,
+    react,
+    tanstack,
+    vitest,
+    tanstackJsPlugins,
+    shadcn,
+    jsPlugins,
+  ],
+  ignorePatterns: [
+    ...(core.ignorePatterns ?? []),
+    "src/routeTree.gen.ts",
+    // React Email templates are not part of the Tailwind/shadcn UI surface.
+    "src/emails/**",
+  ],
+  jsPlugins: [...(jsPlugins.jsPlugins ?? []), ...(shadcn.jsPlugins ?? [])],
+  settings: {
+    ...jsPluginSettings,
+    shadcn: {
+      ui: "@/components/ui",
+    },
+  },
   overrides: [
     {
-      // Email templates are table-based HTML for mail clients, not interactive UI.
-      files: ["src/emails/**"],
-      rules: { "jsx-a11y/control-has-associated-label": "off" },
+      files: ["src/routes/**"],
+      rules: {
+        // Route modules export Route config alongside page components.
+        "react-doctor/only-export-components": "off",
+      },
     },
   ],
   rules: {
-    // TanStack file routes reference their component before its declaration
-    // (`createFileRoute(...)({ component: Page })`), which only works with
-    // hoisted function declarations.
+    "eslint/require-await": "off",
     "func-style": "off",
     "no-use-before-define": ["error", { functions: false }],
     "react/function-component-definition": "off",
-    // Flags React Compiler bailouts (e.g. try/finally), not code problems.
     "react/todo": "off",
   },
 });

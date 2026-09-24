@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+
+import { LoadingDots } from "./loading-dots";
 
 const MESSAGES = [
   "Gathering Santas...",
@@ -8,9 +10,9 @@ const MESSAGES = [
   "Almost Ready!",
 ];
 
-// 3 seconds total
 const DURATION = 3000;
 const MESSAGE_DURATION = DURATION / MESSAGES.length;
+const FADE_MS = 150;
 
 export function AssignmentAnimation() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -21,64 +23,35 @@ export function AssignmentAnimation() {
       return;
     }
 
-    const timer = setTimeout(() => {
+    const hideTimer = setTimeout(() => {
       setIsVisible(false);
-
-      setTimeout(() => {
-        setCurrentIndex((prev) => prev + 1);
-        setIsVisible(true);
-        // Half of transition duration for smooth fade
-      }, 150);
     }, MESSAGE_DURATION);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(hideTimer);
+    };
   }, [currentIndex]);
+
+  useEffect(() => {
+    if (isVisible || currentIndex >= MESSAGES.length - 1) {
+      return;
+    }
+
+    const advanceTimer = setTimeout(() => {
+      setCurrentIndex((prev) => prev + 1);
+      setIsVisible(true);
+    }, FADE_MS);
+
+    return () => {
+      clearTimeout(advanceTimer);
+    };
+  }, [currentIndex, isVisible]);
 
   return (
     <div className="bg-background flex min-h-screen items-center justify-center">
       <div className="space-y-8 text-center">
-        {/* Bouncing Loading Dots */}
-        <div className="flex h-12 items-center justify-center gap-3">
-          <div
-            className="bg-primary h-3 w-3 rounded-full"
-            style={{
-              animation: "bounce-high 1s ease-in-out infinite",
-              animationDelay: "0ms",
-            }}
-          />
-          <div
-            className="bg-primary h-3 w-3 rounded-full"
-            style={{
-              animation: "bounce-high 1s ease-in-out infinite",
-              animationDelay: "150ms",
-            }}
-          />
-          <div
-            className="bg-primary h-3 w-3 rounded-full"
-            style={{
-              animation: "bounce-high 1s ease-in-out infinite",
-              animationDelay: "300ms",
-            }}
-          />
-        </div>
-        <style>{`
-          @keyframes bounce-high {
-            0% {
-              transform: translateY(0);
-            }
-            20% {
-              transform: translateY(-16px);
-            }
-            40% {
-              transform: translateY(0);
-            }
-            100% {
-              transform: translateY(0);
-            }
-          }
-        `}</style>
+        <LoadingDots />
 
-        {/* Text Message */}
         <div
           className={`transition-opacity duration-300 ${
             isVisible ? "opacity-100" : "opacity-0"

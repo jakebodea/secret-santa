@@ -102,16 +102,16 @@ export const Route = createRootRoute({
   shellComponent: RootDocument,
 });
 
-function RootDocument({ children }: { children: React.ReactNode }) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    description:
-      "Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.",
-    name: "Secret Santa",
-    url: "https://supersimplesecretsanta.com",
-  };
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  description:
+    "Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.",
+  name: "Secret Santa",
+  url: "https://supersimplesecretsanta.com",
+};
 
+function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>

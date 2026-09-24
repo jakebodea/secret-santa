@@ -122,7 +122,7 @@ async function parseExcel(file: File): Promise<ImportResult> {
   }
 }
 
-export function importParticipants(file: File): Promise<ImportResult> {
+export async function importParticipants(file: File): Promise<ImportResult> {
   const extension = file.name.toLowerCase().split(".").pop();
 
   if (extension === "csv") {
@@ -131,9 +131,9 @@ export function importParticipants(file: File): Promise<ImportResult> {
   if (extension === "xlsx" || extension === "xls") {
     return parseExcel(file);
   }
-  return Promise.resolve({
+  return {
     error:
       "Unsupported file type. Please upload a CSV or Excel (.xlsx, .xls) file.",
     success: false,
-  });
+  };
 }

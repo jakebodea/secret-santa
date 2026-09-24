@@ -100,6 +100,33 @@ code {
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+@keyframes loading-dot-pulse {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(-16px);
+  }
+  40% {
+    transform: translateY(0);
+  }
+}
+
+@utility animate-loading-dot {
+  animation: loading-dot-pulse 1s ease-out infinite;
+}
+
+@utility animate-loading-dot-delay-150 {
+  animation: loading-dot-pulse 1s ease-out infinite;
+  animation-delay: 150ms;
+}
+
+@utility animate-loading-dot-delay-300 {
+  animation: loading-dot-pulse 1s ease-out infinite;
+  animation-delay: 300ms;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -114,7 +141,8 @@ code {
   h5,
   h6,
   [data-slot="card-title"],
-  [data-slot="dialog-title"] {
+  [data-slot="dialog-title"],
+  input[data-variant="party"] {
     font-family: "Instrument Serif", Georgia, serif;
   }
   ::selection {
