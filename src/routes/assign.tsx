@@ -1,10 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useReducer, useState } from "react";
 
-import { AssignPartyNamePage } from "../components/assign-party-name-page";
-import { AssignSetupView } from "../components/assign-setup-view";
+import type { AssignFlowStepId } from "../components/assign-flow-metadata";
+import { AssignFlowSteps } from "../components/assign-flow-steps";
+import { buildAssignShellFooter } from "../components/assign-shell-footer";
+import { AssignStepperShell } from "../components/assign-stepper-shell";
 import { AssignmentAnimation } from "../components/assignment-animation";
-import { ResultsDisplay } from "../components/results-display";
 import { Button } from "../components/ui/button";
 import {
   Dialog,
@@ -15,111 +16,132 @@ import {
 } from "../components/ui/dialog";
 import { generateAssignments } from "../lib/secret-santa-assignments";
 import {
-  getData,
-  addPlayer,
-  removePlayer,
-  toggleAdmin,
-  replacePlayers,
   addConstraint,
-  removeConstraint,
-  saveConstraints,
-  saveAssignments,
-  clearAssignments,
+  addPlayer,
   clearAllData,
+  clearAssignments,
+  getData,
+  removeConstraint,
+  removePlayer,
+  replacePlayers,
+  saveAssignments,
+  saveConstraints,
   savePartyName,
+  toggleAdmin,
 } from "../lib/storage";
-import type { Player, Constraint, Assignment } from "../lib/types";
+import type { Assignment, Constraint, Player } from "../lib/types";
 import { toTitleCase } from "../lib/utils";
 
 export const Route = createFileRoute("/assign")({
   component: AssignPage,
 });
 
+interface ListState {
+  players: Player[];
+  constraints: Constraint[];
+  assignments: Assignment[];
+  animationComplete: boolean;
+}
+
+type ListAction =
+  | { type: "sync_from_storage"; animationComplete?: boolean }
+  | { type: "patch"; patch: Partial<ListState> }
+  | { type: "reset_lists" };
+
+function listReducer(state: ListState, action: ListAction): ListState {
+  switch (action.type) {
+    case "sync_from_storage": {
+      const data = getData();
+      return {
+        animationComplete: action.animationComplete ?? state.animationComplete,
+        assignments: data.assignments,
+        constraints: data.constraints,
+        players: data.players,
+      };
+    }
+    case "patch": {
+      return { ...state, ...action.patch };
+    }
+    case "reset_lists": {
+      return {
+        animationComplete: false,
+        assignments: [],
+        constraints: [],
+        players: [],
+      };
+    }
+    default: {
+      return state;
+    }
+  }
+}
+
 function AssignPage() {
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [constraints, setConstraints] = useState<Constraint[]>([]);
-  const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const navigate = useNavigate();
+  const [step, setStep] = useState<AssignFlowStepId>(1);
   const [partyName, setPartyName] = useState<string>("");
-  const [showPartyNamePage, setShowPartyNamePage] = useState<boolean>(true);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [animationComplete, setAnimationComplete] = useState(false);
   const [errorDialog, setErrorDialog] = useState<{
     open: boolean;
     message: string;
     details?: string;
   }>({ message: "", open: false });
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [listState, dispatchList] = useReducer(listReducer, {
+    animationComplete: false,
+    assignments: [],
+    constraints: [],
+    players: [],
+  });
 
-  // Every visit starts a fresh exchange, so state begins empty on the party name page
+  const { players, constraints, assignments, animationComplete } = listState;
+
   useEffect(() => {
     clearAllData();
   }, []);
 
-  // Keep input focused when party name page is shown
   useEffect(() => {
-    if (showPartyNamePage && inputRef.current) {
-      // Focus immediately when page is shown
-      inputRef.current.focus();
-
-      const pendingTimeouts = new Set<ReturnType<typeof setTimeout>>();
-
-      const scheduleRefocus = () => {
-        const timeoutId = setTimeout(() => {
-          pendingTimeouts.delete(timeoutId);
-          if (
-            inputRef.current &&
-            showPartyNamePage &&
-            document.activeElement?.tagName !== "BUTTON"
-          ) {
-            inputRef.current.focus();
-          }
-        }, 10);
-        pendingTimeouts.add(timeoutId);
-      };
-
-      const handleBlur = () => {
-        scheduleRefocus();
-      };
-
-      const handleClick = (e: MouseEvent) => {
-        const target = e.target as HTMLElement;
-        if (target.tagName !== "BUTTON" && !target.closest("button")) {
-          scheduleRefocus();
-        }
-      };
-
-      const input = inputRef.current;
-      input.addEventListener("blur", handleBlur);
-      document.addEventListener("click", handleClick, true);
-
-      return () => {
-        input.removeEventListener("blur", handleBlur);
-        document.removeEventListener("click", handleClick, true);
-        for (const timeoutId of pendingTimeouts) {
-          clearTimeout(timeoutId);
-        }
-        pendingTimeouts.clear();
-      };
+    if (!isGenerating) {
+      return;
     }
-  }, [showPartyNamePage]);
+    const timer = setTimeout(() => {
+      setIsGenerating(false);
+      dispatchList({
+        patch: { animationComplete: true },
+        type: "patch",
+      });
+    }, 3000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isGenerating]);
+
+  const goToStep = (next: AssignFlowStepId) => {
+    setStep(next);
+  };
+
+  const persistPartyName = () => {
+    if (partyName.trim()) {
+      const formatted = toTitleCase(partyName.trim());
+      setPartyName(formatted);
+      savePartyName(formatted);
+    } else {
+      savePartyName("");
+    }
+  };
 
   const handleAddPlayer = (player: Player) => {
     addPlayer(player);
-    const data = getData();
-    setPlayers(data.players);
+    dispatchList({ type: "sync_from_storage" });
   };
 
   const handleRemovePlayer = (playerId: string) => {
     removePlayer(playerId);
-    const data = getData();
-    setPlayers(data.players);
-    setConstraints(data.constraints);
+    dispatchList({ type: "sync_from_storage" });
   };
 
   const handleToggleAdmin = (playerId: string) => {
     toggleAdmin(playerId);
-    const data = getData();
-    setPlayers(data.players);
+    dispatchList({ type: "sync_from_storage" });
   };
 
   const handleImportPlayers = (importedPlayers: Player[]) => {
@@ -132,23 +154,17 @@ function AssignPage() {
       return;
     }
     replacePlayers(importedPlayers);
-    const data = getData();
-    setPlayers(data.players);
-    setConstraints(data.constraints);
-    setAssignments(data.assignments);
-    setAnimationComplete(false);
+    dispatchList({ animationComplete: false, type: "sync_from_storage" });
   };
 
   const handleAddConstraint = (constraint: Constraint) => {
     addConstraint(constraint);
-    const data = getData();
-    setConstraints(data.constraints);
+    dispatchList({ type: "sync_from_storage" });
   };
 
   const handleRemoveConstraint = (constraintId: string) => {
     removeConstraint(constraintId);
-    const data = getData();
-    setConstraints(data.constraints);
+    dispatchList({ type: "sync_from_storage" });
   };
 
   const handleGenerateAssignments = () => {
@@ -162,24 +178,21 @@ function AssignPage() {
       return;
     }
 
-    // Start animation
     setIsGenerating(true);
-    setAnimationComplete(false);
+    dispatchList({
+      patch: { animationComplete: false },
+      type: "patch",
+    });
 
-    // Generate assignments immediately
     const result = generateAssignments(players, constraints);
 
     if (result.success && result.assignments) {
       saveAssignments(result.assignments);
-      setAssignments(result.assignments);
-
-      // Wait 3 seconds for animation, then show results
-      setTimeout(() => {
-        setIsGenerating(false);
-        setAnimationComplete(true);
-      }, 3000);
+      dispatchList({
+        patch: { assignments: result.assignments },
+        type: "patch",
+      });
     } else {
-      // If generation failed, stop animation immediately
       setIsGenerating(false);
       setErrorDialog({
         details: result.details,
@@ -191,100 +204,88 @@ function AssignPage() {
 
   const handleStartOver = () => {
     clearAssignments();
-    setAssignments([]);
-    setAnimationComplete(false);
+    dispatchList({
+      patch: { animationComplete: false, assignments: [] },
+      type: "patch",
+    });
   };
 
   const handleClearAll = () => {
     clearAllData();
-    setPlayers([]);
-    setConstraints([]);
-    setAssignments([]);
-    setAnimationComplete(false);
+    dispatchList({ type: "reset_lists" });
+    setStep(2);
   };
 
   const handleClearConstraints = () => {
     saveConstraints([]);
-    setConstraints([]);
+    dispatchList({
+      patch: { constraints: [] },
+      type: "patch",
+    });
   };
 
   const handlePartyNameChange = (value: string) => {
     setPartyName(toTitleCase(value));
   };
 
-  const handlePartyNameSubmit = () => {
-    if (partyName.trim()) {
-      const formatted = toTitleCase(partyName.trim());
-      setPartyName(formatted);
-      savePartyName(formatted);
-    } else {
-      savePartyName("");
-    }
-    setShowPartyNamePage(false);
-  };
-
-  const handleSkipPartyName = () => {
-    savePartyName("");
-    setPartyName("");
-    setShowPartyNamePage(false);
-  };
-
   const handlePartyNameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handlePartyNameSubmit();
+      persistPartyName();
+      goToStep(2);
     }
+  };
+
+  const handleStepBack = () => {
+    if (step > 1) {
+      goToStep((step - 1) as AssignFlowStepId);
+      return;
+    }
+    void navigate({ to: "/" });
   };
 
   const hasAssignments = assignments.length > 0 && animationComplete;
 
-  if (showPartyNamePage) {
-    return (
-      <AssignPartyNamePage
-        inputRef={inputRef}
-        partyName={partyName}
-        onPartyNameChange={handlePartyNameChange}
-        onPartyNameKeyDown={handlePartyNameKeyDown}
-        onSubmit={handlePartyNameSubmit}
-        onSkip={handleSkipPartyName}
-      />
-    );
+  const shellFooter = buildAssignShellFooter({
+    hasAssignments,
+    onBack: handleStepBack,
+    onGenerateAssignments: handleGenerateAssignments,
+    onGoToStep: goToStep,
+    onPersistPartyNameAndContinue: () => {
+      persistPartyName();
+      goToStep(2);
+    },
+    playersCount: players.length,
+    step,
+  });
+
+  if (isGenerating) {
+    return <AssignmentAnimation />;
   }
 
   return (
-    <div className="bg-background min-h-screen">
-      {isGenerating ? (
-        <AssignmentAnimation />
-      ) : (
-        <main className="container mx-auto px-4 py-8 pb-24 sm:pb-8">
-          {hasAssignments ? (
-            <div className="mx-auto max-w-4xl">
-              <ResultsDisplay
-                assignments={assignments}
-                players={players}
-                partyName={partyName}
-                onStartOver={handleStartOver}
-              />
-            </div>
-          ) : (
-            <AssignSetupView
-              partyName={partyName}
-              players={players}
-              constraints={constraints}
-              onAddPlayer={handleAddPlayer}
-              onImportPlayers={handleImportPlayers}
-              onRemovePlayer={handleRemovePlayer}
-              onToggleAdmin={handleToggleAdmin}
-              onClearAllPlayers={handleClearAll}
-              onAddConstraint={handleAddConstraint}
-              onRemoveConstraint={handleRemoveConstraint}
-              onClearConstraints={handleClearConstraints}
-              onGenerateAssignments={handleGenerateAssignments}
-            />
-          )}
-        </main>
-      )}
+    <>
+      <AssignStepperShell currentStep={step} {...shellFooter}>
+        <AssignFlowSteps
+          assignments={assignments}
+          constraints={constraints}
+          hasAssignments={hasAssignments}
+          onAddConstraint={handleAddConstraint}
+          onAddPlayer={handleAddPlayer}
+          onClearAllPlayers={handleClearAll}
+          onClearConstraints={handleClearConstraints}
+          onImportPlayers={handleImportPlayers}
+          onPartyNameChange={handlePartyNameChange}
+          onPartyNameKeyDown={handlePartyNameKeyDown}
+          onRemoveConstraint={handleRemoveConstraint}
+          onRemovePlayer={handleRemovePlayer}
+          onStartOver={handleStartOver}
+          onToggleAdmin={handleToggleAdmin}
+          partyName={partyName}
+          players={players}
+          step={step}
+        />
+      </AssignStepperShell>
 
-      {/* Error Dialog */}
       <Dialog
         open={errorDialog.open}
         onOpenChange={(open) => setErrorDialog({ ...errorDialog, open })}
@@ -305,20 +306,6 @@ function AssignPage() {
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Footer */}
-      <footer className="border-border mt-12 border-t py-8 sm:mt-20 sm:py-10">
-        <div className="text-muted-foreground container mx-auto px-4 text-center text-sm font-light tracking-wide">
-          <p>
-            <Link
-              to="/support"
-              className="text-foreground hover:text-primary underline underline-offset-4 transition-colors"
-            >
-              Support this project
-            </Link>
-          </p>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 }
