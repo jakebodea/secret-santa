@@ -2,8 +2,7 @@ import type { Assignment, Constraint, Player } from "../lib/types";
 import type { AssignFlowStepId } from "./assign-flow-metadata";
 import { ConstraintsForm } from "./constraints-form";
 import { ConstraintsList } from "./constraints-list";
-import { PlayerForm } from "./player-form";
-import { PlayersList } from "./players-list";
+import { ParticipantsSection } from "./participants-section";
 import { ResultsDisplay } from "./results-display";
 import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
@@ -71,25 +70,14 @@ export function AssignFlowSteps({
 
   if (step === 2) {
     return (
-      <div className="space-y-6">
-        <PlayerForm
-          onAddPlayer={onAddPlayer}
-          onImport={onImportPlayers}
-          existingPlayers={players}
-        />
-        <PlayersList
-          players={players}
-          onRemovePlayer={onRemovePlayer}
-          onToggleAdmin={onToggleAdmin}
-          onClearAll={onClearAllPlayers}
-        />
-        {players.length < 3 && (
-          <p className="text-muted-foreground text-center text-sm font-light tracking-wide">
-            Add {3 - players.length} more participant
-            {3 - players.length === 1 ? "" : "s"} to continue
-          </p>
-        )}
-      </div>
+      <ParticipantsSection
+        players={players}
+        onAddPlayer={onAddPlayer}
+        onImport={onImportPlayers}
+        onRemovePlayer={onRemovePlayer}
+        onToggleAdmin={onToggleAdmin}
+        onClearAll={onClearAllPlayers}
+      />
     );
   }
 
