@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import type { Player } from "../lib/types";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import { avatarFallbackToneForId } from "./ui/avatar-tones";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -21,12 +22,6 @@ interface PlayersListProps {
   onClearAll: () => void;
 }
 
-const AVATAR_COLORS = [
-  "bg-primary/10 text-primary",
-  "bg-secondary/10 text-secondary",
-  "bg-accent/40 text-foreground",
-];
-
 export function PlayersList({
   players,
   onRemovePlayer,
@@ -40,7 +35,7 @@ export function PlayersList({
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-normal tracking-tight sm:text-3xl">
+            <CardTitle variant="section">
               Participants ({players.length})
             </CardTitle>
           </div>
@@ -58,11 +53,13 @@ export function PlayersList({
     <Card>
       <CardHeader
         className="cursor-pointer sm:cursor-default"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => {
+          setIsExpanded(!isExpanded);
+        }}
       >
         <div className="flex items-center justify-between">
           <div className="flex flex-1 items-center gap-2">
-            <CardTitle className="text-2xl font-normal tracking-tight sm:text-3xl">
+            <CardTitle variant="section">
               Participants ({players.length})
               {players.length < 3 && (
                 <span className="text-muted-foreground ml-2 text-sm font-light sm:text-base">
@@ -78,13 +75,12 @@ export function PlayersList({
           </div>
           {players.length > 0 && (
             <Button
-              variant="ghost"
+              variant="destructive-ghost"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation();
                 onClearAll();
               }}
-              className="text-muted-foreground hover:text-destructive hover:bg-destructive/5"
             >
               <Trash2 className="h-4 w-4" />
               Clear
@@ -94,16 +90,14 @@ export function PlayersList({
       </CardHeader>
       <CardContent className={`sm:block ${isExpanded ? "block" : "hidden"}`}>
         <div className="space-y-3">
-          {players.map((player, index) => (
+          {players.map((player) => (
             <div
               key={player.id}
               className="bg-card hover:bg-muted/60 flex items-center justify-between gap-3 rounded-lg border p-3 transition-colors"
             >
               <div className="flex min-w-0 items-center gap-3">
                 <Avatar>
-                  <AvatarFallback
-                    className={`text-sm font-medium ${AVATAR_COLORS[index % AVATAR_COLORS.length]}`}
-                  >
+                  <AvatarFallback tone={avatarFallbackToneForId(player.id)}>
                     {player.name
                       .split(" ")
                       .map((n) => n[0])
@@ -116,7 +110,7 @@ export function PlayersList({
                   <div className="flex items-center gap-2">
                     <p className="font-normal tracking-wide">{player.name}</p>
                     {player.isAdmin && (
-                      <Badge variant="secondary" className="gap-1">
+                      <Badge variant="secondary">
                         <Crown className="h-3 w-3" />
                         Admin
                       </Badge>
@@ -129,23 +123,25 @@ export function PlayersList({
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-muted-foreground h-8 w-8 shrink-0"
-                  >
+                  <Button variant="ghost" size="icon-sm" className="shrink-0">
                     <MoreVertical className="h-4 w-4" />
                     <span className="sr-only">Options for {player.name}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => onToggleAdmin(player.id)}>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      onToggleAdmin(player.id);
+                    }}
+                  >
                     <Crown className="h-4 w-4" />
                     {player.isAdmin ? "Remove admin" : "Make admin"}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onClick={() => onRemovePlayer(player.id)}
+                    onClick={() => {
+                      onRemovePlayer(player.id);
+                    }}
                     variant="destructive"
                   >
                     <Trash2 className="h-4 w-4" />

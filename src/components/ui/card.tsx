@@ -1,15 +1,51 @@
+import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+const cardVariants = cva(
+  "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+  {
+    defaultVariants: {
+      variant: "default",
+    },
+    variants: {
+      variant: {
+        dashed: "border-muted-foreground/20 border-2 border-dashed shadow-sm",
+        default: "",
+        destructive: "border-destructive/50 bg-destructive/5 shadow-sm",
+        featured: "border-primary/20 bg-primary/5 border-2",
+        interactive: "hover:border-accent border-2 transition-colors",
+        muted: "bg-muted/50 shadow-none",
+        outline: "shadow-sm",
+      },
+    },
+  }
+);
+
+const cardTitleVariants = cva("leading-none font-semibold", {
+  defaultVariants: {
+    variant: "default",
+  },
+  variants: {
+    variant: {
+      default: "",
+      destructive: "text-destructive",
+      section: "text-2xl font-normal tracking-tight sm:text-3xl",
+    },
+  },
+});
+
+function Card({
+  className,
+  variant,
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof cardVariants>) {
   return (
     <div
       data-slot="card"
-      className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
-        className
-      )}
+      className={cn(cardVariants({ className, variant }))}
       {...props}
     />
   );
@@ -28,11 +64,15 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
+function CardTitle({
+  className,
+  variant,
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof cardTitleVariants>) {
   return (
     <div
       data-slot="card-title"
-      className={cn("leading-none font-semibold", className)}
+      className={cn(cardTitleVariants({ className, variant }))}
       {...props}
     />
   );

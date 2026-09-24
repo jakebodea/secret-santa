@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { Zap, Heart, ShieldCheck, ArrowRight } from "lucide-react";
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 
@@ -38,7 +38,9 @@ const HOVER_QUERY = "(hover: hover) and (pointer: fine)";
 function subscribeToHoverCapability(onChange: () => void) {
   const mediaQuery = window.matchMedia(HOVER_QUERY);
   mediaQuery.addEventListener("change", onChange);
-  return () => mediaQuery.removeEventListener("change", onChange);
+  return () => {
+    mediaQuery.removeEventListener("change", onChange);
+  };
 }
 
 function getHoverCapability() {
@@ -137,206 +139,205 @@ function HomePage() {
   const wiggleDuration = isHoverCapable ? 2 : 1.5;
 
   return (
-    <div className="bg-background min-h-screen">
-      <main className="container mx-auto px-4 py-6 sm:py-12 md:py-16">
-        <div className="mx-auto max-w-3xl space-y-6 text-center sm:space-y-8">
-          {/* Icon */}
-          <div className="flex justify-center">
-            <motion.img
-              src={isHovered ? "/santa-playful.svg" : "/santa.svg"}
-              alt="Secret Santa"
-              className="h-28 w-28 cursor-pointer transition-all sm:h-40 sm:w-40 md:h-48 md:w-48"
-              initial={{ opacity: 0 }}
-              animate={{
-                opacity: 1,
-                rotate:
-                  isAnimating && animationsComplete
-                    ? [0, -12, 12, -10, 10, -8, 8, -6, 6, -4, 4, -2, 2, 0]
-                    : 0,
-                scale: isAnimating && animationsComplete ? 1.15 : 1,
-                x:
-                  isAnimating && animationsComplete
-                    ? [0, -20, 20, -18, 18, -15, 15, -12, 12, -8, 8, -5, 5, 0]
-                    : 0,
-              }}
-              transition={{
-                opacity: { duration: 0.5, ease: "easeOut" },
-                rotate: {
-                  duration: wiggleDuration,
-                  ease: "easeOut",
-                  times: [
-                    0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
-                    0.95, 1,
-                  ],
-                },
-                scale: { duration: 0.3, ease: "easeOut" },
-                x: {
-                  duration: wiggleDuration,
-                  ease: "easeOut",
-                  times: [
-                    0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,
-                    0.95, 1,
-                  ],
-                },
-              }}
-              onMouseEnter={handleHoverStart}
-              onMouseLeave={handleHoverEnd}
-              onClick={() => {
-                startAnimation();
-              }}
-            />
-          </div>
+    <LazyMotion features={domAnimation}>
+      <div className="bg-background min-h-screen">
+        <main className="container mx-auto px-4 py-6 sm:py-12 md:py-16">
+          <div className="mx-auto max-w-3xl space-y-6 text-center sm:space-y-8">
+            {/* Icon */}
+            <div className="flex justify-center">
+              <m.img
+                src={isHovered ? "/santa-playful.svg" : "/santa.svg"}
+                alt="Secret Santa"
+                className="h-28 w-28 cursor-pointer transition-opacity transition-transform sm:h-40 sm:w-40 md:h-48 md:w-48"
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: 1,
+                  rotate:
+                    isAnimating && animationsComplete
+                      ? [0, -12, 12, -10, 10, -8, 8, -6, 6, -4, 4, -2, 2, 0]
+                      : 0,
+                  scale: isAnimating && animationsComplete ? 1.15 : 1,
+                  x:
+                    isAnimating && animationsComplete
+                      ? [0, -20, 20, -18, 18, -15, 15, -12, 12, -8, 8, -5, 5, 0]
+                      : 0,
+                }}
+                transition={{
+                  opacity: { duration: 0.5, ease: "easeOut" },
+                  rotate: {
+                    duration: wiggleDuration,
+                    ease: "easeOut",
+                    times: [
+                      0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
+                      0.9, 0.95, 1,
+                    ],
+                  },
+                  scale: { duration: 0.3, ease: "easeOut" },
+                  x: {
+                    duration: wiggleDuration,
+                    ease: "easeOut",
+                    times: [
+                      0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
+                      0.9, 0.95, 1,
+                    ],
+                  },
+                }}
+                onMouseEnter={handleHoverStart}
+                onMouseLeave={handleHoverEnd}
+                onClick={() => {
+                  startAnimation();
+                }}
+              />
+            </div>
 
-          {/* Heading */}
-          <div className="space-y-6">
-            <motion.h1
-              className="text-foreground text-4xl leading-[1.1] font-normal tracking-tight sm:text-6xl md:text-7xl"
-              initial={{ opacity: 0, y: -16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                delay: 0.1,
-                duration: 0.6,
-                ease: [0.23, 1, 0.32, 1],
-              }}
-            >
-              <span className="font-light italic">
-                {" "}
-                <span className="decoration-primary underline decoration-4">
-                  Super
+            {/* Heading */}
+            <div className="space-y-6">
+              <m.h1
+                className="text-foreground text-4xl leading-none font-normal tracking-tight sm:text-6xl md:text-7xl"
+                initial={{ opacity: 0, y: -16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.1,
+                  duration: 0.6,
+                  ease: [0.23, 1, 0.32, 1],
+                }}
+              >
+                <span className="font-light italic">
+                  {" "}
+                  <span className="decoration-primary underline decoration-4">
+                    Super
+                  </span>{" "}
+                  Simple
                 </span>{" "}
-                Simple
-              </span>{" "}
-              Secret Santa
-            </motion.h1>
-            <motion.p
-              className="text-muted-foreground text-lg font-light tracking-wide sm:text-2xl md:text-3xl"
-              initial={{ opacity: 0, y: -12 }}
-              animate={{ opacity: 1, y: 0 }}
+                Secret Santa
+              </m.h1>
+              <m.p
+                className="text-muted-foreground text-lg font-light tracking-wide sm:text-2xl md:text-3xl"
+                initial={{ opacity: 0, y: -12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.4,
+                  duration: 0.6,
+                  ease: [0.23, 1, 0.32, 1],
+                }}
+              >
+                Organize your gift exchange with this super simple tool!
+              </m.p>
+            </div>
+
+            {/* CTA Button */}
+            <m.div
+              className="space-y-3 pt-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{
-                delay: 0.4,
-                duration: 0.6,
-                ease: [0.23, 1, 0.32, 1],
+                delay: buttonRevealDelay,
+                duration: 0.7,
+                ease: "easeOut",
               }}
             >
-              Organize your gift exchange with this super simple tool!
-            </motion.p>
+              <Button onClick={handleGetStarted} size="cta">
+                Get started
+                <ArrowRight className="h-5 w-5" />
+              </Button>
+              <p className="text-muted-foreground text-sm font-light tracking-wide">
+                Takes about two minutes
+              </p>
+            </m.div>
+            {/* Features */}
+            <m.div
+              className="grid gap-2 pt-6 sm:gap-8 sm:pt-12 md:grid-cols-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{
+                delay: featureRevealDelay,
+                duration: 0.6,
+                ease: "easeOut",
+              }}
+            >
+              <m.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  delay: featureRevealDelay,
+                  duration: 0.6,
+                  ease: "easeOut",
+                }}
+              >
+                <FeatureCard
+                  icon={Zap}
+                  title="No Accounts"
+                  description={
+                    <>
+                      No signups, no logins, no hassle. Just add names and
+                      emails and <span className="underline">go</span>.
+                    </>
+                  }
+                  tone="primary"
+                />
+              </m.div>
+              <m.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  delay: featureRevealDelay,
+                  duration: 0.6,
+                  ease: "easeOut",
+                }}
+              >
+                <FeatureCard
+                  icon={Heart}
+                  title="Absolutely Free"
+                  description={
+                    <>
+                      No hidden costs, no premium tiers, no upsells.{" "}
+                      <span className="underline">Free</span> forever, for
+                      everyone.
+                    </>
+                  }
+                  tone="secondary"
+                />
+              </m.div>
+              <m.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  delay: featureRevealDelay,
+                  duration: 0.6,
+                  ease: "easeOut",
+                }}
+              >
+                <FeatureCard
+                  icon={ShieldCheck}
+                  title="Privacy First"
+                  description={
+                    <>
+                      Zero data stored or sold. Your info is{" "}
+                      <span className="underline">only</span> used to send
+                      assignments, then it’s gone.
+                    </>
+                  }
+                  tone="accent"
+                />
+              </m.div>
+            </m.div>
           </div>
+        </main>
 
-          {/* CTA Button */}
-          <motion.div
-            className="space-y-3 pt-2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{
-              delay: buttonRevealDelay,
-              duration: 0.7,
-              ease: "easeOut",
-            }}
-          >
-            <Button
-              onClick={handleGetStarted}
-              className="h-11 gap-2 px-6 text-base font-medium tracking-wide sm:h-12 sm:px-8"
-            >
-              Get started
-              <ArrowRight className="h-5 w-5" />
-            </Button>
-            <p className="text-muted-foreground text-sm font-light tracking-wide">
-              Takes about two minutes
+        {/* Footer */}
+        <footer className="border-border mt-8 border-t py-6 sm:mt-16 sm:py-10">
+          <div className="text-muted-foreground container mx-auto space-y-2 px-4 text-center text-sm font-light tracking-wide">
+            <p>
+              <Link
+                to="/support"
+                className="text-foreground hover:text-primary underline underline-offset-4 transition-colors"
+              >
+                Support this project
+              </Link>
             </p>
-          </motion.div>
-          {/* Features */}
-          <motion.div
-            className="grid gap-2 pt-6 sm:gap-8 sm:pt-12 md:grid-cols-3"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{
-              delay: featureRevealDelay,
-              duration: 0.6,
-              ease: "easeOut",
-            }}
-          >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{
-                delay: featureRevealDelay,
-                duration: 0.6,
-                ease: "easeOut",
-              }}
-            >
-              <FeatureCard
-                icon={Zap}
-                title="No Accounts"
-                description={
-                  <>
-                    No signups, no logins, no hassle. Just add names and emails
-                    and <span className="underline">go</span>.
-                  </>
-                }
-                colorClass="primary"
-              />
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{
-                delay: featureRevealDelay,
-                duration: 0.6,
-                ease: "easeOut",
-              }}
-            >
-              <FeatureCard
-                icon={Heart}
-                title="Absolutely Free"
-                description={
-                  <>
-                    No hidden costs, no premium tiers, no upsells.{" "}
-                    <span className="underline">Free</span> forever, for
-                    everyone.
-                  </>
-                }
-                colorClass="secondary"
-              />
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{
-                delay: featureRevealDelay,
-                duration: 0.6,
-                ease: "easeOut",
-              }}
-            >
-              <FeatureCard
-                icon={ShieldCheck}
-                title="Privacy First"
-                description={
-                  <>
-                    Zero data stored or sold. Your info is{" "}
-                    <span className="underline">only</span> used to send
-                    assignments, then it’s gone.
-                  </>
-                }
-                colorClass="accent"
-              />
-            </motion.div>
-          </motion.div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-border mt-8 border-t py-6 sm:mt-16 sm:py-10">
-        <div className="text-muted-foreground container mx-auto space-y-2 px-4 text-center text-sm font-light tracking-wide">
-          <p>
-            <Link
-              to="/support"
-              className="text-foreground hover:text-primary underline underline-offset-4 transition-colors"
-            >
-              Support this project
-            </Link>
-          </p>
-        </div>
-      </footer>
-    </div>
+          </div>
+        </footer>
+      </div>
+    </LazyMotion>
   );
 }

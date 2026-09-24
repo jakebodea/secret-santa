@@ -272,10 +272,11 @@ function ChangelogPage() {
             <div className="relative mx-auto max-w-4xl">
               <Separator
                 orientation="vertical"
-                className="bg-foreground/30 absolute top-4 left-2"
+                variant="muted"
+                className="absolute top-4 left-2"
               />
-              {timelineData.map((entry, index) => (
-                <div key={index} className="relative mb-12 pl-8">
+              {timelineData.map((entry) => (
+                <div key={entry.title} className="relative mb-12 pl-8">
                   <div className="bg-secondary absolute top-3.5 left-0 flex size-4 items-center justify-center rounded-full" />
                   <h4 className="py-2 text-2xl leading-none font-medium sm:text-3xl xl:mb-2 xl:px-3">
                     {entry.title}

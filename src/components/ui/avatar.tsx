@@ -1,7 +1,26 @@
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
+import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+
+const avatarFallbackVariants = cva(
+  "flex size-full items-center justify-center rounded-full text-sm font-medium",
+  {
+    defaultVariants: {
+      tone: "muted",
+    },
+    variants: {
+      tone: {
+        accent: "bg-accent/40 text-foreground",
+        muted: "bg-muted text-foreground",
+        primary: "bg-primary/10 text-primary",
+        secondary: "bg-secondary/10 text-secondary",
+      },
+    },
+  }
+);
 
 function Avatar({
   className,
@@ -34,15 +53,14 @@ function AvatarImage({
 
 function AvatarFallback({
   className,
+  tone,
   ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
+}: React.ComponentProps<typeof AvatarPrimitive.Fallback> &
+  VariantProps<typeof avatarFallbackVariants>) {
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
-      className={cn(
-        "bg-muted flex size-full items-center justify-center rounded-full",
-        className
-      )}
+      className={cn(avatarFallbackVariants({ className, tone }))}
       {...props}
     />
   );

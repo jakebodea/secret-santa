@@ -1,8 +1,34 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import { XIcon } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
+
+const dialogTitleVariants = cva("leading-none font-medium", {
+  defaultVariants: {
+    variant: "default",
+  },
+  variants: {
+    variant: {
+      default: "text-2xl sm:text-3xl",
+      compact: "text-xl sm:text-2xl",
+    },
+  },
+});
+
+const dialogDescriptionVariants = cva("text-muted-foreground", {
+  defaultVariants: {
+    variant: "default",
+  },
+  variants: {
+    variant: {
+      body: "pt-2 text-base",
+      default: "text-sm",
+    },
+  },
+});
 
 function Dialog({
   ...props
@@ -103,12 +129,14 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
 
 function DialogTitle({
   className,
+  variant,
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Title>) {
+}: React.ComponentProps<typeof DialogPrimitive.Title> &
+  VariantProps<typeof dialogTitleVariants>) {
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-2xl leading-none font-medium sm:text-3xl", className)}
+      className={cn(dialogTitleVariants({ className, variant }))}
       {...props}
     />
   );
@@ -116,12 +144,14 @@ function DialogTitle({
 
 function DialogDescription({
   className,
+  variant,
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Description>) {
+}: React.ComponentProps<typeof DialogPrimitive.Description> &
+  VariantProps<typeof dialogDescriptionVariants>) {
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn(dialogDescriptionVariants({ className, variant }))}
       {...props}
     />
   );

@@ -23,9 +23,7 @@ export function ConstraintsList({
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-normal tracking-tight sm:text-3xl">
-              Exclusion Rules
-            </CardTitle>
+            <CardTitle variant="section">Exclusion Rules</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
@@ -42,16 +40,9 @@ export function ConstraintsList({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-2xl font-normal tracking-tight sm:text-3xl">
-            Exclusion Rules
-          </CardTitle>
+          <CardTitle variant="section">Exclusion Rules</CardTitle>
           {constraints.length > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClearAll}
-              className="text-muted-foreground hover:text-destructive hover:bg-destructive/5"
-            >
+            <Button variant="destructive-ghost" size="sm" onClick={onClearAll}>
               <Trash2 className="h-4 w-4" />
               Clear
             </Button>
@@ -81,11 +72,13 @@ export function ConstraintsList({
                 </span>
               </div>
               <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onRemoveConstraint(constraint.id)}
+                variant="destructive-ghost"
+                size="icon-sm"
+                onClick={() => {
+                  onRemoveConstraint(constraint.id);
+                }}
                 aria-label="Remove rule"
-                className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 absolute right-1 h-8 w-8"
+                className="absolute right-1"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

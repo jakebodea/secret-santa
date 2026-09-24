@@ -1,29 +1,29 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
+const colorClasses = {
+  accent: "bg-accent/25 text-gold",
+  primary: "bg-primary/10 text-primary",
+  secondary: "bg-secondary/10 text-secondary",
+} as const;
+
 interface FeatureCardProps {
   icon: LucideIcon;
   title: string;
   description: ReactNode;
-  colorClass: "primary" | "secondary" | "accent";
+  tone: keyof typeof colorClasses;
 }
 
 export function FeatureCard({
   icon: Icon,
   title,
   description,
-  colorClass,
+  tone,
 }: FeatureCardProps) {
-  const colorClasses = {
-    accent: "bg-accent/25 text-gold",
-    primary: "bg-primary/10 text-primary",
-    secondary: "bg-secondary/10 text-secondary",
-  };
-
   return (
     <div className="flex flex-col items-center space-y-3 p-6">
       <div
-        className={`h-14 w-14 rounded-full ${colorClasses[colorClass]} flex items-center justify-center`}
+        className={`flex h-14 w-14 items-center justify-center rounded-full ${colorClasses[tone]}`}
       >
         <Icon className="h-7 w-7" />
       </div>

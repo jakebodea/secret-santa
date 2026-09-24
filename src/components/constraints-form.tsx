@@ -64,9 +64,7 @@ export function ConstraintsForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl font-normal tracking-tight sm:text-3xl">
-          Add Exclusion Rule
-        </CardTitle>
+        <CardTitle variant="section">Add Exclusion Rule</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -94,13 +92,13 @@ export function ConstraintsForm({
                   <SelectValue placeholder="Select player" />
                 </SelectTrigger>
                 <SelectContent>
-                  {players
-                    .filter((player) => player.id !== giverId)
-                    .map((player) => (
+                  {players.map((player) =>
+                    player.id === giverId ? null : (
                       <SelectItem key={player.id} value={player.id}>
                         {player.name}
                       </SelectItem>
-                    ))}
+                    )
+                  )}
                 </SelectContent>
               </Select>
             </div>

@@ -2,8 +2,8 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "eslint.config.js",
-    "prettier.config.js",
+    "oxlint.config.ts",
+    "oxfmt.config.ts",
     "vite.config.js"
   ],
 

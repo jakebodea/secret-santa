@@ -1,8 +1,12 @@
-import type { Player, Constraint, Assignment, SecretSantaData } from "./types";
+import {
+  readPersistedJson,
+  removePersisted,
+  writePersistedJson,
+} from "./client-persist";
+import type { Assignment, Constraint, Player, SecretSantaData } from "./types";
 
 const STORAGE_KEY = "secret-santa-data";
 
-// Default empty data structure
 const defaultData: SecretSantaData = {
   assignments: [],
   constraints: [],
@@ -10,38 +14,14 @@ const defaultData: SecretSantaData = {
   players: [],
 };
 
-// Get all data from localStorage
 export function getData(): SecretSantaData {
-  if (typeof window === "undefined") {
-    return defaultData;
-  }
-
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) {
-      return defaultData;
-    }
-    return JSON.parse(stored) as SecretSantaData;
-  } catch (error) {
-    console.error("Error reading from localStorage:", error);
-    return defaultData;
-  }
+  return readPersistedJson(STORAGE_KEY, defaultData);
 }
 
-// Save all data to localStorage
 export function saveData(data: SecretSantaData): void {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch (error) {
-    console.error("Error writing to localStorage:", error);
-  }
+  writePersistedJson(STORAGE_KEY, data);
 }
 
-// Player operations
 export function getPlayers(): Player[] {
   return getData().players;
 }
@@ -61,11 +41,9 @@ export function addPlayer(player: Player): void {
 export function removePlayer(playerId: string): void {
   const data = getData();
   data.players = data.players.filter((p) => p.id !== playerId);
-  // Also remove any constraints involving this player
   data.constraints = data.constraints.filter(
     (c) => c.giverId !== playerId && c.receiverId !== playerId
   );
-  // If we removed the last admin and there are still players, make the first one admin
   const hasAdmin = data.players.some((p) => p.isAdmin);
   if (!hasAdmin && data.players.length > 0) {
     data.players[0].isAdmin = true;
@@ -80,13 +58,10 @@ export function toggleAdmin(playerId: string): void {
     return;
   }
 
-  // Toggle the admin status
   player.isAdmin = !player.isAdmin;
 
-  // Ensure at least one admin exists
   const hasAdmin = data.players.some((p) => p.isAdmin);
   if (!hasAdmin && data.players.length > 0) {
-    // If no admin, make the first player admin (or restore the current player)
     data.players[0].isAdmin = true;
   }
 
@@ -96,13 +71,11 @@ export function toggleAdmin(playerId: string): void {
 export function replacePlayers(players: Player[]): void {
   const data = getData();
   data.players = players;
-  // Clear constraints and assignments when replacing players
   data.constraints = [];
   data.assignments = [];
   saveData(data);
 }
 
-// Constraint operations
 export function getConstraints(): Constraint[] {
   return getData().constraints;
 }
@@ -125,7 +98,6 @@ export function removeConstraint(constraintId: string): void {
   saveData(data);
 }
 
-// Assignment operations
 export function getAssignments(): Assignment[] {
   return getData().assignments;
 }
@@ -142,7 +114,6 @@ export function clearAssignments(): void {
   saveData(data);
 }
 
-// Party name operations
 export function getPartyName(): string | undefined {
   return getData().partyName;
 }
@@ -153,14 +124,6 @@ export function savePartyName(partyName: string): void {
   saveData(data);
 }
 
-// Clear all data
 export function clearAllData(): void {
-  if (typeof window === "undefined") {
-    return;
-  }
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch (error) {
-    console.error("Error clearing localStorage:", error);
-  }
+  removePersisted(STORAGE_KEY);
 }
