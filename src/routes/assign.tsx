@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 
+import { AssignPartyNamePage } from "../components/assign-party-name-page";
+import { AssignSetupView } from "../components/assign-setup-view";
 import { AssignmentAnimation } from "../components/assignment-animation";
 import { ResultsDisplay } from "../components/results-display";
 import { Button } from "../components/ui/button";
@@ -28,8 +30,6 @@ import {
 } from "../lib/storage";
 import type { Player, Constraint, Assignment } from "../lib/types";
 import { toTitleCase } from "../lib/utils";
-import { AssignPartyNamePage } from "./assign-party-name-page";
-import { AssignSetupView } from "./assign-setup-view";
 
 export const Route = createFileRoute("/assign")({
   component: AssignPage,

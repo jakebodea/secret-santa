@@ -4,7 +4,8 @@
     "**/*.tsx",
     "oxlint.config.ts",
     "oxfmt.config.ts",
-    "vite.config.js"
+    "vite.config.js",
+    "vitest.config.ts"
   ],
 
   "compilerOptions": {
