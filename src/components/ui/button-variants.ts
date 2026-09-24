@@ -18,6 +18,7 @@ export const buttonVariants = cva(
         cta: "h-11 gap-2 px-6 text-base tracking-wide has-[>svg]:px-4 sm:h-12 sm:px-8",
         support: "h-10 w-full text-sm sm:h-11",
         supportLg: "h-11 w-full text-base sm:h-12",
+        bar: "h-10 min-w-0 flex-1 gap-1 px-3",
         wide: "h-10 gap-2 px-4 sm:px-6",
       },
       variant: {
