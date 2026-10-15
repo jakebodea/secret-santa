@@ -21,7 +21,7 @@ export const Route = createFileRoute("/support")({
 
 function SupportPage() {
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-background min-h-dvh">
       <main className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
         <div className="mx-auto max-w-3xl space-y-8">
           {/* Header */}

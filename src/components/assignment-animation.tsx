@@ -48,7 +48,7 @@ export function AssignmentAnimation() {
   }, [currentIndex, isVisible]);
 
   return (
-    <div className="bg-background flex min-h-screen items-center justify-center">
+    <div className="bg-background flex min-h-dvh items-center justify-center">
       <div className="space-y-8 text-center">
         <LoadingDots />
 

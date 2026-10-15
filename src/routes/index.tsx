@@ -140,7 +140,7 @@ function HomePage() {
 
   return (
     <LazyMotion features={domAnimation}>
-      <div className="bg-background min-h-screen">
+      <div className="bg-background min-h-dvh">
         <main className="container mx-auto px-4 py-6 sm:py-12 md:py-16">
           <div className="mx-auto max-w-3xl space-y-6 text-center sm:space-y-8">
             {/* Icon */}

@@ -105,7 +105,7 @@ function ResultsPage() {
       : null;
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-background min-h-dvh">
       <main className="container mx-auto px-4 py-8">
         <div className="mx-auto max-w-6xl space-y-8">
           {/* Header */}

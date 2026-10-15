@@ -12,7 +12,8 @@ const Toaster = ({ ...props }: ToasterProps) => (
   <Sonner
     theme="light"
     position="top-center"
-    offset={16}
+    offset={{ top: "calc(16px + env(safe-area-inset-top))" }}
+    mobileOffset={{ top: "calc(16px + env(safe-area-inset-top))" }}
     icons={{
       error: <OctagonXIcon className="size-4" />,
       info: <InfoIcon className="size-4" />,
