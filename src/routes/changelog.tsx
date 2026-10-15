@@ -255,7 +255,7 @@ export const Route = createFileRoute("/changelog")({
 
 function ChangelogPage() {
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-background min-h-dvh">
       <main className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
         <section className="bg-background py-8">
           <div className="container">

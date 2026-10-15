@@ -44,8 +44,13 @@ export const Route = createRootRoute({
         charSet: "utf-8",
       },
       {
-        content: "width=device-width, initial-scale=1",
+        content: "width=device-width, initial-scale=1, viewport-fit=cover",
         name: "viewport",
+      },
+      {
+        // Keep in sync with --background in styles.css
+        content: "#fdf7f1",
+        name: "theme-color",
       },
       {
         title: "Secret Santa - Organize Your Gift Exchange",
@@ -125,6 +130,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         />
       </head>
       <body>
+        {/* Fixed edge strips Safari samples to tint its status bar and toolbar */}
+        <div aria-hidden="true" className="edge-top" />
+        <div aria-hidden="true" className="edge-bottom" />
         {children}
         <Toaster />
         <TanStackRouterDevtools />

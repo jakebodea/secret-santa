@@ -19,7 +19,7 @@ export const Route = createFileRoute("/test-support")({
 
 function TestSupportPage() {
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-background min-h-dvh">
       <main className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
         <div className="mx-auto max-w-4xl">
           <h1 className="text-foreground mb-8 text-center text-3xl font-normal tracking-tight sm:text-4xl">

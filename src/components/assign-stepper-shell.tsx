@@ -35,15 +35,15 @@ export function AssignStepperShell({
 
   if (variant === "minimal") {
     return (
-      <div className="bg-background min-h-screen">
+      <div className="bg-background min-h-dvh">
         <main className="container mx-auto px-4 py-8">{children}</main>
       </div>
     );
   }
 
   return (
-    <div className="bg-background flex min-h-screen flex-col">
-      <header className="fixed inset-x-0 top-0 z-30 flex items-center justify-between px-5 py-5 sm:px-6 sm:py-6">
+    <div className="bg-background flex min-h-dvh flex-col">
+      <header className="top-safe-0 px-safe-5 sm:px-safe-6 fixed inset-x-0 z-30 flex items-center justify-between py-5 sm:py-6">
         <Link
           to="/"
           className="text-muted-foreground hover:text-foreground text-sm font-light tracking-wide transition-colors"
@@ -58,7 +58,7 @@ export function AssignStepperShell({
         </Link>
       </header>
 
-      <main className="container mx-auto flex flex-1 flex-col px-4 pt-16 pb-28 sm:max-w-3xl sm:pt-20 sm:pb-32">
+      <main className="pt-safe-16 pb-safe-28 sm:pt-safe-20 sm:pb-safe-32 container mx-auto flex flex-1 flex-col px-4 sm:max-w-3xl">
         <div className="mb-8 space-y-3 text-center sm:mb-10">
           <h1 className="text-foreground text-3xl leading-tight font-normal tracking-tight sm:text-4xl md:text-5xl">
             {stepMeta.title}
@@ -72,7 +72,7 @@ export function AssignStepperShell({
       </main>
 
       {showActions ? (
-        <div className="pointer-events-none fixed inset-x-0 bottom-6 z-40 flex justify-center px-4 sm:bottom-8">
+        <div className="bottom-safe-6 sm:bottom-safe-8 pointer-events-none fixed inset-x-0 z-40 flex justify-center px-4">
           <div className="border-border bg-card/95 supports-[backdrop-filter]:bg-card/90 pointer-events-auto flex w-full max-w-md min-w-[min(100%,18rem)] gap-2 rounded-lg border p-2 shadow-sm backdrop-blur-md">
             {showBack && onBack ? (
               <Button
