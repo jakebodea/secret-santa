@@ -189,13 +189,13 @@ function HomePage() {
           {/* Heading */}
           <div className="space-y-6">
             <h1 className="animate-reveal reveal-order-1 text-foreground text-4xl leading-tight font-medium tracking-tight sm:text-6xl">
-              <span className="block italic">
+              <span className="whitespace-nowrap italic">
                 <span className="decoration-primary underline decoration-4 underline-offset-4">
                   Super
                 </span>{" "}
                 Simple
-              </span>
-              Secret Santa
+              </span>{" "}
+              <span className="whitespace-nowrap">Secret Santa</span>
             </h1>
             <p className="animate-reveal reveal-order-2 text-muted-foreground text-lg font-light tracking-wide sm:text-2xl">
               Organize your gift exchange with this super simple tool!
