@@ -71,8 +71,6 @@ const FINAL_HOLD = 1100;
 export interface DrawSchedule {
   shakeAt: number;
   exitAt: number;
-  /** When the last envelope pops out of the sack. */
-  lastPopAt: number;
   /** When the last envelope has landed. */
   landedAt: number;
   /** When the screen hands over to the results. */
@@ -84,11 +82,15 @@ export function drawSchedule(cardCount: number): DrawSchedule {
   const lastDropEnd = DROP_START + lastIndex * DROP_STAGGER + DROP_DURATION;
   const shakeAt = lastDropEnd + SHAKE_DELAY;
   const exitAt = shakeAt + SHAKE_DURATION + EXIT_GAP;
-  const lastRiseAt = exitAt + lastIndex * EXIT_STAGGER;
-  const lastPopAt = lastRiseAt + FADE_IN + RISE_DURATION / 2;
-  const landedAt = lastRiseAt + EXIT_DURATION;
+  const landedAt = exitAt + lastIndex * EXIT_STAGGER + EXIT_DURATION;
   const total = landedAt + FINAL_HOLD;
-  return { exitAt, landedAt, lastPopAt, shakeAt, total };
+  return { exitAt, landedAt, shakeAt, total };
+}
+
+/** When an envelope shoots out of the sack's mouth. */
+export function popAt(index: number, count: number) {
+  const { exitAt } = drawSchedule(count);
+  return exitAt + index * EXIT_STAGGER + FADE_IN + RISE_DURATION / 2;
 }
 
 /** How long the draw plays before the results show. */

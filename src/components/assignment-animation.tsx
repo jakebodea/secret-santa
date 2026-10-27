@@ -11,6 +11,7 @@ import {
   cardTrack,
   drawSchedule,
   pickCardPlayers,
+  popAt,
   sackTrack,
 } from "../lib/draw-timeline";
 import { EASE_OUT } from "../lib/motion";
@@ -33,19 +34,23 @@ const STAGE_VARS = {
 } as React.CSSProperties;
 
 const SPARKLE_COLORS = ["bg-gold", "bg-primary", "bg-gold", "bg-secondary"];
-const SPARKLES = Array.from({ length: 14 }, (_, step) => {
-  // Golden-angle spread looks random but renders the same every time.
-  const angle = step * 2.39996;
-  const distance = 60 + (step % 4) * 18;
-  return {
-    className: SPARKLE_COLORS[step % SPARKLE_COLORS.length],
-    id: `sparkle-${step}`,
-    spin: (step % 2 === 0 ? 1 : -1) * (180 + step * 20),
-    x: Math.cos(angle) * distance,
-    // Fountains up out of the sack's mouth before it falls.
-    y: -Math.abs(Math.sin(angle)) * distance * 0.9 - 20,
-  };
-});
+const SPARKLES_PER_BURST = 8;
+/** One small burst per envelope, each turned a little so no two match. */
+function burstPieces(burst: number) {
+  return Array.from({ length: SPARKLES_PER_BURST }, (_, step) => {
+    // Golden-angle spread looks random but renders the same every time.
+    const angle = step * 2.39996 + burst * 0.9;
+    const distance = 40 + (step % 4) * 14;
+    return {
+      className: SPARKLE_COLORS[(step + burst) % SPARKLE_COLORS.length],
+      id: `sparkle-${burst}-${step}`,
+      spin: (step % 2 === 0 ? 1 : -1) * (180 + step * 25),
+      x: Math.cos(angle) * distance,
+      // Fountains up out of the sack's mouth before it falls.
+      y: -Math.abs(Math.sin(angle)) * distance - 16,
+    };
+  });
+}
 
 interface Message {
   at: number;
@@ -169,28 +174,30 @@ function SackLayer({ count, reduceMotion, children }: SackLayerProps) {
   );
 }
 
+/** A pop of confetti out of the sack with every envelope. */
 function Sparkles({ count }: { count: number }) {
-  const { lastPopAt } = drawSchedule(count);
-  return SPARKLES.map((sparkle) => (
-    <m.span
-      key={sparkle.id}
-      className={`absolute top-(--sack-mouth-y) left-1/2 h-2.5 w-1.5 rounded-xs ${sparkle.className}`}
-      initial={{ opacity: 0, transform: "translate(0px, 0px) rotate(0deg)" }}
-      animate={{
-        opacity: [0, 1, 1, 0],
-        transform: [
-          "translate(0px, 0px) rotate(0deg)",
-          `translate(${sparkle.x / 2}px, ${sparkle.y}px) rotate(${sparkle.spin / 2}deg)`,
-          `translate(${sparkle.x}px, ${sparkle.y + 40}px) rotate(${sparkle.spin}deg)`,
-        ],
-      }}
-      transition={{
-        delay: lastPopAt / SECOND,
-        duration: 0.9,
-        ease: EASE_OUT,
-      }}
-    />
-  ));
+  return Array.from({ length: count }, (_, burst) =>
+    burstPieces(burst).map((sparkle) => (
+      <m.span
+        key={sparkle.id}
+        className={`absolute top-(--sack-mouth-y) left-1/2 h-2 w-1.5 rounded-xs ${sparkle.className}`}
+        initial={{ opacity: 0, transform: "translate(0px, 0px) rotate(0deg)" }}
+        animate={{
+          opacity: [0, 1, 1, 0],
+          transform: [
+            "translate(0px, 0px) rotate(0deg)",
+            `translate(${sparkle.x / 2}px, ${sparkle.y}px) rotate(${sparkle.spin / 2}deg)`,
+            `translate(${sparkle.x}px, ${sparkle.y + 36}px) rotate(${sparkle.spin}deg)`,
+          ],
+        }}
+        transition={{
+          delay: popAt(burst, count) / SECOND,
+          duration: 0.8,
+          ease: EASE_OUT,
+        }}
+      />
+    ))
+  );
 }
 
 interface AssignmentAnimationProps {
