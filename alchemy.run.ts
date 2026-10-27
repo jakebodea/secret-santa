@@ -5,7 +5,8 @@
  *
  *   all stages: the TanStack Start Worker, a Cloudflare Email binding, a per-IP
  *   rate limit and a Turnstile widget guarding /api/send-emails
- *   prod only: supersimplesecretsanta.com, Email Sending on the apex, DMARC
+ *   prod only: supersimplesecretsanta.com (workers.dev off), Email Sending on
+ *   the apex, DMARC, and the zone's bot settings
  *
  *   bun run dev                         # alchemy dev, stage dev-<worktree>
  *   bun alchemy deploy --stage pr-<n>   # a preview (CI does this for labelled PRs)
@@ -85,6 +86,15 @@ const productionMail = Effect.gen(function* registerProductionMail() {
     type: "TXT",
     zoneId,
   });
+  yield* Cloudflare.BotManagement.BotManagement("Bots", {
+    // Keep AI crawlers from training on the site, as the zone already did.
+    aiTraining: "block",
+    // Bot Fight Mode challenges every datacenter IP, including CI's smoke test, and
+    // can't be skipped per path. Turnstile and SEND_LIMIT guard the one endpoint worth
+    // abusing (/api/send-emails); the pages are static.
+    fightMode: false,
+    zoneId,
+  });
 });
 
 export default Alchemy.Stack(
@@ -141,6 +151,8 @@ export default Alchemy.Stack(
         TURNSTILE_SITE_KEY: turnstile.sitekey,
       },
       name: stage.workerName,
+      // Prod answers only on its domain, so nothing reaches it around the zone's settings.
+      workersDev: stage.domain === undefined,
       observability: observability(stage.production),
     });
 
