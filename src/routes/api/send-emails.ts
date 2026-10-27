@@ -8,37 +8,19 @@ import SecretSantaAssignment from "../../emails/secret-santa-assignment";
 import { env } from "../../env";
 import { planMail } from "../../lib/assignment-mail";
 import type { OutgoingMail } from "../../lib/assignment-mail";
+import { verifyTurnstile } from "../../lib/turnstile";
 import type { Player, Assignment } from "../../lib/types";
 
-// 1 hour
-const COOLDOWN_MS = 60 * 60 * 1000;
-const COOLDOWN_COOKIE = "ss_send_cooldown";
-
-function parseCookies(header: string | null): Record<string, string> {
-  if (!header) {
-    return {};
-  }
-  const cookies: Record<string, string> = {};
-  for (const part of header.split(";")) {
-    const [key, ...rest] = part.trim().split("=");
-    if (key) {
-      cookies[key] = rest.join("=");
-    }
-  }
-  return cookies;
-}
-
-function buildCooldownCookie(expiresAtMs: number): string {
-  // Use Max-Age rather than Expires for simplicity; set HttpOnly so JS can't mutate it easily
-  const maxAgeSec = Math.max(0, Math.ceil((expiresAtMs - Date.now()) / 1000));
-  return `${COOLDOWN_COOKIE}=${expiresAtMs}; Max-Age=${maxAgeSec}; Path=/; SameSite=Lax; Secure; HttpOnly`;
-}
+/** A party bigger than this is almost certainly not a party. */
+const MAX_PLAYERS = 100;
+/** Seconds a client waits after hitting `SEND_LIMIT` (its period, see alchemy.run.ts). */
+const RATE_LIMIT_RETRY_SECONDS = 60;
 
 interface RequestBody {
-  players: Player[];
-  assignments: Assignment[];
+  players?: Player[];
+  assignments?: Assignment[];
   partyName?: string;
-  bypassCooldown?: boolean;
+  turnstileToken?: string;
 }
 
 const renderMail = (mail: OutgoingMail) =>
@@ -87,42 +69,44 @@ export const Route = createFileRoute("/api/send-emails")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        try {
-          const { players, assignments, partyName, bypassCooldown } =
-            (await request.json()) as RequestBody;
-          // Basic per-browser-session cooldown using an HttpOnly cookie (unless bypass requested)
-          if (!bypassCooldown) {
-            const cookies = parseCookies(request.headers.get("cookie"));
-            const lastSentRaw = cookies[COOLDOWN_COOKIE];
-            if (lastSentRaw) {
-              const lastSent = Number(lastSentRaw);
-              if (!Number.isNaN(lastSent)) {
-                const now = Date.now();
-                const elapsed = now - lastSent;
-                if (elapsed < COOLDOWN_MS) {
-                  const remainingMs = COOLDOWN_MS - elapsed;
-                  const retryAfterSec = Math.max(
-                    1,
-                    Math.ceil(remainingMs / 1000)
-                  );
-                  return json(
-                    {
-                      error:
-                        "Please wait before sending emails again. Try once per hour.",
-                    },
-                    {
-                      headers: {
-                        "Retry-After": String(retryAfterSec),
-                      },
-                      status: 429,
-                    }
-                  );
-                }
-              }
+        // Anyone can call this endpoint, and it mails arbitrary addresses from our
+        // domain: rate limit per IP, then require a fresh Turnstile token per send.
+        const ip = request.headers.get("cf-connecting-ip");
+        const { success: underLimit } = await env.SEND_LIMIT.limit({
+          key: ip ?? "unknown",
+        });
+        if (!underLimit) {
+          return json(
+            {
+              error: "Too many sends from this network. Try again in a minute.",
+            },
+            {
+              headers: { "Retry-After": String(RATE_LIMIT_RETRY_SECONDS) },
+              status: 429,
             }
+          );
+        }
+
+        try {
+          const { players, assignments, partyName, turnstileToken } =
+            (await request.json()) as RequestBody;
+
+          const human = await verifyTurnstile({
+            fetch: fetch.bind(globalThis),
+            remoteIp: ip,
+            secret: env.TURNSTILE_SECRET_KEY,
+            token: turnstileToken ?? "",
+          });
+          if (!human.ok) {
+            return json(
+              {
+                details: human.codes.join(", "),
+                error: "Verification failed. Refresh the page and try again.",
+              },
+              { status: 403 }
+            );
           }
 
-          // Validate input
           if (
             !players ||
             !assignments ||
@@ -131,6 +115,15 @@ export const Route = createFileRoute("/api/send-emails")({
           ) {
             return json(
               { error: "Invalid request: missing players or assignments" },
+              { status: 400 }
+            );
+          }
+          if (
+            players.length > MAX_PLAYERS ||
+            assignments.length > MAX_PLAYERS
+          ) {
+            return json(
+              { error: `Parties are limited to ${MAX_PLAYERS} participants` },
               { status: 400 }
             );
           }
@@ -151,21 +144,12 @@ export const Route = createFileRoute("/api/send-emails")({
           // Participants already have their assignments; an admin summary failure is logged, not fatal.
           await sendAll(admins);
 
-          return json(
-            {
-              adminCount: admins.length,
-              message: `Successfully sent ${participants.length} participant emails and ${admins.length} admin emails`,
-              participantCount: participants.length,
-              success: true,
-            },
-            {
-              headers: {
-                // Set cooldown cookie for one hour
-                "Set-Cookie": buildCooldownCookie(Date.now() + COOLDOWN_MS),
-              },
-              status: 200,
-            }
-          );
+          return json({
+            adminCount: admins.length,
+            message: `Successfully sent ${participants.length} participant emails and ${admins.length} admin emails`,
+            participantCount: participants.length,
+            success: true,
+          });
         } catch (error) {
           console.error("Error sending emails:", error);
           return json(

@@ -29,11 +29,13 @@ import {
   savePartyName,
   toggleAdmin,
 } from "../lib/storage";
+import { getTurnstileSiteKey } from "../lib/turnstile-site-key";
 import type { Assignment, Constraint, Player } from "../lib/types";
 import { toTitleCase } from "../lib/utils";
 
 export const Route = createFileRoute("/assign")({
   component: AssignPage,
+  loader: async () => ({ turnstileSiteKey: await getTurnstileSiteKey() }),
 });
 
 interface ListState {
@@ -77,6 +79,7 @@ function listReducer(state: ListState, action: ListAction): ListState {
 }
 
 function AssignPage() {
+  const { turnstileSiteKey } = Route.useLoaderData();
   const navigate = useNavigate();
   const [stepState, setStepState] = useState<{
     step: AssignFlowStepId;
@@ -292,6 +295,7 @@ function AssignPage() {
           partyName={partyName}
           players={players}
           step={step}
+          turnstileSiteKey={turnstileSiteKey}
         />
       </AssignStepperShell>
 

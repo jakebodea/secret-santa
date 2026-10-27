@@ -10,6 +10,8 @@ TanStack Start on Cloudflare Workers, deployed with Alchemy v2. Follows the jbol
 | `stacks/config.ts` | Account, repository, domain, zone, mail senders |
 | `stacks/stage.ts` | Stage names (`prod`, `pr-<n>`, `dev-<worktree>`), origins, dev ports, the prod-outside-CI refusal |
 | `stacks/secrets.ts` | Infisical project ids and the stage → project mapping |
+| `stacks/github.ts` | CI control plane (stack `secret-santa-ci`, stage `ci`): GitHub environments, `main` ruleset, `preview` label, scoped expiring Cloudflare deploy tokens, Infisical OIDC variables |
+| `.github/workflows/` | `ci.yml`: `check` on every PR; `preview` deploys `pr-<n>` when the PR has the `preview` label; `production` deploys `prod` on merge to `main`. `preview-cleanup.yml` destroys `pr-<n>` |
 | `src/env.ts` | Typed Worker bindings; server code imports `env` from here |
 | `src/lib/assignment-mail.ts` | Who gets which email (pure, tested); `src/routes/api/send-emails.ts` renders and sends |
 
@@ -19,6 +21,8 @@ TanStack Start on Cloudflare Workers, deployed with Alchemy v2. Follows the jbol
 bun run dev       # alchemy dev on stage dev-<worktree>, own port; mail lands in .alchemy/local/email
 bun run ci        # lint + typecheck + tests
 bun alchemy plan --stage pr-<n>   # read-only diff of a preview
+bun scripts/ci/smoke.ts <stage>   # pages 200 + send endpoint refuses tokenless requests
+ALCHEMY_PROFILE=admin bunx alchemy plan stacks/github.ts --stage ci   # control plane diff
 ```
 
 ## Never
