@@ -26,6 +26,7 @@ const STAGE_VARS = {
   "--sack-left": `${STAGE.width / 2 - SACK_ART.mouthX}px`,
   // The sack wobbles and squashes from the middle of its base.
   "--sack-origin-y": `${(124 / SACK_ART.height) * 100}%`,
+  "--sack-mouth-y": `${SACK_MOUTH_Y}px`,
   "--sack-top": `${SACK_MOUTH_Y - SACK_ART.mouthY}px`,
   "--stage-h": `${STAGE.height}px`,
   "--stage-w": `${STAGE.width}px`,
@@ -41,7 +42,8 @@ const SPARKLES = Array.from({ length: 14 }, (_, step) => {
     id: `sparkle-${step}`,
     spin: (step % 2 === 0 ? 1 : -1) * (180 + step * 20),
     x: Math.cos(angle) * distance,
-    y: Math.sin(angle) * distance * 0.7 - 20,
+    // Fountains up out of the sack's mouth before it falls.
+    y: -Math.abs(Math.sin(angle)) * distance * 0.9 - 20,
   };
 });
 
@@ -168,11 +170,11 @@ function SackLayer({ count, reduceMotion, children }: SackLayerProps) {
 }
 
 function Sparkles({ count }: { count: number }) {
-  const { landedAt } = drawSchedule(count);
+  const { lastPopAt } = drawSchedule(count);
   return SPARKLES.map((sparkle) => (
     <m.span
       key={sparkle.id}
-      className={`absolute top-20 left-1/2 h-2.5 w-1.5 rounded-xs ${sparkle.className}`}
+      className={`absolute top-(--sack-mouth-y) left-1/2 h-2.5 w-1.5 rounded-xs ${sparkle.className}`}
       initial={{ opacity: 0, transform: "translate(0px, 0px) rotate(0deg)" }}
       animate={{
         opacity: [0, 1, 1, 0],
@@ -183,7 +185,7 @@ function Sparkles({ count }: { count: number }) {
         ],
       }}
       transition={{
-        delay: (landedAt - 100) / SECOND,
+        delay: lastPopAt / SECOND,
         duration: 0.9,
         ease: EASE_OUT,
       }}
