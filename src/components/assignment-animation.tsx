@@ -8,6 +8,7 @@ import {
   STAGE,
   cardLabel,
   cardRestingPose,
+  cardSlot,
   cardTrack,
   drawSchedule,
   pickCardPlayers,
@@ -35,8 +36,17 @@ const STAGE_VARS = {
 
 const SPARKLE_COLORS = ["bg-gold", "bg-primary", "bg-gold", "bg-secondary"];
 const SPARKLES_PER_BURST = 8;
-/** One small burst per envelope, each turned a little so no two match. */
-function burstPieces(burst: number) {
+/** Where along the sack's opening each burst starts, so shots spread out. */
+const BURST_OFFSETS = [-22, 18, -8, 26, -28, 10] as const;
+
+/**
+ * One small burst per envelope. Each starts at its own spot on the opening,
+ * leans toward where its envelope is headed, and is turned a little so no
+ * two match.
+ */
+function burstPieces(burst: number, count: number) {
+  const originX = BURST_OFFSETS[burst % BURST_OFFSETS.length];
+  const lean = (cardSlot(burst, count).x - STAGE.width / 2) * 0.35;
   return Array.from({ length: SPARKLES_PER_BURST }, (_, step) => {
     // Golden-angle spread looks random but renders the same every time.
     const angle = step * 2.39996 + burst * 0.9;
@@ -44,8 +54,9 @@ function burstPieces(burst: number) {
     return {
       className: SPARKLE_COLORS[(step + burst) % SPARKLE_COLORS.length],
       id: `sparkle-${burst}-${step}`,
+      originX,
       spin: (step % 2 === 0 ? 1 : -1) * (180 + step * 25),
-      x: Math.cos(angle) * distance,
+      x: originX + lean + Math.cos(angle) * distance,
       // Fountains up out of the sack's mouth before it falls.
       y: -Math.abs(Math.sin(angle)) * distance - 16,
     };
@@ -177,16 +188,19 @@ function SackLayer({ count, reduceMotion, children }: SackLayerProps) {
 /** A pop of confetti out of the sack with every envelope. */
 function Sparkles({ count }: { count: number }) {
   return Array.from({ length: count }, (_, burst) =>
-    burstPieces(burst).map((sparkle) => (
+    burstPieces(burst, count).map((sparkle) => (
       <m.span
         key={sparkle.id}
         className={`absolute top-(--sack-mouth-y) left-1/2 h-2 w-1.5 rounded-xs ${sparkle.className}`}
-        initial={{ opacity: 0, transform: "translate(0px, 0px) rotate(0deg)" }}
+        initial={{
+          opacity: 0,
+          transform: `translate(${sparkle.originX}px, 0px) rotate(0deg)`,
+        }}
         animate={{
           opacity: [0, 1, 1, 0],
           transform: [
-            "translate(0px, 0px) rotate(0deg)",
-            `translate(${sparkle.x / 2}px, ${sparkle.y}px) rotate(${sparkle.spin / 2}deg)`,
+            `translate(${sparkle.originX}px, 0px) rotate(0deg)`,
+            `translate(${(sparkle.originX + sparkle.x) / 2}px, ${sparkle.y}px) rotate(${sparkle.spin / 2}deg)`,
             `translate(${sparkle.x}px, ${sparkle.y + 36}px) rotate(${sparkle.spin}deg)`,
           ],
         }}
