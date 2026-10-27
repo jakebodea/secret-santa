@@ -1,10 +1,13 @@
+import { render } from "@react-email/render";
 import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
 import { jsx } from "react/jsx-runtime";
-import { Resend } from "resend";
 
 import AdminSummary from "../../emails/admin-summary";
 import SecretSantaAssignment from "../../emails/secret-santa-assignment";
+import { env } from "../../env";
+import { planMail } from "../../lib/assignment-mail";
+import type { OutgoingMail } from "../../lib/assignment-mail";
 import type { Player, Assignment } from "../../lib/types";
 
 // 1 hour
@@ -38,36 +41,47 @@ interface RequestBody {
   bypassCooldown?: boolean;
 }
 
-// Helper to get name with initial for compact representation
-function getCompactName(name: string): string {
-  const parts = name.trim().split(" ");
-  if (parts.length === 1) {
-    return name;
+const renderMail = (mail: OutgoingMail) =>
+  mail.kind === "assignment"
+    ? jsx(SecretSantaAssignment, {
+        giverName: mail.giverName,
+        partyName: mail.partyName,
+        receiverName: mail.receiverName,
+      })
+    : jsx(AdminSummary, {
+        adminName: mail.adminName,
+        partyName: mail.partyName,
+        resultsUrl: mail.resultsUrl,
+      });
+
+/** Sends every message through Cloudflare Email Service; returns the recipients that failed. */
+const sendAll = async (mails: readonly OutgoingMail[]): Promise<string[]> => {
+  const from = { email: env.MAIL_FROM, name: env.MAIL_FROM_NAME };
+  const results = await Promise.allSettled(
+    mails.map(async (mail) => {
+      const element = renderMail(mail);
+      const [html, text] = await Promise.all([
+        render(element),
+        render(element, { plainText: true }),
+      ]);
+      await env.EMAIL.send({
+        from,
+        html,
+        subject: mail.subject,
+        text,
+        to: mail.to,
+      });
+    })
+  );
+  const failed: string[] = [];
+  for (const [index, result] of results.entries()) {
+    if (result.status === "rejected") {
+      console.error("Failed to send email:", result.reason);
+      failed.push(mails[index]?.to ?? "unknown");
+    }
   }
-
-  const [firstName] = parts;
-  const lastInitial = parts.at(-1)?.[0] ?? "";
-  return `${firstName} ${lastInitial}`;
-}
-
-// Helper to encode assignments for URL
-function encodeAssignments(
-  assignments: Assignment[],
-  players: Player[],
-  partyName?: string
-): string {
-  const playerMap = new Map(players.map((p) => [p.id, p]));
-
-  const compactData = {
-    assignments: assignments.map((a) => ({
-      giver: getCompactName(playerMap.get(a.giverId)?.name || "Unknown"),
-      receiver: getCompactName(playerMap.get(a.receiverId)?.name || "Unknown"),
-    })),
-    partyName,
-  };
-
-  return Buffer.from(JSON.stringify(compactData)).toString("base64");
-}
+  return failed;
+};
 
 export const Route = createFileRoute("/api/send-emails")({
   server: {
@@ -76,7 +90,6 @@ export const Route = createFileRoute("/api/send-emails")({
         try {
           const { players, assignments, partyName, bypassCooldown } =
             (await request.json()) as RequestBody;
-          const baseUrl = new URL(request.url).origin;
           // Basic per-browser-session cooldown using an HttpOnly cookie (unless bypass requested)
           if (!bypassCooldown) {
             const cookies = parseCookies(request.headers.get("cookie"));
@@ -122,92 +135,27 @@ export const Route = createFileRoute("/api/send-emails")({
             );
           }
 
-          const apiKey = process.env.RESEND_API_KEY;
-          if (!apiKey) {
-            return json(
-              { error: "Server configuration error: missing API key" },
-              { status: 500 }
-            );
-          }
-
-          const resend = new Resend(apiKey);
-
-          // Create player lookup map
-          const playerMap = new Map(players.map((p) => [p.id, p]));
-
-          // Build the admin results URL with encoded data
-          const encodedData = encodeAssignments(
+          const { participants, admins } = planMail({
             assignments,
+            origin: env.SITE_ORIGIN,
+            partyName,
             players,
-            partyName
-          );
-          const resultsUrl = `${baseUrl}/results?data=${encodedData}`;
-
-          // Prepare emails for participants
-          const participantEmails = assignments.map((assignment) => {
-            const giver = playerMap.get(assignment.giverId);
-            const receiver = playerMap.get(assignment.receiverId);
-
-            if (!giver || !receiver) {
-              throw new Error("Invalid assignment: player not found");
-            }
-
-            return {
-              from: "Secret Santa <noreply@supersimplesecretsanta.com>",
-              react: jsx(SecretSantaAssignment, {
-                giverName: giver.name,
-                partyName,
-                receiverName: receiver.name,
-              }),
-              subject: partyName
-                ? `Hey ${giver.name}! You've been assigned for ${partyName}...`
-                : `Hey ${giver.name}! You've been assigned for Secret Santa...`,
-              to: giver.email,
-            };
           });
 
-          // Send participant emails in batch
-          const participantResult = await resend.batch.send(participantEmails);
-
-          if (participantResult.error) {
-            console.error(
-              "Failed to send participant emails:",
-              participantResult.error
-            );
+          const failedParticipants = await sendAll(participants);
+          if (failedParticipants.length > 0) {
             throw new Error(
-              `Failed to send participant emails: ${participantResult.error.message}`
+              `Failed to send ${failedParticipants.length} of ${participants.length} participant emails`
             );
           }
-
-          // Send admin emails
-          const admins = players.filter((p) => p.isAdmin);
-          const adminEmails = admins.map((admin) => ({
-            from: "Secret Santa <noreply@supersimplesecretsanta.com>",
-            react: jsx(AdminSummary, {
-              adminName: admin.name,
-              partyName,
-              resultsUrl,
-            }),
-            subject: partyName
-              ? `Admin: ${partyName} Results`
-              : "Admin: Secret Santa Results",
-            to: admin.email,
-          }));
-
-          if (adminEmails.length > 0) {
-            const adminResult = await resend.batch.send(adminEmails);
-
-            if (adminResult.error) {
-              console.error("Failed to send admin emails:", adminResult.error);
-              // Continue anyway since participant emails were sent
-            }
-          }
+          // Participants already have their assignments; an admin summary failure is logged, not fatal.
+          await sendAll(admins);
 
           return json(
             {
-              adminCount: adminEmails.length,
-              message: `Successfully sent ${participantEmails.length} participant emails and ${adminEmails.length} admin emails`,
-              participantCount: participantEmails.length,
+              adminCount: admins.length,
+              message: `Successfully sent ${participants.length} participant emails and ${admins.length} admin emails`,
+              participantCount: participants.length,
               success: true,
             },
             {

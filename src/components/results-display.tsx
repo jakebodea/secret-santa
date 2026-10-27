@@ -71,7 +71,7 @@ export function ResultsDisplay({
         method: "POST",
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as { error?: string };
 
       if (!response.ok) {
         if (response.status === 429) {

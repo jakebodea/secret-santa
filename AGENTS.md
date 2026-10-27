@@ -1,3 +1,36 @@
+# Super Simple Secret Santa
+
+TanStack Start on Cloudflare Workers, deployed with Alchemy v2. Follows the jbolabs standard in `~/code/projects/sites/docs/stack.md` (Alchemy owns all infra; Infisical secret tiers; prod deploys from CI only).
+
+## Map
+
+| Path | What lives there |
+| --- | --- |
+| `alchemy.run.ts` | The app stack (`secret-santa`): Worker, Cloudflare Email binding, and on prod the custom domain, Email Sending on the apex and DMARC |
+| `stacks/config.ts` | Account, repository, domain, zone, mail senders |
+| `stacks/stage.ts` | Stage names (`prod`, `pr-<n>`, `dev-<worktree>`), origins, dev ports, the prod-outside-CI refusal |
+| `stacks/secrets.ts` | Infisical project ids and the stage → project mapping |
+| `src/env.ts` | Typed Worker bindings; server code imports `env` from here |
+| `src/lib/assignment-mail.ts` | Who gets which email (pure, tested); `src/routes/api/send-emails.ts` renders and sends |
+
+## Commands
+
+```bash
+bun run dev       # alchemy dev on stage dev-<worktree>, own port; mail lands in .alchemy/local/email
+bun run ci        # lint + typecheck + tests
+bun alchemy plan --stage pr-<n>   # read-only diff of a preview
+```
+
+## Never
+
+- Never touch infrastructure outside Alchemy: no dashboard, `wrangler`, Cloudflare MCP write tools, or raw API writes. Every resource and setting lives in `alchemy.run.ts` or `stacks/`.
+- Never add `@cloudflare/vite-plugin` or a wrangler config: `Cloudflare.Website.Vite` injects it.
+- Never read `process.env` in app code (use `env` from `src/env.ts`) or for secrets in stacks (use `Config` from Infisical).
+- Never create `.env` files or print secrets. Secrets live in Infisical: `secret-santa-dev` (agents) and `secret-santa-prod` (CI only).
+- Never export `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` locally: use `alchemy profile` (`ALCHEMY_PROFILE=admin` for the operator).
+- Never deploy `prod` from a shell; it deploys from CI on merge to `main`. Never deploy, destroy, or change cloud resources without Jake's explicit go-ahead.
+- Never rename the `secret-santa` stack or its stages.
+
 # Ultracite Code Standards
 
 This project uses **Ultracite**, a zero-config preset that enforces strict code quality standards through automated formatting and linting.

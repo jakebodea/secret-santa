@@ -11,4 +11,5 @@ count.txt
 .vinxi
 todos.json
 
-.wrangler/state
+.alchemy
+.wrangler

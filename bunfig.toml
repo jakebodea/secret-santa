@@ -1,0 +1,6 @@
+[install]
+# Required: with auto-installed peers, resolving @alchemy.run/frontend-frameworks hangs on its
+# optional Nuxt/SvelteKit/Next peers. Every peer a package needs is listed explicitly instead.
+peer = false
+# Pin exact versions on `bun add`; the catalog in package.json is the version source of truth.
+exact = true
