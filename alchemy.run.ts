@@ -3,7 +3,8 @@
  * Every Cloudflare resource and setting the app uses is declared here; there
  * is no wrangler config and no dashboard state.
  *
- *   all stages: the TanStack Start Worker + a Cloudflare Email binding
+ *   all stages: the TanStack Start Worker, a Cloudflare Email binding, a per-IP
+ *   rate limit and a Turnstile widget guarding /api/send-emails
  *   prod only: supersimplesecretsanta.com, Email Sending on the apex, DMARC
  *
  *   bun run dev                         # alchemy dev, stage dev-<worktree>
@@ -58,6 +59,16 @@ const observability = (production: boolean) => ({
   },
 });
 
+/**
+ * Cloudflare's documented always-pass Turnstile test keys. Turnstile has no
+ * local emulation, so `alchemy dev` uses these; deployed stages get a widget.
+ * https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+ */
+const TURNSTILE_TEST_KEYS = {
+  secret: "1x0000000000000000000000000000000AA",
+  sitekey: "1x00000000000000000000AA",
+} as const;
+
 /** Registers the apex for Cloudflare Email Sending and publishes a DMARC policy. */
 const productionMail = Effect.gen(function* registerProductionMail() {
   yield* Cloudflare.Email.SendingSubdomain("Sending", {
@@ -97,6 +108,13 @@ export default Alchemy.Stack(
       yield* productionMail;
     }
     const mailFrom = stage.production ? mail.production : mail.preview;
+    const turnstile = dev
+      ? TURNSTILE_TEST_KEYS
+      : yield* Cloudflare.Turnstile.Widget("Turnstile", {
+          domains: [new URL(stage.origin).hostname],
+          mode: "managed",
+          name: stage.workerName,
+        });
 
     const website = yield* Cloudflare.Website.Vite("Website", {
       compatibility: {
@@ -112,8 +130,15 @@ export default Alchemy.Stack(
         }),
         MAIL_FROM: mailFrom,
         MAIL_FROM_NAME: mail.fromName,
+        // Two sends a minute per IP: enough to fix a typo and resend, not enough to spam.
+        SEND_LIMIT: Cloudflare.RateLimit("SEND_LIMIT", {
+          namespaceId: 1225,
+          simple: { limit: 2, period: 60 },
+        }),
         SITE_ORIGIN: origin,
         STAGE: stage.stage,
+        TURNSTILE_SECRET_KEY: turnstile.secret,
+        TURNSTILE_SITE_KEY: turnstile.sitekey,
       },
       name: stage.workerName,
       observability: observability(stage.production),

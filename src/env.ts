@@ -14,6 +14,11 @@ declare global {
       /** Public origin of this stage, e.g. `https://supersimplesecretsanta.com`. */
       SITE_ORIGIN: string;
       STAGE: string;
+      /** Per-IP limit on `/api/send-emails` (Workers Rate Limiting). */
+      SEND_LIMIT: RateLimit;
+      /** Public; rendered by the widget on the send step. */
+      TURNSTILE_SITE_KEY: string;
+      TURNSTILE_SECRET_KEY: string;
     }
   }
 }

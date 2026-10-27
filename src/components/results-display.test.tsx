@@ -35,6 +35,7 @@ describe(ResultsDisplay, () => {
         assignments={assignments}
         players={players}
         partyName="Office Party"
+        turnstileSiteKey="1x00000000000000000000AA"
         onStartOver={() => {}}
       />
     );

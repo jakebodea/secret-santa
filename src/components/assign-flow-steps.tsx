@@ -16,6 +16,7 @@ interface AssignFlowStepsProps {
   constraints: Constraint[];
   assignments: Assignment[];
   hasAssignments: boolean;
+  turnstileSiteKey: string;
   onPartyNameChange: (value: string) => void;
   onPartyNameKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onAddPlayer: (player: Player) => void;
@@ -36,6 +37,7 @@ export function AssignFlowSteps({
   constraints,
   assignments,
   hasAssignments,
+  turnstileSiteKey,
   onPartyNameChange,
   onPartyNameKeyDown,
   onAddPlayer,
@@ -110,6 +112,7 @@ export function AssignFlowSteps({
         assignments={assignments}
         players={players}
         partyName={partyName}
+        turnstileSiteKey={turnstileSiteKey}
         onStartOver={onStartOver}
       />
     );
