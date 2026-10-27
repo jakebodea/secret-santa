@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
+import { drawDurationMs } from "../lib/draw-timeline";
 import { generateAssignments } from "../lib/secret-santa-assignments";
 import {
   addConstraint,
@@ -116,11 +117,11 @@ function AssignPage() {
         patch: { animationComplete: true },
         type: "patch",
       });
-    }, 3000);
+    }, drawDurationMs(players.length));
     return () => {
       clearTimeout(timer);
     };
-  }, [isGenerating]);
+  }, [isGenerating, players.length]);
 
   const goToStep = (next: AssignFlowStepId) => {
     setStepState({ direction: next >= step ? 1 : -1, step: next });
@@ -268,7 +269,7 @@ function AssignPage() {
   });
 
   if (isGenerating) {
-    return <AssignmentAnimation />;
+    return <AssignmentAnimation players={players} />;
   }
 
   return (
