@@ -60,11 +60,21 @@ function findAssignments(
   givers: string[],
   availableReceivers: string[],
   constraints: Constraint[],
-  currentAssignments: Assignment[]
+  currentAssignments: Assignment[],
+  previousAssignments: Assignment[]
 ): Assignment[] | null {
   // Base case: all givers have been assigned
   if (givers.length === 0) {
-    return currentAssignments;
+    const isPreviousDraw =
+      previousAssignments.length === currentAssignments.length &&
+      currentAssignments.every((assignment) =>
+        previousAssignments.some(
+          (previous) =>
+            previous.giverId === assignment.giverId &&
+            previous.receiverId === assignment.receiverId
+        )
+      );
+    return isPreviousDraw ? null : currentAssignments;
   }
 
   const [currentGiver, ...remainingGivers] = givers;
@@ -86,7 +96,8 @@ function findAssignments(
         remainingGivers,
         newAvailableReceivers,
         constraints,
-        newAssignments
+        newAssignments,
+        previousAssignments
       );
 
       if (result !== null) {
@@ -154,7 +165,8 @@ function analyzeConstraints(
  */
 export function generateAssignments(
   players: Player[],
-  constraints: Constraint[]
+  constraints: Constraint[],
+  previousAssignments: Assignment[] = []
 ): AssignmentResult {
   // Validate minimum players
   if (players.length < 3) {
@@ -177,7 +189,8 @@ export function generateAssignments(
       shuffledGivers,
       receiverIds,
       constraints,
-      []
+      [],
+      previousAssignments
     );
 
     if (result !== null) {
@@ -186,6 +199,15 @@ export function generateAssignments(
         success: true,
       };
     }
+  }
+
+  if (previousAssignments.length > 0) {
+    return {
+      details:
+        "Your exclusions allow only the current draw. Keep it, or edit your exclusions to allow other matchups.",
+      error: "No different draw available",
+      success: false,
+    };
   }
 
   // Failed to find valid assignments

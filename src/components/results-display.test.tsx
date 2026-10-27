@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import type { Assignment, Player } from "../lib/types";
@@ -18,6 +18,7 @@ const assignments: Assignment[] = [
 
 describe(ResultsDisplay, () => {
   afterEach(() => {
+    cleanup();
     vi.restoreAllMocks();
   });
 
@@ -36,6 +37,7 @@ describe(ResultsDisplay, () => {
         players={players}
         partyName="Office Party"
         turnstileSiteKey="1x00000000000000000000AA"
+        onRedraw={() => {}}
         onStartOver={() => {}}
       />
     );

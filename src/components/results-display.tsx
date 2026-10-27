@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { useNow } from "../hooks/use-now";
 import type { Assignment, Player } from "../lib/types";
+import { ResultsDrawOptions } from "./results-draw-options";
 import { ResultsEmailSending } from "./results-email-sending";
 import { ResultsEmailsSent } from "./results-emails-sent";
 import { ResultsErrorDialog } from "./results-error-dialog";
@@ -15,6 +16,7 @@ interface ResultsDisplayProps {
   /** Public Turnstile key for this stage; the send button waits for its token. */
   turnstileSiteKey: string;
   onStartOver: () => void;
+  onRedraw: () => void;
 }
 
 function readStoredCooldown(): number | null {
@@ -31,6 +33,7 @@ export function ResultsDisplay({
   partyName,
   turnstileSiteKey,
   onStartOver,
+  onRedraw,
 }: ResultsDisplayProps) {
   const [isSending, setIsSending] = useState(false);
   const [emailsSent, setEmailsSent] = useState(false);
@@ -159,7 +162,14 @@ export function ResultsDisplay({
         onConfirmDialogOpenChange={setConfirmDialogOpen}
         onSendEmails={async () => handleSendEmails()}
         onSendEmailsBypass={async () => handleSendEmails({ bypass: true })}
-        onStartOver={onStartOver}
+        drawOptions={
+          <ResultsDrawOptions
+            assignments={assignments}
+            players={players}
+            onRedraw={onRedraw}
+            onStartOver={onStartOver}
+          />
+        }
       />
       <ResultsErrorDialog
         open={errorDialog.open}

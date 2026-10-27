@@ -1,4 +1,4 @@
-import { Mail, RotateCcw } from "lucide-react";
+import { Mail } from "lucide-react";
 import type { ReactNode } from "react";
 
 import type { Player } from "../lib/types";
@@ -25,7 +25,7 @@ interface ResultsReadyToSendProps {
   onConfirmDialogOpenChange: (open: boolean) => void;
   onSendEmails: () => Promise<void>;
   onSendEmailsBypass: () => Promise<void>;
-  onStartOver: () => void;
+  drawOptions: ReactNode;
 }
 
 export function ResultsReadyToSend({
@@ -39,7 +39,7 @@ export function ResultsReadyToSend({
   onConfirmDialogOpenChange,
   onSendEmails,
   onSendEmailsBypass,
-  onStartOver,
+  drawOptions,
 }: ResultsReadyToSendProps) {
   const admin = players.find((p) => p.isAdmin);
 
@@ -74,17 +74,9 @@ export function ResultsReadyToSend({
             <Mail data-icon="inline-start" />
             Send emails
           </Button>
-          <Button
-            variant="outline"
-            onClick={onStartOver}
-            size="cta"
-            className="w-full sm:w-auto"
-          >
-            <RotateCcw data-icon="inline-start" />
-            Start over
-          </Button>
         </div>
         {verification}
+        {drawOptions}
 
         <Dialog
           open={confirmDialogOpen}

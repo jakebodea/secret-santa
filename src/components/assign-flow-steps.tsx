@@ -28,6 +28,7 @@ interface AssignFlowStepsProps {
   onRemoveConstraint: (constraintId: string) => void;
   onClearConstraints: () => void;
   onStartOver: () => void;
+  onRedraw: () => void;
 }
 
 export function AssignFlowSteps({
@@ -49,6 +50,7 @@ export function AssignFlowSteps({
   onRemoveConstraint,
   onClearConstraints,
   onStartOver,
+  onRedraw,
 }: AssignFlowStepsProps) {
   if (step === 1) {
     return (
@@ -114,6 +116,7 @@ export function AssignFlowSteps({
         partyName={partyName}
         turnstileSiteKey={turnstileSiteKey}
         onStartOver={onStartOver}
+        onRedraw={onRedraw}
       />
     );
   }

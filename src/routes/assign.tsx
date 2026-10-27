@@ -174,7 +174,9 @@ function AssignPage() {
     dispatchList({ type: "sync_from_storage" });
   };
 
-  const handleGenerateAssignments = () => {
+  const handleGenerateAssignments = (
+    previousAssignments: Assignment[] = []
+  ) => {
     if (players.length < 3) {
       setErrorDialog({
         details:
@@ -185,18 +187,17 @@ function AssignPage() {
       return;
     }
 
-    setIsGenerating(true);
-    dispatchList({
-      patch: { animationComplete: false },
-      type: "patch",
-    });
-
-    const result = generateAssignments(players, constraints);
+    const result = generateAssignments(
+      players,
+      constraints,
+      previousAssignments
+    );
 
     if (result.success && result.assignments) {
+      setIsGenerating(true);
       saveAssignments(result.assignments);
       dispatchList({
-        patch: { assignments: result.assignments },
+        patch: { animationComplete: false, assignments: result.assignments },
         type: "patch",
       });
     } else {
@@ -210,6 +211,7 @@ function AssignPage() {
   };
 
   const handleStartOver = () => {
+    goToStep(2);
     clearAssignments();
     dispatchList({
       patch: { animationComplete: false, assignments: [] },
@@ -290,6 +292,7 @@ function AssignPage() {
           onPartyNameKeyDown={handlePartyNameKeyDown}
           onRemoveConstraint={handleRemoveConstraint}
           onRemovePlayer={handleRemovePlayer}
+          onRedraw={() => handleGenerateAssignments(assignments)}
           onStartOver={handleStartOver}
           onToggleAdmin={handleToggleAdmin}
           partyName={partyName}
