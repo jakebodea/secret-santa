@@ -77,6 +77,14 @@ function useCurrentMessage(messages: Message[], skipToEnd: boolean) {
   return messages[index];
 }
 
+/**
+ * Full transform strings rather than Motion's x/y/scale shorthands, so the
+ * browser can run the movement on the compositor.
+ */
+function cardTransform(x: number, y: number, rotate: number, scale: number) {
+  return `translate(${x}px, ${y}px) rotate(${rotate}deg) scale(${scale})`;
+}
+
 interface DrawCardProps {
   index: number;
   count: number;
@@ -88,8 +96,27 @@ function DrawCard({ index, count, label, reduceMotion }: DrawCardProps) {
   const { total } = drawSchedule(count);
   const { values, ease, times } = cardTrack(index, count);
   const timing = { duration: total / SECOND, ease, times };
-  const { envelope, ...pose } = values;
-  const restingPose = cardRestingPose(index, count);
+  const pose = {
+    opacity: values.opacity,
+    transform: values.x.map((x, frame) =>
+      cardTransform(
+        x,
+        values.y[frame],
+        values.rotate[frame],
+        values.scale[frame]
+      )
+    ),
+  };
+  const resting = cardRestingPose(index, count);
+  const restingPose = {
+    opacity: resting.opacity,
+    transform: cardTransform(
+      resting.x,
+      resting.y,
+      resting.rotate,
+      resting.scale
+    ),
+  };
 
   return (
     <m.div
@@ -106,7 +133,7 @@ function DrawCard({ index, count, label, reduceMotion }: DrawCardProps) {
       <m.div
         className="absolute inset-0 overflow-hidden rounded-md shadow-md"
         initial={reduceMotion ? false : undefined}
-        animate={{ opacity: reduceMotion ? 1 : envelope }}
+        animate={{ opacity: reduceMotion ? 1 : values.envelope }}
         transition={reduceMotion ? undefined : timing}
       >
         <SealedEnvelope />
@@ -124,16 +151,16 @@ interface SackLayerProps {
 /** Back and front share one motion so the sack moves as a single piece. */
 function SackLayer({ count, reduceMotion, children }: SackLayerProps) {
   const { total } = drawSchedule(count);
-  const track = sackTrack(count);
+  const { values, ease, times } = sackTrack(count);
+  const transform = values.rotate.map(
+    (rotate, frame) =>
+      `translateY(${values.y[frame]}px) rotate(${rotate}deg) scale(${values.scaleX[frame]}, ${values.scaleY[frame]})`
+  );
   return (
     <m.div
       className="absolute top-(--sack-top) left-(--sack-left) origin-[50%_var(--sack-origin-y)]"
-      animate={reduceMotion ? undefined : track.values}
-      transition={{
-        duration: total / SECOND,
-        ease: track.ease,
-        times: track.times,
-      }}
+      animate={reduceMotion ? undefined : { transform }}
+      transition={{ duration: total / SECOND, ease, times }}
     >
       {children}
     </m.div>
@@ -146,12 +173,14 @@ function Sparkles({ count }: { count: number }) {
     <m.span
       key={sparkle.id}
       className={`absolute top-20 left-1/2 h-2.5 w-1.5 rounded-xs ${sparkle.className}`}
-      initial={{ opacity: 0, rotate: 0, x: 0, y: 0 }}
+      initial={{ opacity: 0, transform: "translate(0px, 0px) rotate(0deg)" }}
       animate={{
         opacity: [0, 1, 1, 0],
-        rotate: sparkle.spin,
-        x: sparkle.x,
-        y: [0, sparkle.y, sparkle.y + 40],
+        transform: [
+          "translate(0px, 0px) rotate(0deg)",
+          `translate(${sparkle.x / 2}px, ${sparkle.y}px) rotate(${sparkle.spin / 2}deg)`,
+          `translate(${sparkle.x}px, ${sparkle.y + 40}px) rotate(${sparkle.spin}deg)`,
+        ],
       }}
       transition={{
         delay: (landedAt - 100) / SECOND,

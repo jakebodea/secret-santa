@@ -1,6 +1,6 @@
 /**
- * Choreography for the "drawing names" screen: name cards drop into Santa's
- * sack, the sack shakes, and sealed envelopes rise back out to the spots the
+ * Choreography for the "drawing names" screen: name cards are tossed into
+ * Santa's sack, the sack shakes, and sealed envelopes rise back out to the spots the
  * cards started from. Everything is plain numbers so the timing is testable
  * and the component only maps tracks onto motion props.
  */
@@ -9,15 +9,11 @@ type CubicBezier = readonly [number, number, number, number];
 
 const LINEAR: CubicBezier = [0, 0, 1, 1];
 const EASE_OUT: CubicBezier = [0.23, 1, 0.32, 1];
-const EASE_IN: CubicBezier = [0.55, 0, 1, 0.45];
 const EASE_IN_OUT: CubicBezier = [0.77, 0, 0.175, 1];
-/** Overshoots slightly, so cards land with a small settle. */
-const SPRING_OUT: CubicBezier = [0.34, 1.45, 0.64, 1];
-const POP_IN: CubicBezier = [0.34, 1.56, 0.64, 1];
 
 export const STAGE = { height: 300, width: 320 } as const;
 export const CARD = { height: 50, width: 72 } as const;
-/** Six cards fill two rows; bigger groups show a random six. */
+/** Six cards fill two rows; bigger groups show six spread through the list. */
 export const MAX_CARDS = 6;
 
 const CENTER_X = STAGE.width / 2;
@@ -36,18 +32,41 @@ const TOP_ROW_Y = 44;
 const SINGLE_ROW_Y = 77;
 const TILTS = [-4, 2, -3, 3, -2, 4] as const;
 
-const APPEAR_STAGGER = 55;
-const APPEAR_DURATION = 420;
-const DROP_START = 450;
-const DROP_STAGGER = 100;
-const DROP_DURATION = 480;
-const SHAKE_DURATION = 560;
-const EXIT_GAP = 60;
-const EXIT_STAGGER = 80;
-const EXIT_DURATION = 780;
+const APPEAR_STAGGER = 70;
+const APPEAR_DURATION = 520;
+
+const DROP_START = 950;
+const DROP_STAGGER = 130;
+/** A small press before each toss reads as the card being picked up. */
+const PRESS_DURATION = 110;
+const TOSS_DURATION = 480;
+/** How far above the higher end of the toss the arc peaks. */
+const TOSS_HEIGHT = 34;
+/** Room for the card to carry on into the sack at the speed it arrived. */
+const ENTRY_MAX = 120;
+const DROP_DURATION = PRESS_DURATION + TOSS_DURATION + ENTRY_MAX;
+/** Straight lines between this many points along each curved path. */
+const PATH_STEPS = 8;
+
+const SHAKE_DELAY = 160;
+const SHAKE_DURATION = 760;
+const EXIT_GAP = 80;
+
+const EXIT_STAGGER = 120;
+const FADE_IN = 30;
+const RISE_DURATION = 270;
+/** Height above the mouth an envelope pops to before gliding home. */
+const RISE_HEIGHT = 64;
+const GLIDE_DURATION = 560;
+const GLIDE_LIFT = 30;
+const SETTLE_DURATION = 160;
+const EXIT_DURATION =
+  FADE_IN + RISE_DURATION + GLIDE_DURATION + SETTLE_DURATION;
+
+const RIPPLE_DELAY = 120;
+const RIPPLE_STAGGER = 60;
 /** Time to see the sealed envelopes before the results. */
-const FINAL_HOLD = 900;
-const SETTLE_DURATION = 260;
+const FINAL_HOLD = 1100;
 
 export interface DrawSchedule {
   shakeAt: number;
@@ -60,7 +79,8 @@ export interface DrawSchedule {
 
 export function drawSchedule(cardCount: number): DrawSchedule {
   const lastIndex = cardCount - 1;
-  const shakeAt = DROP_START + lastIndex * DROP_STAGGER + DROP_DURATION + 20;
+  const lastDropEnd = DROP_START + lastIndex * DROP_STAGGER + DROP_DURATION;
+  const shakeAt = lastDropEnd + SHAKE_DELAY;
   const exitAt = shakeAt + SHAKE_DURATION + EXIT_GAP;
   const landedAt = exitAt + lastIndex * EXIT_STAGGER + EXIT_DURATION;
   const total = landedAt + FINAL_HOLD;
@@ -120,82 +140,164 @@ export function cardSlot(index: number, count: number): CardPose {
   };
 }
 
+interface Point {
+  x: number;
+  y: number;
+}
+
+/** Point `t` of the way along a quadratic curve from `from` to `to`. */
+function along(from: Point, control: Point, to: Point, t: number): Point {
+  const a = (1 - t) ** 2;
+  const b = 2 * t * (1 - t);
+  const c = t ** 2;
+  return {
+    x: a * from.x + b * control.x + c * to.x,
+    y: a * from.y + b * control.y + c * to.y,
+  };
+}
+
+/** Control point that makes the curve's midpoint pass through `peak`. */
+function controlThrough(from: Point, peak: Point, to: Point): Point {
+  return {
+    x: 2 * peak.x - (from.x + to.x) / 2,
+    y: 2 * peak.y - (from.y + to.y) / 2,
+  };
+}
+
+function easeInOutCubic(t: number) {
+  return t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2;
+}
+
 const CARD_KEYS = ["x", "y", "rotate", "envelope", "scale", "opacity"] as const;
 export type CardKey = (typeof CARD_KEYS)[number];
+type CardFrame = Frame<CardKey>;
 
 /**
- * One card's whole life: pop in face up, hop into the sack, stay hidden while
- * the sack shakes, then rise out as a sealed envelope and spring back to its
- * slot. `envelope` is how much the envelope covers the name: 0 or 1 whenever
- * the card can be seen.
+ * The toss into the sack. Walking a quadratic curve at an even pace is how a
+ * thrown object really moves (steady sideways, accelerating down), so the
+ * card arcs up, tips toward the sack, and drops in.
+ */
+function tossFrames(
+  slot: CardPose,
+  startAt: number,
+  lean: number
+): CardFrame[] {
+  const from = { x: slot.x, y: slot.y + 3 };
+  const to = { x: CENTER_X, y: SACK_MOUTH_Y - 6 };
+  const peak = {
+    x: (from.x + to.x) / 2,
+    y: Math.min(from.y, to.y) - TOSS_HEIGHT,
+  };
+  const control = controlThrough(from, peak, to);
+  const frames: CardFrame[] = Array.from({ length: PATH_STEPS }, (_, step) => {
+    const t = (step + 1) / PATH_STEPS;
+    return {
+      ...along(from, control, to, t),
+      at: startAt + TOSS_DURATION * t,
+      envelope: 0,
+      opacity: 1,
+      rotate: slot.rotate * (1 - t) + lean * Math.sin(Math.PI * t),
+      // Grows a touch at the top of the arc, shrinks as it falls away.
+      scale: 0.97 + 0.06 * Math.sin(Math.PI * t) - 0.07 * t,
+    };
+  });
+  // Keep falling at the speed it reached so it doesn't stall at the mouth.
+  const speed = (2 * (to.y - control.y)) / TOSS_DURATION;
+  const entry = Math.min(ENTRY_MAX, Math.max(40, (INSIDE_Y - to.y) / speed));
+  const enterAt = startAt + TOSS_DURATION + entry;
+  const inside = { rotate: 0, scale: INSIDE_SCALE, x: CENTER_X, y: INSIDE_Y };
+  frames.push(
+    { ...inside, at: enterAt, envelope: 0, opacity: 1 },
+    { ...inside, at: enterAt + 1, envelope: 0, opacity: 0 }
+  );
+  return frames;
+}
+
+/** Pops up out of the sack, then glides home in an eased arc and settles. */
+function exitFrames(slot: CardPose, riseAt: number, lean: number): CardFrame[] {
+  const sealed = { envelope: 1, opacity: 1 };
+  const popped = { x: CENTER_X, y: SACK_MOUTH_Y - RISE_HEIGHT };
+  const glideAt = riseAt + FADE_IN + RISE_DURATION;
+  const peak = {
+    x: (popped.x + slot.x) / 2,
+    y: Math.min(popped.y, slot.y) - GLIDE_LIFT,
+  };
+  const control = controlThrough(popped, peak, slot);
+  const inside = { rotate: 0, scale: INSIDE_SCALE, x: CENTER_X, y: INSIDE_Y };
+  const frames: CardFrame[] = [
+    // Swapped for the envelope while out of sight, so a name never comes back out.
+    { ...inside, at: riseAt, envelope: 1, opacity: 0 },
+    { ...inside, ...sealed, at: riseAt + FADE_IN },
+    {
+      ...popped,
+      ...sealed,
+      at: glideAt,
+      ease: EASE_OUT,
+      rotate: -lean / 3,
+      scale: 1.04,
+    },
+  ];
+  for (let step = 1; step <= PATH_STEPS; step += 1) {
+    const progress = easeInOutCubic(step / PATH_STEPS);
+    frames.push({
+      ...along(popped, control, slot, progress),
+      ...sealed,
+      at: glideAt + (GLIDE_DURATION * step) / PATH_STEPS,
+      rotate: (-lean / 3) * (1 - progress) + slot.rotate * progress,
+      // Lands with a soft press, then settles to full size.
+      scale: 1.04 - 0.07 * progress,
+    });
+  }
+  frames.push({
+    ...slot,
+    ...sealed,
+    at: glideAt + GLIDE_DURATION + SETTLE_DURATION,
+    ease: EASE_OUT,
+    scale: 1,
+  });
+  return frames;
+}
+
+/**
+ * One card's whole life: fade up face up, get tossed into the sack, stay
+ * hidden while the sack shakes, then pop out as a sealed envelope and glide
+ * back to its slot. `envelope` is how much the envelope covers the name: 0 or
+ * 1 whenever the card can be seen.
  */
 export function cardTrack(index: number, count: number): Track<CardKey> {
-  const { exitAt, total } = drawSchedule(count);
+  const { exitAt, landedAt, total } = drawSchedule(count);
   const slot = cardSlot(index, count);
   const appearAt = index * APPEAR_STAGGER;
   const dropAt = DROP_START + index * DROP_STAGGER;
   const riseAt = exitAt + index * EXIT_STAGGER;
+  const rippleAt = landedAt + RIPPLE_DELAY + index * RIPPLE_STAGGER;
+  // Lean toward the sack while flying; the middle column alternates.
+  const side = Math.sign(CENTER_X - slot.x) || (index % 2 === 0 ? -1 : 1);
+  const lean = side * 12;
 
-  const faceUp = { ...slot, opacity: 1, envelope: 0, scale: 1 };
-  const hidden = { ...faceUp, at: 0, opacity: 0, scale: 0.7, y: slot.y + 10 };
-  const inside = {
-    rotate: 0,
-    scale: INSIDE_SCALE,
-    x: CENTER_X,
-    y: INSIDE_Y,
-  };
+  const faceUp = { ...slot, envelope: 0, opacity: 1, scale: 1 };
+  const hidden = { ...faceUp, at: 0, opacity: 0, scale: 0.94, y: slot.y + 12 };
+  const resting = { ...slot, envelope: 1, opacity: 1, scale: 1 };
 
-  const frames: Frame<CardKey>[] = [
+  const frames: CardFrame[] = [
     hidden,
     ...(appearAt > 0 ? [{ ...hidden, at: appearAt }] : []),
-    { ...faceUp, at: appearAt + APPEAR_DURATION, ease: POP_IN },
+    { ...faceUp, at: appearAt + APPEAR_DURATION, ease: EASE_OUT },
     { ...faceUp, at: dropAt },
-    // Small lift before the hop reads as anticipation.
     {
       ...faceUp,
-      at: dropAt + DROP_DURATION * 0.22,
-      scale: 1.04,
-      y: slot.y - 10,
-    },
-    {
-      ...faceUp,
-      at: dropAt + DROP_DURATION * 0.6,
-      ease: EASE_IN_OUT,
-      rotate: 0,
-      scale: 0.95,
-      x: CENTER_X,
-      y: SACK_MOUTH_Y - CARD.height * 0.9,
-    },
-    {
-      ...inside,
-      at: dropAt + DROP_DURATION * 0.96,
-      ease: EASE_IN,
-      opacity: 1,
-      envelope: 0,
-    },
-    { ...inside, at: dropAt + DROP_DURATION, opacity: 0, envelope: 0 },
-    // Swapped for the envelope while out of sight, so a name never comes back out.
-    { ...inside, at: riseAt, opacity: 0, envelope: 1 },
-    { ...inside, at: riseAt + EXIT_DURATION * 0.04, opacity: 1, envelope: 1 },
-    {
-      at: riseAt + EXIT_DURATION * 0.36,
+      at: dropAt + PRESS_DURATION,
       ease: EASE_OUT,
-      opacity: 1,
-      rotate: slot.rotate / 2,
-      envelope: 1,
-      scale: 1,
-      x: CENTER_X,
-      y: SACK_MOUTH_Y - 50,
+      scale: 0.97,
+      y: slot.y + 3,
     },
-    {
-      ...slot,
-      at: riseAt + EXIT_DURATION,
-      ease: SPRING_OUT,
-      opacity: 1,
-      envelope: 1,
-      scale: 1,
-    },
-    { ...slot, at: total, opacity: 1, envelope: 1, scale: 1 },
+    ...tossFrames(slot, dropAt + PRESS_DURATION, lean),
+    ...exitFrames(slot, riseAt, lean),
+    // Once all are home, a ripple runs across the envelopes.
+    { ...resting, at: rippleAt },
+    { ...resting, at: rippleAt + 160, ease: EASE_OUT, scale: 1.035 },
+    { ...resting, at: rippleAt + 420, ease: EASE_IN_OUT },
+    { ...resting, at: total },
   ];
   return toTrack(CARD_KEYS, frames, total);
 }
@@ -207,37 +309,57 @@ export function cardRestingPose(index: number, count: number) {
 
 const SACK_KEYS = ["rotate", "y", "scaleX", "scaleY"] as const;
 export type SackKey = (typeof SACK_KEYS)[number];
+type SackFrame = Frame<SackKey>;
 
-const SHAKE_ANGLES = [0, -7, 6, -5, 4, -2, 0] as const;
 const REST = { rotate: 0, scaleX: 1, scaleY: 1, y: 0 };
-const SQUASH = { rotate: 0, scaleX: 1.04, scaleY: 0.93, y: 0 };
-const SQUASH_TIME = 35;
+const WIND_UP = { ...REST, scaleX: 1.05, scaleY: 0.92 };
+const WIND_UP_TIME = 90;
+const SHAKE_ANGLES = [-8, 7, -5, 3, -1.5, 0] as const;
+const CATCH = { ...REST, scaleX: 1.03, scaleY: 0.95, y: 1 };
+const RELEASE = { ...REST, scaleX: 1.04, scaleY: 0.93 };
+const PULSE_PEAK = 45;
+const LAST_PULSE = 220;
 
-/** The sack wobbles once everything is in, then bobs as each card leaves. */
+/** A quick squash and recover at each moment, never overlapping the next. */
+function pulses(starts: number[], squash: typeof REST, gap: number) {
+  return starts.flatMap((at, index): SackFrame[] => {
+    const settle = index === starts.length - 1 ? LAST_PULSE : gap - 1;
+    return [
+      { ...REST, at },
+      { ...squash, at: at + PULSE_PEAK, ease: EASE_OUT },
+      { ...REST, at: at + settle, ease: EASE_OUT },
+    ];
+  });
+}
+
+/**
+ * The sack gulps as each card lands in it, winds up and wobbles once
+ * everything is in, then bobs as each envelope leaves.
+ */
 export function sackTrack(count: number): Track<SackKey> {
   const { exitAt, shakeAt, total } = drawSchedule(count);
-  const shakeStep = SHAKE_DURATION / (SHAKE_ANGLES.length - 1);
-  const frames: Frame<SackKey>[] = [
+  const indexes = Array.from({ length: count }, (_, index) => index);
+  const catches = indexes.map(
+    (index) =>
+      DROP_START + index * DROP_STAGGER + PRESS_DURATION + TOSS_DURATION
+  );
+  const releases = indexes.map((index) => exitAt + index * EXIT_STAGGER);
+  const wobbleStep = (SHAKE_DURATION - WIND_UP_TIME) / SHAKE_ANGLES.length;
+  const frames: SackFrame[] = [
     { ...REST, at: 0 },
+    ...pulses(catches, CATCH, DROP_STAGGER),
+    { ...REST, at: shakeAt },
+    { ...WIND_UP, at: shakeAt + WIND_UP_TIME, ease: EASE_OUT },
     ...SHAKE_ANGLES.map((angle, step) => ({
       ...REST,
-      at: shakeAt + step * shakeStep,
+      at: shakeAt + WIND_UP_TIME + (step + 1) * wobbleStep,
       ease: EASE_IN_OUT,
       rotate: angle,
-      y: step % 2 === 1 ? -3 : 0,
+      y: step % 2 === 0 ? -4 : 0,
     })),
+    ...pulses(releases, RELEASE, EXIT_STAGGER),
+    { ...REST, at: total },
   ];
-  for (let index = 0; index < count; index += 1) {
-    const riseAt = exitAt + index * EXIT_STAGGER;
-    const nextAt =
-      index === count - 1 ? riseAt + SETTLE_DURATION : riseAt + EXIT_STAGGER;
-    frames.push(
-      { ...REST, at: riseAt },
-      { ...SQUASH, at: riseAt + SQUASH_TIME, ease: EASE_OUT },
-      { ...REST, at: nextAt - 1, ease: EASE_OUT }
-    );
-  }
-  frames.push({ ...REST, at: total });
   return toTrack(SACK_KEYS, frames, total);
 }
 
