@@ -57,14 +57,14 @@ export function AssignStepperShell({
       <header className="top-safe-0 px-safe-5 sm:px-safe-6 fixed inset-x-0 z-30 grid grid-cols-[1fr_auto_1fr] items-center py-5 sm:py-6">
         <Link
           to="/"
-          className="text-muted-foreground hover:text-foreground justify-self-start text-sm font-light tracking-wide transition-colors"
+          className="text-muted-foreground hover:text-foreground flex min-h-11 items-center justify-self-start text-sm font-light tracking-wide transition-colors"
         >
           ← Home
         </Link>
         <StepProgress currentStep={currentStep} />
         <Link
           to="/support"
-          className="text-muted-foreground hover:text-foreground justify-self-end text-sm font-light tracking-wide transition-colors"
+          className="text-muted-foreground hover:text-foreground flex min-h-11 items-center justify-self-end text-sm font-light tracking-wide transition-colors"
         >
           Support
         </Link>

@@ -42,7 +42,7 @@ function SheetOverlay({
     <SheetPrimitive.Backdrop
       data-slot="sheet-overlay"
       className={cn(
-        "data-closed:animate-out data-closed:fade-out-0 data-open:animate-in data-open:fade-in-0 absolute inset-0 z-50 bg-black/40 duration-300 ease-out data-closed:duration-200",
+        "data-closed:animate-out data-closed:fade-out-0 data-open:animate-in data-open:fade-in-0 fixed inset-0 z-50 bg-black/40 duration-300 ease-out data-closed:duration-200",
         className
       )}
       {...props}
@@ -68,11 +68,11 @@ function SheetContent({
       <SheetPrimitive.Popup
         data-slot="sheet-content"
         className={cn(
-          "bg-background data-closed:animate-out data-open:animate-in ease-drawer fixed z-50 flex flex-col gap-4 shadow-xl data-closed:duration-200 data-open:duration-400",
+          "bg-background data-closed:animate-out data-open:animate-in ease-drawer px-safe-0 fixed z-50 flex max-h-dvh flex-col gap-4 overflow-y-auto overscroll-contain shadow-xl data-closed:duration-200 data-open:duration-400",
           side === "right" &&
-            "data-closed:slide-out-to-right data-open:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm",
+            "data-closed:slide-out-to-right data-open:slide-in-from-right pt-safe-4 pb-safe-4 inset-y-0 right-0 h-dvh w-3/4 border-l sm:max-w-sm",
           side === "left" &&
-            "data-closed:slide-out-to-left data-open:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm",
+            "data-closed:slide-out-to-left data-open:slide-in-from-left pt-safe-4 pb-safe-4 inset-y-0 left-0 h-dvh w-3/4 border-r sm:max-w-sm",
           side === "top" &&
             "data-closed:slide-out-to-top data-open:slide-in-from-top pt-safe-0 inset-x-0 top-0 h-auto border-b",
           side === "bottom" &&
@@ -83,7 +83,7 @@ function SheetContent({
       >
         {children}
         {showCloseButton && (
-          <SheetPrimitive.Close className="ring-offset-background focus:ring-ring data-open:bg-secondary absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
+          <SheetPrimitive.Close className="ring-offset-background focus:ring-ring data-open:bg-secondary absolute top-2 right-2 flex size-11 items-center justify-center rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
             <XIcon className="size-4" />
             <span className="sr-only">Close</span>
           </SheetPrimitive.Close>

@@ -89,6 +89,7 @@ export function PlayerForm({
                 ref={nameInputRef}
                 placeholder="Alex Morgan"
                 autoComplete="name"
+                enterKeyHint="next"
                 className={isDialog ? "h-11" : undefined}
                 value={field.state.value}
                 onChange={(e) => {
@@ -134,6 +135,9 @@ export function PlayerForm({
                 type="email"
                 placeholder="alex@example.com"
                 autoComplete="off"
+                autoCapitalize="none"
+                autoCorrect="off"
+                enterKeyHint="done"
                 className={isDialog ? "h-11" : undefined}
                 value={field.state.value}
                 onKeyDown={(e) => {

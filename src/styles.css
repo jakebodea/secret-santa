@@ -2,8 +2,19 @@
 
 @import "tw-animate-css";
 
+/* Touch must not inherit simulated hover, including group-hover variants. */
+@custom-variant hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @slot;
+    }
+  }
+}
+
 html {
   background-color: var(--edge-top-background);
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -214,9 +225,27 @@ code {
   body {
     @apply bg-background text-foreground;
   }
+  input,
+  textarea,
+  select {
+    font-size: 1rem;
+  }
   button:not(:disabled):not([aria-disabled="true"]),
   [role="button"]:not([aria-disabled="true"]) {
     cursor: pointer;
+  }
+  :where(button, a[href], summary, [role="button"]) {
+    touch-action: manipulation;
+  }
+  :where(button, summary, [role="button"], a[data-slot="button"]) {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+  :where(button, a[href], summary, [role="button"]):not(:disabled):not(
+      [aria-disabled="true"]
+    ):active {
+    opacity: 0.75;
   }
   h1,
   h2,
@@ -243,6 +272,14 @@ code {
   }
   [data-slot="select-item"]:focus {
     background-color: oklch(0.75 0.15 85 / 0.4);
+  }
+}
+
+@media (pointer: coarse) {
+  /* Small visual variants still need a finger-sized target. */
+  :where(button, [role="button"], a[data-slot="button"]) {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 
