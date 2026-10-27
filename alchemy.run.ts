@@ -6,7 +6,7 @@
  *   all stages: the TanStack Start Worker, a Cloudflare Email binding, a per-IP
  *   rate limit and a Turnstile widget guarding /api/send-emails
  *   prod only: supersimplesecretsanta.com (workers.dev off), Email Sending on
- *   the apex, DMARC, and the zone's bot settings
+ *   the apex, and the zone's bot settings
  *
  *   bun run dev                         # alchemy dev, stage dev-<worktree>
  *   bun alchemy deploy --stage pr-<n>   # a preview (CI does this for labelled PRs)
@@ -70,7 +70,11 @@ const TURNSTILE_TEST_KEYS = {
   sitekey: "1x00000000000000000000AA",
 } as const;
 
-/** Registers the apex for Cloudflare Email Sending and publishes a DMARC policy. */
+/**
+ * Registers the apex for Cloudflare Email Sending. Onboarding publishes its
+ * own `_dmarc` (`p=reject`), so the stack must not add a second one: two
+ * DMARC records make the policy invalid.
+ */
 const productionMail = Effect.gen(function* registerProductionMail() {
   yield* Cloudflare.Email.SendingSubdomain("Sending", {
     name: site.domain,
@@ -78,14 +82,6 @@ const productionMail = Effect.gen(function* registerProductionMail() {
     previewEnabled: false,
     zoneId,
   }).pipe(RemovalPolicy.retain());
-  yield* Cloudflare.DNS.Record("Dmarc", {
-    // Monitor first; tighten to quarantine once reports show only Cloudflare sending.
-    content: '"v=DMARC1; p=none; adkim=r; aspf=r"',
-    name: `_dmarc.${site.domain}`,
-    ttl: 1,
-    type: "TXT",
-    zoneId,
-  });
   yield* Cloudflare.BotManagement.BotManagement("Bots", {
     // Keep AI crawlers from training on the site, as the zone already did.
     aiTraining: "block",

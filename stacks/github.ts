@@ -29,7 +29,7 @@ const appPermissions: Cloudflare.ApiToken.PermissionGroupRef[] = [
   "Secrets Store Write",
 ];
 
-/** Production also attaches the custom domain, onboards apex sending, writes DMARC and bot settings. */
+/** Production also attaches the custom domain, onboards apex sending, writes bot settings. */
 const zonePermissions: Cloudflare.ApiToken.PermissionGroupRef[] = [
   "Zone Read",
   "DNS Write",

@@ -6,7 +6,7 @@ TanStack Start on Cloudflare Workers, deployed with Alchemy v2. Follows the jbol
 
 | Path | What lives there |
 | --- | --- |
-| `alchemy.run.ts` | The app stack (`secret-santa`): Worker, Cloudflare Email binding, and on prod the custom domain, Email Sending on the apex and DMARC |
+| `alchemy.run.ts` | The app stack (`secret-santa`): Worker, Cloudflare Email binding, and on prod the custom domain, Email Sending on the apex (which publishes its own DMARC) and bot settings |
 | `stacks/config.ts` | Account, repository, domain, zone, mail senders |
 | `stacks/stage.ts` | Stage names (`prod`, `pr-<n>`, `dev-<worktree>`), origins, dev ports, the prod-outside-CI refusal |
 | `stacks/secrets.ts` | Infisical project ids and the stage → project mapping |
