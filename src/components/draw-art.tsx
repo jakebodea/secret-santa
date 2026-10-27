@@ -1,6 +1,6 @@
 /**
  * Flat illustrations for the drawing-names screen, drawn in the palette and
- * style of public/santa.svg: solid fills, gold trim and accents, and
+ * style of public/santa.svg: solid fills, cream trim, gold accents, and
  * shading as translucent ink rather than gradients.
  */
 
@@ -23,7 +23,7 @@ export function SackBack() {
       viewBox="0 0 160 130"
       aria-hidden
     >
-      <ellipse cx="80" cy="22" rx="52" ry="13" fill={GOLD} />
+      <ellipse cx="80" cy="22" rx="52" ry="13" fill={CREAM} />
       <ellipse cx="80" cy="22" rx="43" ry="9" fill={RED} />
       <ellipse cx="80" cy="22" rx="43" ry="9" fill={INK} opacity="0.55" />
     </svg>
@@ -62,7 +62,7 @@ export function SackFront() {
       <path d={STAR_POINTS} fill={GOLD} />
       <path
         d="M28 22L28 28A52 13 0 0 0 132 28L132 22 123 22A43 9 0 0 1 37 22Z"
-        fill={GOLD}
+        fill={CREAM}
       />
       <path
         d="M30 30A52 13 0 0 0 130 30"
