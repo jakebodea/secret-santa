@@ -90,7 +90,6 @@ export function SackFront() {
 }
 
 const PAPER = "#fffaf1";
-const FLAP = "#f4e7cb";
 const FLAP_EDGE = "#e6d3ab";
 const RED_DEEP = "#a32a27";
 
@@ -121,8 +120,13 @@ export function SealedEnvelope() {
   return (
     <svg viewBox="0 0 72 50" className="absolute inset-0 size-full" aria-hidden>
       <rect width="72" height="50" fill={PAPER} />
-      <path d="M0 0H72L36 31Z" fill={FLAP} />
-      <path d="M0 0L36 31 72 0" fill="none" stroke={FLAP_EDGE} />
+      <path
+        d="M0 0L36 31 72 0"
+        fill="none"
+        stroke={FLAP_EDGE}
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
       <path d={SEAL_EDGE} fill={RED} />
       <circle
         cx={SEAL.x}
