@@ -58,6 +58,7 @@ export function AssignFlowSteps({
         <Input
           variant="party"
           type="text"
+          enterKeyHint="next"
           autoFocus
           value={partyName}
           onChange={(e) => {

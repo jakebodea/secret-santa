@@ -1,8 +1,7 @@
-import { useEffect } from "react";
-
 import { useIsMobile } from "../hooks/use-is-mobile";
 import type { Player } from "../lib/types";
 import { PlayerForm } from "./player-form";
+import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,52 +10,20 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "./ui/sheet";
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerClose,
+  DrawerFooter,
+} from "./ui/drawer";
 
 interface AddParticipantOverlayProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddPlayer: (player: Player) => void;
   existingPlayers: Player[];
-}
-
-function AddParticipantForm({
-  existingPlayers,
-  onAddPlayer,
-  open,
-}: {
-  open: boolean;
-  existingPlayers: Player[];
-  onAddPlayer: (player: Player) => void;
-}) {
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-    const frame = requestAnimationFrame(() => {
-      const nameInput = document.querySelector("#add-participant-name");
-      if (nameInput instanceof HTMLInputElement) {
-        nameInput.focus();
-      }
-    });
-    return () => {
-      cancelAnimationFrame(frame);
-    };
-  }, [open]);
-
-  return (
-    <PlayerForm
-      variant="dialog"
-      onAddPlayer={onAddPlayer}
-      existingPlayers={existingPlayers}
-      fieldIdPrefix="add-participant"
-    />
-  );
 }
 
 export function AddParticipantOverlay({
@@ -71,8 +38,9 @@ export function AddParticipantOverlay({
   const isFirstParticipant = existingPlayers.length === 0;
 
   const form = (
-    <AddParticipantForm
-      open={open}
+    <PlayerForm
+      variant="dialog"
+      fieldIdPrefix="add-participant"
       existingPlayers={existingPlayers}
       onAddPlayer={onAddPlayer}
     />
@@ -80,27 +48,32 @@ export function AddParticipantOverlay({
 
   if (isMobile) {
     return (
-      <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="bottom" className="max-h-[90dvh] overflow-y-auto">
-          <SheetHeader className="text-left">
-            <SheetTitle>{title}</SheetTitle>
+      <Drawer open={open} onOpenChange={onOpenChange}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>{title}</DrawerTitle>
             {isFirstParticipant && (
-              <SheetDescription>
+              <DrawerDescription>
                 The first person you add becomes the organizer.
-              </SheetDescription>
+              </DrawerDescription>
             )}
-          </SheetHeader>
-          <div className="px-4 pb-6">{form}</div>
-        </SheetContent>
-      </Sheet>
+          </DrawerHeader>
+          <div className="flex-1 overflow-y-auto p-4">{form}</div>
+          <DrawerFooter>
+            <DrawerClose render={<Button variant="outline" />}>
+              Cancel
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     );
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle variant="compact">{title}</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
           {isFirstParticipant && (
             <DialogDescription>
               The first person you add becomes the organizer.

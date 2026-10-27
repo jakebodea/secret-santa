@@ -134,6 +134,9 @@ export function PlayerForm({
                 type="email"
                 placeholder="alex@example.com"
                 autoComplete="off"
+                autoCapitalize="none"
+                autoCorrect="off"
+                enterKeyHint="done"
                 className={isDialog ? "h-11" : undefined}
                 value={field.state.value}
                 onKeyDown={(e) => {

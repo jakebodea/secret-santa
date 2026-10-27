@@ -59,11 +59,16 @@ export const Route = createRootRoute({
         charSet: "utf-8",
       },
       {
-        content: "width=device-width, initial-scale=1, viewport-fit=cover",
+        content:
+          "width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content",
         name: "viewport",
       },
       {
-        // Keep in sync with --background in styles.css
+        content: "light",
+        name: "color-scheme",
+      },
+      {
+        // This app stays light in both OS schemes. Keep in sync with --background in styles.css
         content: "#fdf7f1",
         name: "theme-color",
       },

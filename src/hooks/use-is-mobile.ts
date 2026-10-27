@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const MOBILE_MAX_WIDTH_PX = 639;
+const MOBILE_MAX_WIDTH_PX = 767;
 
 export function useIsMobile(): boolean {
   const [isMobile, setIsMobile] = useState(false);
