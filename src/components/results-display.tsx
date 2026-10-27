@@ -1,5 +1,6 @@
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 
+import { useNow } from "../hooks/use-now";
 import type { Assignment, Player } from "../lib/types";
 import { ResultsEmailSending } from "./results-email-sending";
 import { ResultsEmailsSent } from "./results-emails-sent";
@@ -39,16 +40,7 @@ export function ResultsDisplay({
   }>({ message: "", open: false });
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
-  const now = useSyncExternalStore(
-    (onStoreChange) => {
-      const id = setInterval(onStoreChange, 1000);
-      return () => {
-        clearInterval(id);
-      };
-    },
-    () => Date.now(),
-    () => Date.now()
-  );
+  const now = useNow();
 
   const COOLDOWN_MS = 60 * 60 * 1000;
   const remainingMs = cooldownUntil ? Math.max(0, cooldownUntil - now) : 0;

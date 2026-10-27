@@ -78,7 +78,11 @@ function listReducer(state: ListState, action: ListAction): ListState {
 
 function AssignPage() {
   const navigate = useNavigate();
-  const [step, setStep] = useState<AssignFlowStepId>(1);
+  const [stepState, setStepState] = useState<{
+    step: AssignFlowStepId;
+    direction: 1 | -1;
+  }>({ direction: 1, step: 1 });
+  const { step, direction } = stepState;
   const [partyName, setPartyName] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorDialog, setErrorDialog] = useState<{
@@ -116,7 +120,7 @@ function AssignPage() {
   }, [isGenerating]);
 
   const goToStep = (next: AssignFlowStepId) => {
-    setStep(next);
+    setStepState({ direction: next >= step ? 1 : -1, step: next });
   };
 
   const persistPartyName = () => {
@@ -213,7 +217,7 @@ function AssignPage() {
   const handleClearAll = () => {
     clearAllData();
     dispatchList({ type: "reset_lists" });
-    setStep(2);
+    goToStep(2);
   };
 
   const handleClearConstraints = () => {
@@ -264,7 +268,12 @@ function AssignPage() {
 
   return (
     <>
-      <AssignStepperShell currentStep={step} {...shellFooter}>
+      <AssignStepperShell
+        currentStep={step}
+        direction={direction}
+        showHeading={!hasAssignments}
+        {...shellFooter}
+      >
         <AssignFlowSteps
           assignments={assignments}
           constraints={constraints}

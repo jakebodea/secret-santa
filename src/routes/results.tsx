@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AlertCircle, Eye, EyeOff } from "lucide-react";
+import { AnimatePresence, m } from "framer-motion";
+import type { HTMLMotionProps } from "framer-motion";
+import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import type { Ref } from "react";
 
 import { Button } from "../components/ui/button";
 import {
@@ -17,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import { EASE_OUT } from "../lib/motion";
 
 interface CompactAssignment {
   giver: string;
@@ -106,103 +110,87 @@ function ResultsPage() {
 
   return (
     <div className="bg-background min-h-dvh">
-      <main className="container mx-auto px-4 py-8">
-        <div className="mx-auto max-w-6xl space-y-8">
+      <main className="container mx-auto px-4 py-10 sm:py-16">
+        <div className="mx-auto max-w-3xl space-y-8">
           {/* Header */}
           <div className="space-y-4 text-center">
-            <div className="flex items-center justify-center gap-10 md:gap-16">
+            <div className="animate-reveal reveal-order-0">
               <img
                 src="/gift.svg"
-                alt="Gift"
-                className="h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16"
-              />
-              <h1 className="text-3xl leading-tight font-normal tracking-tight sm:text-5xl md:text-6xl">
-                Secret Santa Results:
-                {decodedData?.partyName && (
-                  <>
-                    <br />
-                    <span className="decoration-primary italic underline decoration-4">
-                      {decodedData.partyName}
-                    </span>
-                  </>
-                )}
-              </h1>
-              <img
-                src="/gift.svg"
-                alt="Gift"
-                className="h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16"
+                alt=""
+                className="mx-auto size-12 sm:size-14"
               />
             </div>
-            <p className="text-muted-foreground text-base font-light tracking-wide sm:text-xl md:text-2xl">
-              View individual assignments or reveal all at once
-            </p>
+            <div className="animate-reveal reveal-order-1 space-y-2">
+              <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
+                Secret Santa results
+              </p>
+              <h1 className="text-foreground text-4xl leading-tight font-normal tracking-tight sm:text-5xl md:text-6xl">
+                {decodedData?.partyName || "All the matches"}
+              </h1>
+            </div>
           </div>
 
-          {/* Warning Banner */}
-          <Card variant="destructive">
-            <CardContent>
-              <div className="flex items-center gap-4">
-                <AlertCircle className="text-destructive h-5 w-5 flex-shrink-0" />
-                <div>
-                  <p className="text-destructive font-medium">
-                    Warning: This page shows Secret Santa assignments!
-                  </p>
-                  <p className="text-muted-foreground mt-1 text-sm">
-                    Keep this information confidential to maintain the surprise
-                    for all participants.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="animate-reveal reveal-order-2">
+            <div className="bg-accent/25 flex items-start gap-3 rounded-xl px-4 py-3 text-left sm:items-center">
+              <EyeOff className="text-gold mt-0.5 size-4 shrink-0 sm:mt-0" />
+              <p className="text-foreground/80 text-sm tracking-wide">
+                <span className="text-foreground font-medium">
+                  Spoilers ahead.
+                </span>{" "}
+                Keep this page to yourself so the surprise survives.
+              </p>
+            </div>
+          </div>
 
           {/* Error state */}
           {error && (
             <Card variant="outline">
               <CardHeader>
                 <CardTitle variant="destructive">
-                  Error Loading Results
+                  Couldn’t load these results
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">{error}</p>
+                <p className="text-muted-foreground">
+                  {error}. Try opening the link from your email again.
+                </p>
               </CardContent>
             </Card>
           )}
 
-          {/* Controls */}
           {decodedData && (
-            <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-              <div className="w-full flex-1 sm:w-auto">
-                <div className="mb-2">
+            <div className="animate-reveal reveal-order-3 space-y-6">
+              {/* Controls */}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                <div className="flex-1 space-y-2">
                   <Label htmlFor="peek-participant" variant="field">
-                    Peek at a participant’s assignment:
+                    Peek at one person
                   </Label>
-                </div>
-                <Select
-                  value={selectedParticipant || undefined}
-                  onValueChange={(value) => {
-                    setSelectedParticipant(value);
-                    setShowAll(false);
-                  }}
-                  disabled={showAll}
-                >
-                  <SelectTrigger
-                    id="peek-participant"
-                    className="h-11 w-full sm:w-[280px]"
+                  <Select
+                    value={selectedParticipant || ""}
+                    onValueChange={(value) => {
+                      setSelectedParticipant(value);
+                      setShowAll(false);
+                    }}
+                    disabled={showAll}
                   >
-                    <SelectValue placeholder="Select a participant..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {participants.map((participant) => (
-                      <SelectItem key={participant} value={participant}>
-                        {participant}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-end">
+                    <SelectTrigger
+                      id="peek-participant"
+                      size="lg"
+                      className="w-full"
+                    >
+                      <SelectValue placeholder="Choose a name" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {participants.map((participant) => (
+                        <SelectItem key={participant} value={participant}>
+                          {participant}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <Button
                   onClick={() => {
                     setShowAll(!showAll);
@@ -211,64 +199,55 @@ function ResultsPage() {
                     }
                   }}
                   variant={showAll ? "outline" : "default"}
-                  size="wide"
+                  className="h-11 sm:w-36"
                 >
                   {showAll ? (
                     <>
                       <EyeOff className="h-4 w-4" />
-                      Hide All
+                      Hide all
                     </>
                   ) : (
                     <>
                       <Eye className="h-4 w-4" />
-                      Show All
+                      Show all
                     </>
                   )}
                 </Button>
               </div>
+
+              <AnimatePresence mode="popLayout" initial={false}>
+                {!showAll && peekedAssignment && (
+                  <PeekedAssignment
+                    key={`peek-${peekedAssignment.giver}`}
+                    assignment={peekedAssignment}
+                  />
+                )}
+                {showAll && (
+                  <AllAssignments key="all" assignments={assignmentsToShow} />
+                )}
+                {!showAll && !selectedParticipant && (
+                  <m.div
+                    key="empty"
+                    {...panelMotion}
+                    className="border-border/60 rounded-2xl border border-dashed px-6 py-12 text-center"
+                  >
+                    <Eye className="text-muted-foreground/50 mx-auto mb-4 size-8" />
+                    <p className="text-foreground mb-1 font-medium">
+                      Pick someone to peek
+                    </p>
+                    <p className="text-muted-foreground mx-auto max-w-sm text-sm font-light tracking-wide">
+                      See one match at a time, or show them all at once.
+                    </p>
+                  </m.div>
+                )}
+              </AnimatePresence>
             </div>
-          )}
-
-          {/* Assignment Display */}
-          {decodedData && (
-            <>
-              {/* Peek Mode - Single Assignment */}
-              {!showAll && peekedAssignment && (
-                <PeekedAssignment assignment={peekedAssignment} />
-              )}
-
-              {/* Show All Mode - All Assignments */}
-              {showAll && <AllAssignments assignments={assignmentsToShow} />}
-
-              {/* Empty State - No Selection */}
-              {!showAll && !selectedParticipant && (
-                <Card variant="dashed">
-                  <CardContent>
-                    <div className="py-12">
-                      <div className="space-y-4 text-center">
-                        <Eye className="text-muted-foreground/40 mx-auto h-12 w-12" />
-                        <div>
-                          <p className="text-foreground mb-1 text-lg font-medium">
-                            Select a participant to peek
-                          </p>
-                          <p className="text-muted-foreground text-sm">
-                            Choose someone from the dropdown above to see their
-                            assignment, or click “Show All” to reveal everything
-                            at once.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </>
           )}
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-border mt-20 border-t py-10">
+      <footer className="border-border mt-16 border-t py-10">
         <div className="text-muted-foreground container mx-auto px-4 text-center text-sm font-light tracking-wide">
           <p>
             <Link
@@ -284,82 +263,83 @@ function ResultsPage() {
   );
 }
 
+const panelMotion = {
+  animate: { filter: "blur(0px)", opacity: 1, scale: 1 },
+  exit: {
+    filter: "blur(4px)",
+    opacity: 0,
+    scale: 0.98,
+    transition: { duration: 0.15, ease: "easeOut" },
+  },
+  initial: { filter: "blur(4px)", opacity: 0, scale: 0.98 },
+  transition: { duration: 0.3, ease: EASE_OUT },
+} satisfies HTMLMotionProps<"div">;
+
 function PeekedAssignment({
-  assignment: peekedAssignment,
+  assignment,
+  ref,
 }: {
   assignment: CompactAssignment;
+  ref?: Ref<HTMLDivElement>;
 }) {
   return (
-    <div className="bg-primary/5 border-primary/20 rounded-lg border px-6 py-8">
-      <div className="flex flex-col justify-center gap-4 sm:flex-row sm:gap-8">
-        <div className="flex flex-col text-center sm:text-left">
-          <p className="text-muted-foreground mb-2 text-xs font-medium tracking-wide uppercase">
-            Gift Giver
-          </p>
-          <h2 className="text-foreground text-2xl font-semibold sm:text-3xl md:text-4xl">
-            {peekedAssignment.giver}
-          </h2>
-        </div>
-        <div className="flex flex-col text-center sm:text-left">
-          <p className="text-muted-foreground mb-2 text-xs font-medium tracking-wide uppercase opacity-0">
-            &nbsp;
-          </p>
-          <p className="text-muted-foreground mt-1 text-base font-normal italic sm:text-xl md:text-2xl">
-            is giving to
-          </p>
-        </div>
-        <div className="flex flex-col text-center sm:text-left">
-          <p className="text-muted-foreground mb-2 text-xs font-medium tracking-wide uppercase">
-            Gift Receiver
-          </p>
-          <h2 className="text-primary text-2xl font-semibold sm:text-3xl md:text-4xl">
-            {peekedAssignment.receiver}
-          </h2>
-        </div>
-      </div>
-    </div>
+    <m.div
+      ref={ref}
+      {...panelMotion}
+      className="bg-card rounded-2xl border px-6 py-10 text-center shadow-sm"
+    >
+      <p className="text-muted-foreground text-base font-light tracking-wide sm:text-lg">
+        <span className="text-foreground font-normal">{assignment.giver}</span>{" "}
+        is buying for
+      </p>
+      <p className="text-primary mt-2 font-serif text-4xl break-words sm:text-6xl">
+        {assignment.receiver}
+      </p>
+    </m.div>
   );
 }
 
 function AllAssignments({
-  assignments: assignmentsToShow,
+  assignments,
+  ref,
 }: {
   assignments: CompactAssignment[];
+  ref?: Ref<HTMLDivElement>;
 }) {
   return (
-    <div className="bg-primary/5 border-primary/20 rounded-lg border px-4 py-8 sm:px-6">
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 sm:mb-6 sm:gap-8">
-          <p className="text-muted-foreground text-left text-xs font-medium tracking-wide uppercase sm:text-right">
-            Gift Giver
-          </p>
-          <p className="text-muted-foreground text-center text-xs font-medium tracking-wide uppercase opacity-0">
-            Spacer
-          </p>
-          <p className="text-muted-foreground text-right text-xs font-medium tracking-wide uppercase sm:text-left">
-            Gift Receiver
-          </p>
-        </div>
-
-        <div className="space-y-5 sm:space-y-6">
-          {assignmentsToShow.map((assignment) => (
-            <div
-              key={`${assignment.giver}-${assignment.receiver}`}
-              className="border-primary/10 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b pb-5 last:border-b-0 last:pb-0 sm:gap-8 sm:pb-6"
-            >
-              <h2 className="text-foreground text-left text-2xl font-semibold sm:text-right sm:text-3xl md:text-4xl">
-                {assignment.giver}
-              </h2>
-              <p className="text-muted-foreground text-center text-base font-normal italic sm:text-xl md:text-2xl">
-                is giving to
-              </p>
-              <h2 className="text-primary text-right text-2xl font-semibold sm:text-left sm:text-3xl md:text-4xl">
-                {assignment.receiver}
-              </h2>
-            </div>
-          ))}
-        </div>
+    <m.div
+      ref={ref}
+      {...panelMotion}
+      className="bg-card overflow-hidden rounded-2xl border shadow-sm"
+    >
+      <div className="text-muted-foreground border-border/60 grid grid-cols-[minmax(0,1fr)_1.5rem_minmax(0,1fr)] gap-3 border-b px-4 py-3 text-xs font-medium tracking-widest uppercase sm:gap-6 sm:px-6">
+        <span>Giver</span>
+        <span />
+        <span>Buying for</span>
       </div>
-    </div>
+      <ul className="divide-border/60 divide-y">
+        {assignments.map((assignment, index) => (
+          <m.li
+            key={`${assignment.giver}-${assignment.receiver}`}
+            className="grid grid-cols-[minmax(0,1fr)_1.5rem_minmax(0,1fr)] items-center gap-3 px-4 py-3.5 sm:gap-6 sm:px-6 sm:py-4"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              delay: Math.min(index, 12) * 0.035,
+              duration: 0.3,
+              ease: EASE_OUT,
+            }}
+          >
+            <span className="font-serif text-xl break-words sm:text-2xl">
+              {assignment.giver}
+            </span>
+            <ArrowRight className="text-muted-foreground size-4 justify-self-center" />
+            <span className="text-primary font-serif text-xl break-words sm:text-2xl">
+              {assignment.receiver}
+            </span>
+          </m.li>
+        ))}
+      </ul>
+    </m.div>
   );
 }

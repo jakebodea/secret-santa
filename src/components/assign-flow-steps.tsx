@@ -1,3 +1,5 @@
+import { Crown } from "lucide-react";
+
 import type { Assignment, Constraint, Player } from "../lib/types";
 import type { AssignFlowStepId } from "./assign-flow-metadata";
 import { ConstraintsForm } from "./constraints-form";
@@ -118,7 +120,7 @@ export function AssignFlowSteps({
       <div className="space-y-6">
         <Card>
           <CardContent>
-            <div className="space-y-4 p-6 text-left">
+            <div className="divide-border/60 space-y-5 divide-y text-left [&>*:not(:last-child)]:pb-5">
               <div>
                 <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
                   Event
@@ -134,11 +136,19 @@ export function AssignFlowSteps({
                 <p className="text-foreground mt-1 text-base">
                   {players.length} people ready to draw names
                 </p>
-                <ul className="text-muted-foreground mt-2 space-y-1 text-sm font-light">
+                <ul className="mt-3 flex flex-wrap gap-1.5">
                   {players.map((p) => (
-                    <li key={p.id}>
+                    <li
+                      key={p.id}
+                      className="bg-muted text-foreground/80 inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-light"
+                    >
+                      {p.isAdmin && (
+                        <Crown
+                          className="text-secondary size-3.5"
+                          aria-label="Organizer"
+                        />
+                      )}
                       {p.name}
-                      {p.isAdmin ? " (organizer)" : ""}
                     </li>
                   ))}
                 </ul>

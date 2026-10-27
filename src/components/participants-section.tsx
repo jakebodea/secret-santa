@@ -56,12 +56,12 @@ export function ParticipantsSection({
 
   const handleAddPlayer = (player: Player) => {
     onAddPlayer(player);
-    toast.success("Added", { duration: 2000 });
+    toast.success(`Added ${player.name}`, { duration: 2000 });
   };
 
   const handleImport = (importedPlayers: Player[]) => {
     onImport(importedPlayers);
-    toast.success("Added");
+    toast.success(`Imported ${importedPlayers.length} people`);
   };
 
   const progressLabel = participantProgressLabel(players.length);
@@ -149,7 +149,7 @@ export function ParticipantsSection({
                     <div
                       key={index}
                       className={cn(
-                        "size-2 rounded-full",
+                        "size-2 rounded-full transition-colors duration-300 ease-out",
                         index < players.length ? "bg-primary" : "bg-muted"
                       )}
                     />

@@ -25,7 +25,7 @@ function SupportPage() {
       <main className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
         <div className="mx-auto max-w-3xl space-y-8">
           {/* Header */}
-          <div className="space-y-4 text-center">
+          <div className="animate-reveal space-y-4 text-center">
             <div className="flex justify-center">
               <div className="bg-primary/10 flex h-16 w-16 items-center justify-center rounded-full sm:h-20 sm:w-20">
                 <Heart className="text-primary fill-primary h-8 w-8 sm:h-10 sm:w-10" />
@@ -40,7 +40,9 @@ function SupportPage() {
           </div>
 
           {/* Support Card - without header, unwrapped, default size */}
-          <SupportCard showHeader={false} wrapped={false} size="default" />
+          <div className="animate-reveal reveal-order-2">
+            <SupportCard showHeader={false} wrapped={false} size="default" />
+          </div>
         </div>
       </main>
 
