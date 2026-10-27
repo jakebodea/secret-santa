@@ -214,6 +214,10 @@ code {
   body {
     @apply bg-background text-foreground;
   }
+  button:not(:disabled):not([aria-disabled="true"]),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
   h1,
   h2,
   h3 {
