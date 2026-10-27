@@ -1,7 +1,10 @@
+import { AnimatePresence, m } from "framer-motion";
 import { Trash2, Crown, MoreVertical } from "lucide-react";
 
+import { listItemMotion } from "../lib/motion";
 import type { Player } from "../lib/types";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import { avatarFallbackToneForId } from "./ui/avatar-tones";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -31,10 +34,10 @@ function PlayerRow({
   onToggleAdmin: (playerId: string) => void;
 }) {
   return (
-    <div className="hover:bg-muted/50 flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors sm:px-3">
+    <div className="hover:bg-muted/50 flex items-center justify-between gap-3 px-2 py-2.5 transition-colors sm:px-3">
       <div className="flex min-w-0 items-center gap-3">
         <Avatar className="size-9">
-          <AvatarFallback tone="muted">
+          <AvatarFallback tone={avatarFallbackToneForId(player.id)}>
             {player.name
               .split(" ")
               .map((n) => n[0])
@@ -45,7 +48,7 @@ function PlayerRow({
         </Avatar>
         <div className="min-w-0 text-left">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="font-normal tracking-wide">{player.name}</p>
+            <p className="truncate font-normal tracking-wide">{player.name}</p>
             {player.isAdmin && (
               <Badge variant="secondary">
                 <span className="flex items-center gap-1">
@@ -120,15 +123,22 @@ export function PlayersList({
         <p className="text-muted-foreground mb-2 text-xs font-medium tracking-widest uppercase">
           In your group
         </p>
-        <div className="border-border/60 divide-border/60 -mx-1 divide-y rounded-lg border">
-          {players.map((player) => (
-            <PlayerRow
-              key={player.id}
-              player={player}
-              onRemovePlayer={onRemovePlayer}
-              onToggleAdmin={onToggleAdmin}
-            />
-          ))}
+        <div className="border-border/60 -mx-1 overflow-hidden rounded-lg border">
+          <AnimatePresence initial={false}>
+            {players.map((player) => (
+              <m.div
+                key={player.id}
+                {...listItemMotion}
+                className="border-border/60 overflow-hidden border-b last:border-b-0"
+              >
+                <PlayerRow
+                  player={player}
+                  onRemovePlayer={onRemovePlayer}
+                  onToggleAdmin={onToggleAdmin}
+                />
+              </m.div>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
     );

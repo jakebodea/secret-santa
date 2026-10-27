@@ -1,3 +1,4 @@
+import { Plus } from "lucide-react";
 import { useState } from "react";
 
 import type { Player, Constraint } from "../lib/types";
@@ -64,7 +65,7 @@ export function ConstraintsForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle variant="section">Add Exclusion Rule</CardTitle>
+        <CardTitle variant="section">New rule</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -72,7 +73,7 @@ export function ConstraintsForm({
             <div className="space-y-2">
               <Label htmlFor="giver">This player</Label>
               <Select value={giverId} onValueChange={handleGiverChange}>
-                <SelectTrigger id="giver" className="h-11 w-full">
+                <SelectTrigger id="giver" size="lg" className="w-full">
                   <SelectValue placeholder="Select player" />
                 </SelectTrigger>
                 <SelectContent>
@@ -88,7 +89,7 @@ export function ConstraintsForm({
             <div className="space-y-2">
               <Label htmlFor="receiver">Cannot give to</Label>
               <Select value={receiverId} onValueChange={setReceiverId}>
-                <SelectTrigger id="receiver" className="h-11 w-full">
+                <SelectTrigger id="receiver" size="lg" className="w-full">
                   <SelectValue placeholder="Select player" />
                 </SelectTrigger>
                 <SelectContent>
@@ -104,7 +105,7 @@ export function ConstraintsForm({
             </div>
           </div>
 
-          <div className="flex items-center justify-between space-x-2 rounded-lg border p-2.5 sm:p-3">
+          <div className="flex items-center justify-between gap-3 rounded-lg border p-3">
             <div className="space-y-0.5">
               <Label htmlFor="bidirectional">Apply both ways</Label>
               <p className="text-muted-foreground text-sm font-light tracking-wide">
@@ -123,7 +124,8 @@ export function ConstraintsForm({
             disabled={!canSubmit}
             className="h-10 w-full sm:h-11"
           >
-            Add Rule
+            <Plus data-icon="inline-start" />
+            Add rule
           </Button>
         </form>
       </CardContent>

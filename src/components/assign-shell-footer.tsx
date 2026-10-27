@@ -79,7 +79,7 @@ export function buildAssignShellFooter({
         primaryAction: {
           disabled: playersCount < 3,
           icon: <Sparkles data-icon="inline-start" />,
-          label: "Generate assignments",
+          label: "Draw names",
           onClick: onGenerateAssignments,
         },
         showBack: true,

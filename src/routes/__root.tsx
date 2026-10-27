@@ -1,4 +1,5 @@
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import { LazyMotion, MotionConfig, domAnimation } from "framer-motion";
 import React from "react";
 
 import { Toaster } from "../components/ui/sonner";
@@ -17,6 +18,20 @@ const TanStackRouterDevtools =
 export const Route = createRootRoute({
   head: () => ({
     links: [
+      {
+        href: "https://fonts.googleapis.com",
+        rel: "preconnect",
+      },
+      {
+        crossOrigin: "anonymous",
+        href: "https://fonts.gstatic.com",
+        rel: "preconnect",
+      },
+      {
+        // Linked here rather than @import-ed from CSS so it downloads in parallel
+        href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap",
+        rel: "stylesheet",
+      },
       {
         href: appCss,
         rel: "stylesheet",
@@ -133,7 +148,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         {/* Fixed edge strips Safari samples to tint its status bar and toolbar */}
         <div aria-hidden="true" className="edge-top" />
         <div aria-hidden="true" className="edge-bottom" />
-        {children}
+        <LazyMotion features={domAnimation}>
+          <MotionConfig reducedMotion="user">{children}</MotionConfig>
+        </LazyMotion>
         <Toaster />
         <TanStackRouterDevtools />
         <Scripts />

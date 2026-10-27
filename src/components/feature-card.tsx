@@ -21,11 +21,11 @@ export function FeatureCard({
   tone,
 }: FeatureCardProps) {
   return (
-    <div className="flex flex-col items-center space-y-3 p-6">
+    <div className="flex flex-col items-center space-y-3 px-6 py-4 sm:p-6">
       <div
-        className={`flex h-14 w-14 items-center justify-center rounded-full ${colorClasses[tone]}`}
+        className={`flex size-12 items-center justify-center rounded-full sm:size-14 ${colorClasses[tone]}`}
       >
-        <Icon className="h-7 w-7" />
+        <Icon className="size-6 sm:size-7" />
       </div>
       <h3 className="text-foreground text-xl font-medium tracking-tight sm:text-2xl md:text-3xl">
         {title}
