@@ -89,7 +89,6 @@ export function PlayerForm({
                 ref={nameInputRef}
                 placeholder="Alex Morgan"
                 autoComplete="name"
-                enterKeyHint="next"
                 className={isDialog ? "h-11" : undefined}
                 value={field.state.value}
                 onChange={(e) => {
