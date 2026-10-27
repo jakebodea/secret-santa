@@ -89,65 +89,50 @@ export function SackFront() {
   );
 }
 
-const SEAL_CENTER = { x: 36, y: 29 };
-const SEAL_SCALLOPS = Array.from({ length: 10 }, (_, step) => {
-  const angle = (step / 10) * Math.PI * 2;
-  return {
-    cx: SEAL_CENTER.x + Math.cos(angle) * 8,
-    cy: SEAL_CENTER.y + Math.sin(angle) * 8,
-    id: `scallop-${step}`,
-  };
-});
+const PAPER = "#fffaf1";
+const FLAP = "#f4e7cb";
+const FLAP_EDGE = "#e6d3ab";
+const RED_DEEP = "#a32a27";
 
-/** Back of a drawn card: a cream envelope closed with a red wax seal. */
+const SEAL = { lobes: 9, radius: 8.8, ripple: 0.75, x: 36, y: 30 };
+
+/** Closed path through points around the seal's centre. */
+function sealPath(points: number, radiusAt: (step: number) => number) {
+  const corners = Array.from({ length: points }, (_, step) => {
+    const angle = (step / points) * Math.PI * 2 - Math.PI / 2;
+    const radius = radiusAt(step);
+    const x = SEAL.x + Math.cos(angle) * radius;
+    const y = SEAL.y + Math.sin(angle) * radius;
+    return `${x.toFixed(2)} ${y.toFixed(2)}`;
+  });
+  return `M${corners.join("L")}Z`;
+}
+
+/** Wax blob: a circle with a soft ripple round the edge. */
+const SEAL_EDGE = sealPath(
+  72,
+  (step) =>
+    SEAL.radius + SEAL.ripple * Math.cos((step / 72) * Math.PI * 2 * SEAL.lobes)
+);
+const SEAL_STAR = sealPath(10, (step) => (step % 2 === 0 ? 3.7 : 1.6));
+
+/** Back of a drawn card: warm paper closed with a red wax seal. */
 export function SealedEnvelope() {
   return (
     <svg viewBox="0 0 72 50" className="absolute inset-0 size-full" aria-hidden>
-      <rect width="72" height="50" rx="5" fill={WHITE} />
-      <path
-        d="M2 48L30 28M70 48L42 28"
-        stroke={INK}
-        strokeOpacity="0.15"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M2.5 2.5L36 30 69.5 2.5Z"
-        fill={CREAM}
-        fillOpacity="0.55"
-        stroke={GOLD}
-        strokeOpacity="0.5"
-        strokeLinejoin="round"
-      />
-      <g fill={RED}>
-        <circle cx={SEAL_CENTER.x} cy={SEAL_CENTER.y} r="8.5" />
-        {SEAL_SCALLOPS.map((scallop) => (
-          <circle key={scallop.id} cx={scallop.cx} cy={scallop.cy} r="2.6" />
-        ))}
-      </g>
+      <rect width="72" height="50" fill={PAPER} />
+      <path d="M0 0H72L36 31Z" fill={FLAP} />
+      <path d="M0 0L36 31 72 0" fill="none" stroke={FLAP_EDGE} />
+      <path d={SEAL_EDGE} fill={RED} />
       <circle
-        cx={SEAL_CENTER.x}
-        cy={SEAL_CENTER.y}
-        r="5.6"
+        cx={SEAL.x}
+        cy={SEAL.y}
+        r="6"
         fill="none"
-        stroke={INK}
-        strokeOpacity="0.25"
-        strokeWidth="1.2"
+        stroke={RED_DEEP}
+        strokeWidth="1.1"
       />
-      <path
-        d="M36 25.4L37.1 27.9 39.8 28.1 37.7 29.9 38.4 32.5 36 31.1 33.6 32.5 34.3 29.9 32.2 28.1 34.9 27.9Z"
-        fill={INK}
-        fillOpacity="0.25"
-      />
-      <ellipse
-        cx="32.5"
-        cy="25"
-        rx="2.4"
-        ry="1.3"
-        fill={WHITE}
-        opacity="0.35"
-        transform="rotate(-35 32.5 25)"
-      />
+      <path d={SEAL_STAR} fill={CREAM} />
     </svg>
   );
 }

@@ -45,16 +45,15 @@ const SHAKE_DURATION = 560;
 const EXIT_GAP = 60;
 const EXIT_STAGGER = 80;
 const EXIT_DURATION = 780;
-const GLINT_GAP = 50;
-const GLINT_STAGGER = 40;
-const GLINT_DURATION = 500;
-const FINAL_HOLD = 200;
+/** Time to see the sealed envelopes before the results. */
+const FINAL_HOLD = 900;
 const SETTLE_DURATION = 260;
 
 export interface DrawSchedule {
   shakeAt: number;
   exitAt: number;
-  glintAt: number;
+  /** When the last envelope has landed. */
+  landedAt: number;
   /** When the screen hands over to the results. */
   total: number;
 }
@@ -63,10 +62,9 @@ export function drawSchedule(cardCount: number): DrawSchedule {
   const lastIndex = cardCount - 1;
   const shakeAt = DROP_START + lastIndex * DROP_STAGGER + DROP_DURATION + 20;
   const exitAt = shakeAt + SHAKE_DURATION + EXIT_GAP;
-  const glintAt = exitAt + lastIndex * EXIT_STAGGER + EXIT_DURATION + GLINT_GAP;
-  const total =
-    glintAt + lastIndex * GLINT_STAGGER + GLINT_DURATION + FINAL_HOLD;
-  return { exitAt, glintAt, shakeAt, total };
+  const landedAt = exitAt + lastIndex * EXIT_STAGGER + EXIT_DURATION;
+  const total = landedAt + FINAL_HOLD;
+  return { exitAt, landedAt, shakeAt, total };
 }
 
 /** How long the draw plays before the results show. */
@@ -242,12 +240,6 @@ export function sackTrack(count: number): Track<SackKey> {
   frames.push({ ...REST, at: total });
   return toTrack(SACK_KEYS, frames, total);
 }
-
-export function glintDelay(index: number, count: number) {
-  return drawSchedule(count).glintAt + index * GLINT_STAGGER;
-}
-
-export const GLINT_MS = GLINT_DURATION;
 
 const FIRST_NAME = /\S+/u;
 

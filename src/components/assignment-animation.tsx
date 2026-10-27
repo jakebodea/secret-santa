@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   CARD,
-  GLINT_MS,
   SACK_ART,
   SACK_MOUTH_Y,
   STAGE,
@@ -11,11 +10,10 @@ import {
   cardRestingPose,
   cardTrack,
   drawSchedule,
-  glintDelay,
   pickCardPlayers,
   sackTrack,
 } from "../lib/draw-timeline";
-import { EASE_IN_OUT, EASE_OUT } from "../lib/motion";
+import { EASE_OUT } from "../lib/motion";
 import type { Player } from "../lib/types";
 import { SackBack, SackFront, SealedEnvelope } from "./draw-art";
 
@@ -112,18 +110,6 @@ function DrawCard({ index, count, label, reduceMotion }: DrawCardProps) {
         transition={reduceMotion ? undefined : timing}
       >
         <SealedEnvelope />
-        {!reduceMotion && (
-          <m.span
-            className="absolute inset-0 bg-linear-to-r from-transparent via-white/60 to-transparent"
-            initial={{ x: "-100%" }}
-            animate={{ x: "100%" }}
-            transition={{
-              delay: glintDelay(index, count) / SECOND,
-              duration: GLINT_MS / SECOND,
-              ease: EASE_IN_OUT,
-            }}
-          />
-        )}
       </m.div>
     </m.div>
   );
@@ -155,7 +141,7 @@ function SackLayer({ count, reduceMotion, children }: SackLayerProps) {
 }
 
 function Sparkles({ count }: { count: number }) {
-  const { glintAt } = drawSchedule(count);
+  const { landedAt } = drawSchedule(count);
   return SPARKLES.map((sparkle) => (
     <m.span
       key={sparkle.id}
@@ -168,7 +154,7 @@ function Sparkles({ count }: { count: number }) {
         y: [0, sparkle.y, sparkle.y + 40],
       }}
       transition={{
-        delay: (glintAt - 150) / SECOND,
+        delay: (landedAt - 100) / SECOND,
         duration: 0.9,
         ease: EASE_OUT,
       }}
