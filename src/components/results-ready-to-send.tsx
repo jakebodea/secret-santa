@@ -1,4 +1,5 @@
 import { Mail, RotateCcw } from "lucide-react";
+import type { ReactNode } from "react";
 
 import type { Player } from "../lib/types";
 import { CelebrationHero } from "./celebration-hero";
@@ -15,6 +16,10 @@ interface ResultsReadyToSendProps {
   partyName?: string;
   players: Player[];
   isSending: boolean;
+  /** Turnstile has issued a token; sending without one would be rejected. */
+  isVerified: boolean;
+  /** The Turnstile widget; invisible unless the visitor must interact. */
+  verification: ReactNode;
   cooldownRemainingMs: number;
   confirmDialogOpen: boolean;
   onConfirmDialogOpenChange: (open: boolean) => void;
@@ -27,6 +32,8 @@ export function ResultsReadyToSend({
   partyName,
   players,
   isSending,
+  isVerified,
+  verification,
   cooldownRemainingMs,
   confirmDialogOpen,
   onConfirmDialogOpenChange,
@@ -60,7 +67,7 @@ export function ResultsReadyToSend({
         <div className="animate-reveal reveal-order-3 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
           <Button
             onClick={onSendEmails}
-            disabled={isSending}
+            disabled={isSending || !isVerified}
             size="cta"
             className="w-full sm:w-auto"
           >
@@ -77,6 +84,7 @@ export function ResultsReadyToSend({
             Start over
           </Button>
         </div>
+        {verification}
 
         <Dialog
           open={confirmDialogOpen}

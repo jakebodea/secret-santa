@@ -6,11 +6,14 @@ import { ResultsEmailSending } from "./results-email-sending";
 import { ResultsEmailsSent } from "./results-emails-sent";
 import { ResultsErrorDialog } from "./results-error-dialog";
 import { ResultsReadyToSend } from "./results-ready-to-send";
+import { TurnstileWidget } from "./turnstile-widget";
 
 interface ResultsDisplayProps {
   assignments: Assignment[];
   players: Player[];
   partyName?: string;
+  /** Public Turnstile key for this stage; the send button waits for its token. */
+  turnstileSiteKey: string;
   onStartOver: () => void;
 }
 
@@ -26,6 +29,7 @@ export function ResultsDisplay({
   assignments,
   players,
   partyName,
+  turnstileSiteKey,
   onStartOver,
 }: ResultsDisplayProps) {
   const [isSending, setIsSending] = useState(false);
@@ -39,6 +43,9 @@ export function ResultsDisplay({
     details?: string;
   }>({ message: "", open: false });
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  // Tokens are single-use; bumping this remounts the widget for a fresh one.
+  const [turnstileAttempt, setTurnstileAttempt] = useState(0);
 
   const now = useNow();
 
@@ -61,9 +68,9 @@ export function ResultsDisplay({
       const response = await fetch("/api/send-emails", {
         body: JSON.stringify({
           assignments,
-          bypassCooldown: opts?.bypass === true,
           partyName,
           players,
+          turnstileToken,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +78,7 @@ export function ResultsDisplay({
         method: "POST",
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as { error?: string };
 
       if (!response.ok) {
         if (response.status === 429) {
@@ -103,6 +110,8 @@ export function ResultsDisplay({
         open: true,
       });
     } finally {
+      setTurnstileToken(null);
+      setTurnstileAttempt((attempt) => attempt + 1);
       setIsSending(false);
       setConfirmDialogOpen(false);
     }
@@ -137,6 +146,14 @@ export function ResultsDisplay({
         partyName={partyName}
         players={players}
         isSending={isSending}
+        isVerified={turnstileToken !== null}
+        verification={
+          <TurnstileWidget
+            key={turnstileAttempt}
+            siteKey={turnstileSiteKey}
+            onToken={setTurnstileToken}
+          />
+        }
         cooldownRemainingMs={remainingMs}
         confirmDialogOpen={confirmDialogOpen}
         onConfirmDialogOpenChange={setConfirmDialogOpen}
