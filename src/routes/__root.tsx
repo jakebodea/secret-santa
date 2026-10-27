@@ -29,7 +29,7 @@ export const Route = createRootRoute({
       },
       {
         // Linked here rather than @import-ed from CSS so it downloads in parallel
-        href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Nunito+Sans:wght@300..700&display=swap",
         rel: "stylesheet",
       },
       {
