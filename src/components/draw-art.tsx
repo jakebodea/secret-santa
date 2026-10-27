@@ -1,6 +1,6 @@
 /**
  * Flat illustrations for the drawing-names screen, drawn in the palette and
- * style of public/santa.svg: solid fills, white trim, gold accents, and
+ * style of public/santa.svg: solid fills, gold trim and accents, and
  * shading as translucent ink rather than gradients.
  */
 
@@ -10,7 +10,6 @@ const RED = "#c83532";
 const CREAM = "#e8d4a0";
 const GOLD = "#c4a862";
 const INK = "#2f3034";
-const WHITE = "#fff";
 
 const STAR_POINTS =
   "M58 77.5L60.4 83.2 66.5 83.6 61.8 87.5 63.3 93.4 58 90.2 52.7 93.4 54.2 87.5 49.5 83.6 55.6 83.2Z";
@@ -24,7 +23,7 @@ export function SackBack() {
       viewBox="0 0 160 130"
       aria-hidden
     >
-      <ellipse cx="80" cy="22" rx="52" ry="13" fill={WHITE} />
+      <ellipse cx="80" cy="22" rx="52" ry="13" fill={GOLD} />
       <ellipse cx="80" cy="22" rx="43" ry="9" fill={RED} />
       <ellipse cx="80" cy="22" rx="43" ry="9" fill={INK} opacity="0.55" />
     </svg>
@@ -63,14 +62,14 @@ export function SackFront() {
       <path d={STAR_POINTS} fill={GOLD} />
       <path
         d="M28 22L28 28A52 13 0 0 0 132 28L132 22 123 22A43 9 0 0 1 37 22Z"
-        fill={WHITE}
+        fill={GOLD}
       />
       <path
         d="M30 30A52 13 0 0 0 130 30"
         fill="none"
-        stroke={GOLD}
+        stroke={INK}
         strokeWidth="3"
-        opacity="0.35"
+        opacity="0.15"
       />
       <g fill="none" stroke={GOLD} strokeWidth="3.5" strokeLinecap="round">
         <path d="M18 50Q80 66 142 50" />
