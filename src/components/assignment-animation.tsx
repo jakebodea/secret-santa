@@ -3,19 +3,19 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   CARD,
-  GLINT_MS,
   SACK_ART,
   SACK_MOUTH_Y,
   STAGE,
   cardLabel,
   cardRestingPose,
+  cardSlot,
   cardTrack,
   drawSchedule,
-  glintDelay,
   pickCardPlayers,
+  popAt,
   sackTrack,
 } from "../lib/draw-timeline";
-import { EASE_IN_OUT, EASE_OUT } from "../lib/motion";
+import { EASE_OUT } from "../lib/motion";
 import type { Player } from "../lib/types";
 import { SackBack, SackFront, SealedEnvelope } from "./draw-art";
 
@@ -28,24 +28,40 @@ const STAGE_VARS = {
   "--sack-left": `${STAGE.width / 2 - SACK_ART.mouthX}px`,
   // The sack wobbles and squashes from the middle of its base.
   "--sack-origin-y": `${(124 / SACK_ART.height) * 100}%`,
+  "--sack-mouth-y": `${SACK_MOUTH_Y}px`,
   "--sack-top": `${SACK_MOUTH_Y - SACK_ART.mouthY}px`,
   "--stage-h": `${STAGE.height}px`,
   "--stage-w": `${STAGE.width}px`,
 } as React.CSSProperties;
 
 const SPARKLE_COLORS = ["bg-gold", "bg-primary", "bg-gold", "bg-secondary"];
-const SPARKLES = Array.from({ length: 14 }, (_, step) => {
-  // Golden-angle spread looks random but renders the same every time.
-  const angle = step * 2.39996;
-  const distance = 60 + (step % 4) * 18;
-  return {
-    className: SPARKLE_COLORS[step % SPARKLE_COLORS.length],
-    id: `sparkle-${step}`,
-    spin: (step % 2 === 0 ? 1 : -1) * (180 + step * 20),
-    x: Math.cos(angle) * distance,
-    y: Math.sin(angle) * distance * 0.7 - 20,
-  };
-});
+const SPARKLES_PER_BURST = 8;
+/** Where along the sack's opening each burst starts, so shots spread out. */
+const BURST_OFFSETS = [-22, 18, -8, 26, -28, 10] as const;
+
+/**
+ * One small burst per envelope. Each starts at its own spot on the opening,
+ * leans toward where its envelope is headed, and is turned a little so no
+ * two match.
+ */
+function burstPieces(burst: number, count: number) {
+  const originX = BURST_OFFSETS[burst % BURST_OFFSETS.length];
+  const lean = (cardSlot(burst, count).x - STAGE.width / 2) * 0.35;
+  return Array.from({ length: SPARKLES_PER_BURST }, (_, step) => {
+    // Golden-angle spread looks random but renders the same every time.
+    const angle = step * 2.39996 + burst * 0.9;
+    const distance = 40 + (step % 4) * 14;
+    return {
+      className: SPARKLE_COLORS[(step + burst) % SPARKLE_COLORS.length],
+      id: `sparkle-${burst}-${step}`,
+      originX,
+      spin: (step % 2 === 0 ? 1 : -1) * (180 + step * 25),
+      x: originX + lean + Math.cos(angle) * distance,
+      // Fountains up out of the sack's mouth before it falls.
+      y: -Math.abs(Math.sin(angle)) * distance - 16,
+    };
+  });
+}
 
 interface Message {
   at: number;
@@ -79,6 +95,14 @@ function useCurrentMessage(messages: Message[], skipToEnd: boolean) {
   return messages[index];
 }
 
+/**
+ * Full transform strings rather than Motion's x/y/scale shorthands, so the
+ * browser can run the movement on the compositor.
+ */
+function cardTransform(x: number, y: number, rotate: number, scale: number) {
+  return `translate(${x}px, ${y}px) rotate(${rotate}deg) scale(${scale})`;
+}
+
 interface DrawCardProps {
   index: number;
   count: number;
@@ -90,8 +114,27 @@ function DrawCard({ index, count, label, reduceMotion }: DrawCardProps) {
   const { total } = drawSchedule(count);
   const { values, ease, times } = cardTrack(index, count);
   const timing = { duration: total / SECOND, ease, times };
-  const { envelope, ...pose } = values;
-  const restingPose = cardRestingPose(index, count);
+  const pose = {
+    opacity: values.opacity,
+    transform: values.x.map((x, frame) =>
+      cardTransform(
+        x,
+        values.y[frame],
+        values.rotate[frame],
+        values.scale[frame]
+      )
+    ),
+  };
+  const resting = cardRestingPose(index, count);
+  const restingPose = {
+    opacity: resting.opacity,
+    transform: cardTransform(
+      resting.x,
+      resting.y,
+      resting.rotate,
+      resting.scale
+    ),
+  };
 
   return (
     <m.div
@@ -108,22 +151,10 @@ function DrawCard({ index, count, label, reduceMotion }: DrawCardProps) {
       <m.div
         className="absolute inset-0 overflow-hidden rounded-md shadow-md"
         initial={reduceMotion ? false : undefined}
-        animate={{ opacity: reduceMotion ? 1 : envelope }}
+        animate={{ opacity: reduceMotion ? 1 : values.envelope }}
         transition={reduceMotion ? undefined : timing}
       >
         <SealedEnvelope />
-        {!reduceMotion && (
-          <m.span
-            className="absolute inset-0 bg-linear-to-r from-transparent via-white/60 to-transparent"
-            initial={{ x: "-100%" }}
-            animate={{ x: "100%" }}
-            transition={{
-              delay: glintDelay(index, count) / SECOND,
-              duration: GLINT_MS / SECOND,
-              ease: EASE_IN_OUT,
-            }}
-          />
-        )}
       </m.div>
     </m.div>
   );
@@ -138,42 +169,49 @@ interface SackLayerProps {
 /** Back and front share one motion so the sack moves as a single piece. */
 function SackLayer({ count, reduceMotion, children }: SackLayerProps) {
   const { total } = drawSchedule(count);
-  const track = sackTrack(count);
+  const { values, ease, times } = sackTrack(count);
+  const transform = values.rotate.map(
+    (rotate, frame) =>
+      `translateY(${values.y[frame]}px) rotate(${rotate}deg) scale(${values.scaleX[frame]}, ${values.scaleY[frame]})`
+  );
   return (
     <m.div
       className="absolute top-(--sack-top) left-(--sack-left) origin-[50%_var(--sack-origin-y)]"
-      animate={reduceMotion ? undefined : track.values}
-      transition={{
-        duration: total / SECOND,
-        ease: track.ease,
-        times: track.times,
-      }}
+      animate={reduceMotion ? undefined : { transform }}
+      transition={{ duration: total / SECOND, ease, times }}
     >
       {children}
     </m.div>
   );
 }
 
+/** A pop of confetti out of the sack with every envelope. */
 function Sparkles({ count }: { count: number }) {
-  const { glintAt } = drawSchedule(count);
-  return SPARKLES.map((sparkle) => (
-    <m.span
-      key={sparkle.id}
-      className={`absolute top-20 left-1/2 h-2.5 w-1.5 rounded-xs ${sparkle.className}`}
-      initial={{ opacity: 0, rotate: 0, x: 0, y: 0 }}
-      animate={{
-        opacity: [0, 1, 1, 0],
-        rotate: sparkle.spin,
-        x: sparkle.x,
-        y: [0, sparkle.y, sparkle.y + 40],
-      }}
-      transition={{
-        delay: (glintAt - 150) / SECOND,
-        duration: 0.9,
-        ease: EASE_OUT,
-      }}
-    />
-  ));
+  return Array.from({ length: count }, (_, burst) =>
+    burstPieces(burst, count).map((sparkle) => (
+      <m.span
+        key={sparkle.id}
+        className={`absolute top-(--sack-mouth-y) left-1/2 h-2 w-1.5 rounded-xs ${sparkle.className}`}
+        initial={{
+          opacity: 0,
+          transform: `translate(${sparkle.originX}px, 0px) rotate(0deg)`,
+        }}
+        animate={{
+          opacity: [0, 1, 1, 0],
+          transform: [
+            `translate(${sparkle.originX}px, 0px) rotate(0deg)`,
+            `translate(${(sparkle.originX + sparkle.x) / 2}px, ${sparkle.y}px) rotate(${sparkle.spin / 2}deg)`,
+            `translate(${sparkle.x}px, ${sparkle.y + 36}px) rotate(${sparkle.spin}deg)`,
+          ],
+        }}
+        transition={{
+          delay: popAt(burst, count) / SECOND,
+          duration: 0.8,
+          ease: EASE_OUT,
+        }}
+      />
+    ))
+  );
 }
 
 interface AssignmentAnimationProps {
