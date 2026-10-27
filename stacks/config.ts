@@ -12,6 +12,16 @@ export const repository = {
   repository: "secret-santa",
 } as const;
 
+/**
+ * CI deploy tokens are minted per generation. Bump `generation` to rotate: the
+ * next `stacks/github.ts` deploy mints fresh tokens, writes them to GitHub, and
+ * deletes the previous generation. Rotate before `expiresOn`.
+ */
+export const deployTokens = {
+  expiresOn: "2027-10-27T23:59:59Z",
+  generation: 1,
+} as const;
+
 export const site = {
   /**
    * Attached to the production Worker only. The zone is on the account, so
