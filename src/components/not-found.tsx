@@ -20,8 +20,8 @@ export function NotFound() {
           </p>
         </div>
         <div className="animate-reveal reveal-order-2">
-          <Button asChild size="cta">
-            <Link to="/">Back to home</Link>
+          <Button render={<Link to="/" />} nativeButton={false} size="cta">
+            Back to home
           </Button>
         </div>
       </div>

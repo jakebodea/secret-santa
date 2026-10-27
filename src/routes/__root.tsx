@@ -145,14 +145,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         />
       </head>
       <body>
-        {/* Fixed edge strips Safari samples to tint its status bar and toolbar */}
-        <div aria-hidden="true" className="edge-top" />
-        <div aria-hidden="true" className="edge-bottom" />
-        <LazyMotion features={domAnimation}>
-          <MotionConfig reducedMotion="user">{children}</MotionConfig>
-        </LazyMotion>
-        <Toaster />
-        <TanStackRouterDevtools />
+        <div className="isolate">
+          {/* Fixed edge strips Safari samples to tint its status bar and toolbar */}
+          <div aria-hidden="true" className="edge-top" />
+          <div aria-hidden="true" className="edge-bottom" />
+          <LazyMotion features={domAnimation}>
+            <MotionConfig reducedMotion="user">{children}</MotionConfig>
+          </LazyMotion>
+          <Toaster />
+          <TanStackRouterDevtools />
+        </div>
         <Scripts />
       </body>
     </html>

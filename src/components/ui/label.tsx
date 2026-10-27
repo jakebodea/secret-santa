@@ -1,4 +1,3 @@
-import * as LabelPrimitive from "@radix-ui/react-label";
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
 import * as React from "react";
@@ -23,11 +22,12 @@ const labelVariants = cva(
 function Label({
   className,
   variant,
+  htmlFor,
   ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root> &
-  VariantProps<typeof labelVariants>) {
+}: React.ComponentProps<"label"> & VariantProps<typeof labelVariants>) {
   return (
-    <LabelPrimitive.Root
+    <label
+      htmlFor={htmlFor}
       data-slot="label"
       className={cn(labelVariants({ className, variant }))}
       {...props}
