@@ -9,6 +9,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectGroup,
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
@@ -23,23 +24,28 @@ export function ConstraintsForm({
   players,
   onAddConstraint,
 }: ConstraintsFormProps) {
-  const [giverId, setGiverId] = useState<string>("");
-  const [receiverId, setReceiverId] = useState<string>("");
+  const [giverId, setGiverId] = useState<string | null>(null);
+  const [receiverId, setReceiverId] = useState<string | null>(null);
   const [bidirectional, setBidirectional] = useState(true);
+
+  const playerItems = [
+    { label: "Select player", value: null },
+    ...players.map((player) => ({ label: player.name, value: player.id })),
+  ];
 
   const canSubmit = !!giverId && !!receiverId && giverId !== receiverId;
 
-  const handleGiverChange = (id: string) => {
+  const handleGiverChange = (id: string | null) => {
     setGiverId(id);
     if (id === receiverId) {
-      setReceiverId("");
+      setReceiverId(null);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!canSubmit) {
+    if (!canSubmit || !giverId || !receiverId) {
       return;
     }
 
@@ -53,8 +59,8 @@ export function ConstraintsForm({
     onAddConstraint(newConstraint);
 
     // Reset form
-    setGiverId("");
-    setReceiverId("");
+    setGiverId(null);
+    setReceiverId(null);
     setBidirectional(true);
   };
 
@@ -72,34 +78,48 @@ export function ConstraintsForm({
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="giver">This player</Label>
-              <Select value={giverId} onValueChange={handleGiverChange}>
+              <Select
+                items={playerItems}
+                value={giverId}
+                onValueChange={handleGiverChange}
+              >
                 <SelectTrigger id="giver" size="lg" className="w-full">
-                  <SelectValue placeholder="Select player" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {players.map((player) => (
-                    <SelectItem key={player.id} value={player.id}>
-                      {player.name}
-                    </SelectItem>
-                  ))}
+                  <SelectGroup>
+                    {players.map((player) => (
+                      <SelectItem key={player.id} value={player.id}>
+                        {player.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="receiver">Cannot give to</Label>
-              <Select value={receiverId} onValueChange={setReceiverId}>
+              <Select
+                items={playerItems.filter(
+                  (item) => item.value !== giverId || item.value === null
+                )}
+                value={receiverId}
+                onValueChange={setReceiverId}
+              >
                 <SelectTrigger id="receiver" size="lg" className="w-full">
-                  <SelectValue placeholder="Select player" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {players.map((player) =>
-                    player.id === giverId ? null : (
-                      <SelectItem key={player.id} value={player.id}>
-                        {player.name}
-                      </SelectItem>
-                    )
-                  )}
+                  <SelectGroup>
+                    {players.map((player) =>
+                      player.id === giverId ? null : (
+                        <SelectItem key={player.id} value={player.id}>
+                          {player.name}
+                        </SelectItem>
+                      )
+                    )}
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>

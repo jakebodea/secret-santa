@@ -137,8 +137,8 @@ function HomePage() {
   const wiggleDuration = isHoverCapable ? 2 : 1.5;
 
   return (
-    <div className="bg-background min-h-dvh">
-      <main className="container mx-auto px-4 py-6 sm:py-12 md:py-16">
+    <div className="bg-background flex min-h-dvh flex-col">
+      <main className="container mx-auto flex-1 px-4 pt-6 pb-4 sm:pt-12 sm:pb-6 md:pt-16">
         <div className="mx-auto max-w-3xl space-y-6 text-center sm:space-y-8">
           {/* Icon */}
           <div className="animate-pop-in flex justify-center">
@@ -188,17 +188,16 @@ function HomePage() {
 
           {/* Heading */}
           <div className="space-y-6">
-            <h1 className="animate-reveal reveal-order-1 text-foreground text-4xl leading-none font-normal tracking-tight sm:text-6xl md:text-7xl">
-              <span className="font-light italic">
-                {" "}
-                <span className="decoration-primary underline decoration-4">
+            <h1 className="animate-reveal reveal-order-1 text-foreground text-4xl leading-tight font-medium tracking-tight sm:text-6xl">
+              <span className="whitespace-nowrap italic">
+                <span className="decoration-primary underline decoration-4 underline-offset-4">
                   Super
                 </span>{" "}
                 Simple
               </span>{" "}
-              Secret Santa
+              <span className="whitespace-nowrap">Secret Santa</span>
             </h1>
-            <p className="animate-reveal reveal-order-2 text-muted-foreground text-lg font-light tracking-wide sm:text-2xl md:text-3xl">
+            <p className="animate-reveal reveal-order-2 text-muted-foreground text-lg font-light tracking-wide sm:text-2xl">
               Organize your gift exchange with this super simple tool!
             </p>
           </div>
@@ -261,7 +260,7 @@ function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-border mt-8 border-t py-6 sm:mt-16 sm:py-10">
+      <footer className="pb-safe-6 pt-4">
         <div className="text-muted-foreground container mx-auto space-y-2 px-4 text-center text-sm font-light tracking-wide">
           <p>
             <Link

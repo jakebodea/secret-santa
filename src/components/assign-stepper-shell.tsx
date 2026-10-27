@@ -101,7 +101,7 @@ export function AssignStepperShell({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: EASE_OUT }}
         >
-          <div className="border-border bg-card/95 supports-[backdrop-filter]:bg-card/85 pointer-events-auto flex w-full max-w-md min-w-[min(100%,18rem)] gap-2 rounded-xl border p-2 shadow-lg shadow-black/5 backdrop-blur-md">
+          <div className="border-border bg-card/95 supports-[backdrop-filter]:bg-card/85 rounded-action pointer-events-auto flex w-full max-w-md min-w-[min(100%,18rem)] gap-2 border p-2 shadow-lg shadow-black/5 backdrop-blur-md">
             {showBack && onBack ? (
               <Button
                 type="button"

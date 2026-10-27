@@ -27,7 +27,7 @@ export function FeatureCard({
       >
         <Icon className="size-6 sm:size-7" />
       </div>
-      <h3 className="text-foreground text-xl font-medium tracking-tight sm:text-2xl md:text-3xl">
+      <h3 className="text-foreground text-xl font-medium tracking-tight sm:text-2xl">
         {title}
       </h3>
       <p className="text-foreground/70 text-center text-sm leading-tight font-normal tracking-wide sm:text-base md:text-lg">

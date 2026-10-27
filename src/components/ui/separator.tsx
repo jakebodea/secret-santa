@@ -1,4 +1,4 @@
-import * as SeparatorPrimitive from "@radix-ui/react-separator";
+import { Separator as SeparatorPrimitive } from "@base-ui/react/separator";
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
 import * as React from "react";
@@ -6,7 +6,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const separatorVariants = cva(
-  "shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
+  "shrink-0 data-horizontal:h-px data-horizontal:w-full data-vertical:h-full data-vertical:w-px",
   {
     defaultVariants: {
       variant: "default",
@@ -23,15 +23,14 @@ const separatorVariants = cva(
 function Separator({
   className,
   orientation = "horizontal",
-  decorative = true,
   variant,
   ...props
-}: React.ComponentProps<typeof SeparatorPrimitive.Root> &
-  VariantProps<typeof separatorVariants>) {
+}: React.ComponentProps<typeof SeparatorPrimitive> & {
+  className?: string;
+} & VariantProps<typeof separatorVariants>) {
   return (
-    <SeparatorPrimitive.Root
+    <SeparatorPrimitive
       data-slot="separator"
-      decorative={decorative}
       orientation={orientation}
       className={cn(separatorVariants({ className, variant }))}
       {...props}

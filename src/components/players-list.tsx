@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
@@ -64,31 +65,35 @@ function PlayerRow({
         </div>
       </div>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon-sm" className="shrink-0">
-            <MoreVertical className="h-4 w-4" />
-            <span className="sr-only">Options for {player.name}</span>
-          </Button>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="ghost" size="icon-sm" className="shrink-0" />
+          }
+        >
+          <MoreVertical className="h-4 w-4" />
+          <span className="sr-only">Options for {player.name}</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            onClick={() => {
-              onToggleAdmin(player.id);
-            }}
-          >
-            <Crown className="h-4 w-4" />
-            {player.isAdmin ? "Remove organizer role" : "Make organizer"}
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              onRemovePlayer(player.id);
-            }}
-            variant="destructive"
-          >
-            <Trash2 className="h-4 w-4" />
-            Remove
-          </DropdownMenuItem>
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onClick={() => {
+                onToggleAdmin(player.id);
+              }}
+            >
+              <Crown className="h-4 w-4" />
+              {player.isAdmin ? "Remove organizer role" : "Make organizer"}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => {
+                onRemovePlayer(player.id);
+              }}
+              variant="destructive"
+            >
+              <Trash2 className="h-4 w-4" />
+              Remove
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

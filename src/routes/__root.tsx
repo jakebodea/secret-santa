@@ -29,7 +29,7 @@ export const Route = createRootRoute({
       },
       {
         // Linked here rather than @import-ed from CSS so it downloads in parallel
-        href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Nunito+Sans:wght@300..700&display=swap",
         rel: "stylesheet",
       },
       {
@@ -145,14 +145,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         />
       </head>
       <body>
-        {/* Fixed edge strips Safari samples to tint its status bar and toolbar */}
-        <div aria-hidden="true" className="edge-top" />
-        <div aria-hidden="true" className="edge-bottom" />
-        <LazyMotion features={domAnimation}>
-          <MotionConfig reducedMotion="user">{children}</MotionConfig>
-        </LazyMotion>
-        <Toaster />
-        <TanStackRouterDevtools />
+        <div className="isolate">
+          {/* Fixed edge strips Safari samples to tint its status bar and toolbar */}
+          <div aria-hidden="true" className="edge-top" />
+          <div aria-hidden="true" className="edge-bottom" />
+          <LazyMotion features={domAnimation}>
+            <MotionConfig reducedMotion="user">{children}</MotionConfig>
+          </LazyMotion>
+          <Toaster />
+          <TanStackRouterDevtools />
+        </div>
         <Scripts />
       </body>
     </html>
