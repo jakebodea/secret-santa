@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { useNow } from "../hooks/use-now";
+import { useWebMCPTools } from "../hooks/use-webmcp-tools";
 import type { Assignment, Player } from "../lib/types";
+import { emptySchema } from "../lib/webmcp/tools";
 import { ResultsDrawOptions } from "./results-draw-options";
 import { ResultsEmailSending } from "./results-email-sending";
 import { ResultsEmailsSent } from "./results-emails-sent";
@@ -50,21 +52,37 @@ export function ResultsDisplay({
   // Tokens are single-use; bumping this remounts the widget for a fresh one.
   const [turnstileAttempt, setTurnstileAttempt] = useState(0);
 
+  const sendLock = useRef(false);
+  const consumedToken = useRef<string | null>(null);
+  const sent = useRef(false);
   const now = useNow();
 
   const COOLDOWN_MS = 60 * 60 * 1000;
   const remainingMs = cooldownUntil ? Math.max(0, cooldownUntil - now) : 0;
   const isOnCooldown = remainingMs > 0;
 
+  const needsVerification = () =>
+    !turnstileToken || turnstileToken === consumedToken.current;
+
   const handleSendEmails = async (opts?: { bypass?: boolean }) => {
+    if (sendLock.current || emailsSent) {
+      return { error: "Emails already sent or sending." };
+    }
+    if (needsVerification()) {
+      return { error: "Complete verification in the page before sending." };
+    }
     if (isOnCooldown && !opts?.bypass) {
       setConfirmDialogOpen(true);
-      return;
+      return {
+        error: "Sending is on cooldown. Use the page to review resend options.",
+      };
     }
+    consumedToken.current = turnstileToken;
+    sendLock.current = true;
     setIsSending(true);
 
     try {
-      if (opts?.bypass && typeof window !== "undefined") {
+      if (opts?.bypass) {
         localStorage.removeItem("ss_email_cooldown_until");
         setCooldownUntil(null);
       }
@@ -104,7 +122,13 @@ export function ResultsDisplay({
         localStorage.setItem("ss_email_cooldown_until", String(until));
       }
       setCooldownUntil(until);
+      sent.current = true;
       setEmailsSent(true);
+      return {
+        status: "sent",
+        message:
+          "The server accepted the emails. Inbox delivery is not verified.",
+      };
     } catch (error) {
       setErrorDialog({
         details:
@@ -112,13 +136,62 @@ export function ResultsDisplay({
         message: "Failed to send emails",
         open: true,
       });
+      return {
+        error: error instanceof Error ? error.message : "Email sending failed.",
+      };
     } finally {
+      sendLock.current = sent.current;
       setTurnstileToken(null);
       setTurnstileAttempt((attempt) => attempt + 1);
       setIsSending(false);
       setConfirmDialogOpen(false);
     }
   };
+
+  let deliveryStatus = "ready_to_send";
+  if (emailsSent) {
+    deliveryStatus = "sent";
+  } else if (isSending) {
+    deliveryStatus = "sending";
+  }
+
+  useWebMCPTools([
+    {
+      name: "get_delivery_status",
+      description:
+        "Read whether verification is ready, emails are sending, or the server accepted them. Does not reveal matches. Verification may require the user to interact with the page.",
+      inputSchema: emptySchema,
+      annotations: { readOnlyHint: true },
+      execute: () => ({
+        status: deliveryStatus,
+        verified: turnstileToken !== null,
+        cooldownRemainingMs: remainingMs,
+      }),
+    },
+    {
+      name: "send_assignment_emails",
+      description:
+        "Send each participant their secret match and each organizer the FULL match summary. Only call after the user approves the group, organizer, and sending emails. Requires page verification. Does not bypass cooldowns or resend after success.",
+      inputSchema: {
+        type: "object",
+        additionalProperties: false,
+        required: ["confirmed"],
+        properties: {
+          confirmed: {
+            type: "boolean",
+            const: true,
+            description:
+              "User has approved sending to the displayed group and organizers.",
+          },
+        },
+      },
+      annotations: { consequentialHint: true },
+      execute: (input) =>
+        input.confirmed === true
+          ? handleSendEmails()
+          : { error: "Ask the user to approve email sending first." },
+    },
+  ]);
 
   if (isSending) {
     return <ResultsEmailSending />;
@@ -160,8 +233,12 @@ export function ResultsDisplay({
         cooldownRemainingMs={remainingMs}
         confirmDialogOpen={confirmDialogOpen}
         onConfirmDialogOpenChange={setConfirmDialogOpen}
-        onSendEmails={async () => handleSendEmails()}
-        onSendEmailsBypass={async () => handleSendEmails({ bypass: true })}
+        onSendEmails={async () => {
+          await handleSendEmails();
+        }}
+        onSendEmailsBypass={async () => {
+          await handleSendEmails({ bypass: true });
+        }}
         drawOptions={
           <ResultsDrawOptions
             assignments={assignments}

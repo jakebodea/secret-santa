@@ -5,7 +5,9 @@ import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 
 import { FeatureCard } from "../components/feature-card";
 import { Button } from "../components/ui/button";
+import { useWebMCPTools } from "../hooks/use-webmcp-tools";
 import { clearAllData } from "../lib/storage";
+import { emptySchema } from "../lib/webmcp/tools";
 
 // Santa stays still until the entrance has settled
 const animationsCompleteDelay = 0.9;
@@ -19,7 +21,7 @@ export const Route = createFileRoute("/")({
       },
       {
         content:
-          "Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.",
+          "Organize a free Secret Santa gift exchange with no account. Add participants, set exclusions, and email secret matches yourself or with a WebMCP-compatible AI agent.",
         name: "description",
       },
       {
@@ -134,6 +136,21 @@ function HomePage() {
     navigate({ to: "/assign" });
   };
 
+  const handleAgentStart = async () => {
+    await navigate({ to: "/assign" });
+    return { next: "configure_exchange" };
+  };
+
+  useWebMCPTools([
+    {
+      name: "start_secret_santa",
+      description:
+        "Open a new Secret Santa exchange. Use configure_exchange on the next page to add participants and exclusions. Does not send email.",
+      inputSchema: emptySchema,
+      execute: handleAgentStart,
+    },
+  ]);
+
   const wiggleDuration = isHoverCapable ? 2 : 1.5;
 
   return (
@@ -210,6 +227,17 @@ function HomePage() {
             </Button>
             <p className="text-muted-foreground text-sm font-light tracking-wide">
               Takes about two minutes
+            </p>
+            <p className="text-muted-foreground mx-auto max-w-md text-sm font-light tracking-wide">
+              Bring your AI agent, too. A WebMCP-compatible browser agent can
+              add your group, set exclusions, and draw names for free. You
+              approve before emails go out.{" "}
+              <a
+                href="/llms.txt"
+                className="text-foreground underline underline-offset-4"
+              >
+                Agent instructions
+              </a>
             </p>
           </div>
           {/* Features */}

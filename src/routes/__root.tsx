@@ -3,6 +3,8 @@ import { LazyMotion, MotionConfig, domAnimation } from "framer-motion";
 import React from "react";
 
 import { Toaster } from "../components/ui/sonner";
+import { useWebMCPTools } from "../hooks/use-webmcp-tools";
+import { exchangeGuideTool } from "../lib/webmcp/guide";
 
 import appCss from "../styles.css?url";
 
@@ -77,7 +79,7 @@ export const Route = createRootRoute({
       },
       {
         content:
-          "Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.",
+          "Organize a free Secret Santa gift exchange with no account. Add participants, set exclusions, and email secret matches yourself or with a WebMCP-compatible AI agent.",
         name: "description",
       },
       {
@@ -91,7 +93,7 @@ export const Route = createRootRoute({
       },
       {
         content:
-          "Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.",
+          "Organize a free Secret Santa gift exchange with no account. Add participants, set exclusions, and email secret matches yourself or with a WebMCP-compatible AI agent.",
         property: "og:description",
       },
       {
@@ -116,7 +118,7 @@ export const Route = createRootRoute({
       },
       {
         content:
-          "Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.",
+          "Organize a free Secret Santa gift exchange with no account. Add participants, set exclusions, and email secret matches yourself or with a WebMCP-compatible AI agent.",
         name: "twitter:description",
       },
       {
@@ -131,14 +133,26 @@ export const Route = createRootRoute({
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebSite",
+  "@type": "WebApplication",
+  applicationCategory: "LifestyleApplication",
+  operatingSystem: "Web",
+  browserRequirements:
+    "A WebMCP-compatible browser agent is required for AI agent tools. Manual setup works without WebMCP.",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  featureList: [
+    "Free Secret Santa gift exchanges",
+    "Participant exclusions",
+    "Email assignments",
+    "WebMCP tools for browser AI agents",
+  ],
   description:
-    "Easily organize your Secret Santa gift exchange. Add participants, set constraints, and automatically assign gift recipients with our simple and fun tool.",
+    "Organize a free Secret Santa gift exchange with no account. Add participants, set exclusions, and email secret matches yourself or with a WebMCP-compatible AI agent.",
   name: "Secret Santa",
   url: "https://supersimplesecretsanta.com",
 };
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  useWebMCPTools([exchangeGuideTool]);
   return (
     <html lang="en">
       <head>

@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
+import { useExchangeWebMCP } from "../hooks/use-exchange-webmcp";
 import { drawDurationMs } from "../lib/draw-timeline";
 import { generateAssignments } from "../lib/secret-santa-assignments";
 import {
@@ -185,7 +186,7 @@ function AssignPage() {
         message: "Not enough players",
         open: true,
       });
-      return;
+      return { error: "At least 3 participants are required." };
     }
 
     const result = generateAssignments(
@@ -209,6 +210,12 @@ function AssignPage() {
         open: true,
       });
     }
+    return result.success
+      ? {
+          status: "drawing",
+          next: "Wait for the animation, then use get_delivery_status and send_assignment_emails.",
+        }
+      : { error: result.error, details: result.details };
   };
 
   const handleStartOver = () => {
@@ -252,6 +259,20 @@ function AssignPage() {
     }
     void navigate({ to: "/" });
   };
+
+  useExchangeWebMCP({
+    partyName,
+    players,
+    constraints,
+    assignments,
+    isGenerating,
+    goToStep,
+    handleGenerateAssignments,
+    onConfigure: (name) => {
+      setPartyName(name);
+      dispatchList({ type: "sync_from_storage" });
+    },
+  });
 
   const hasAssignments = assignments.length > 0 && animationComplete;
 
