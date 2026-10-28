@@ -151,8 +151,12 @@ export const Route = createFileRoute("/api/send-emails")({
               `Failed to send ${failedParticipants.length} of ${participants.length} participant emails`
             );
           }
-          // Participants already have their assignments; an admin summary failure is logged, not fatal.
-          await sendAll(admins);
+          // Participants already have their assignments, so an admin summary
+          // failure is logged, not fatal, unless the summary was all we sent.
+          const failedAdmins = await sendAll(admins);
+          if (participants.length === 0 && failedAdmins.length > 0) {
+            throw new Error("Failed to send the organizer summary");
+          }
 
           return json({
             adminCount: admins.length,
