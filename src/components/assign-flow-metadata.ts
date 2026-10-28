@@ -19,7 +19,8 @@ export const ASSIGN_FLOW_STEPS = [
     title: "Set exclusions",
   },
   {
-    description: "Review everyone, generate matches, and email assignments.",
+    description:
+      "Review everyone, draw names, then email or print their matches.",
     id: 4,
     label: "Send",
     title: "Confirm & send",

@@ -248,8 +248,9 @@ function HomePage() {
                 title="No Accounts"
                 description={
                   <>
-                    No signups, no logins, no hassle. Just add names and emails
-                    and <span className="underline">go</span>.
+                    No signups, no logins, no hassle. Just add names and{" "}
+                    <span className="underline">go</span>. No email? Print them
+                    a card.
                   </>
                 }
                 tone="primary"

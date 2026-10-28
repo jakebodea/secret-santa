@@ -1,5 +1,10 @@
-import { Crown } from "lucide-react";
+import { Crown, Printer } from "lucide-react";
 
+import {
+  drawingPlayers,
+  drawsNames,
+  handDeliveryPlayers,
+} from "../lib/players";
 import type { Assignment, Constraint, Player } from "../lib/types";
 import type { AssignFlowStepId } from "./assign-flow-metadata";
 import { ConstraintsForm } from "./constraints-form";
@@ -23,6 +28,7 @@ interface AssignFlowStepsProps {
   onImportPlayers: (players: Player[]) => void;
   onRemovePlayer: (playerId: string) => void;
   onToggleAdmin: (playerId: string) => void;
+  onToggleSitsOut: (playerId: string) => void;
   onClearAllPlayers: () => void;
   onAddConstraint: (constraint: Constraint) => void;
   onRemoveConstraint: (constraintId: string) => void;
@@ -45,6 +51,7 @@ export function AssignFlowSteps({
   onImportPlayers,
   onRemovePlayer,
   onToggleAdmin,
+  onToggleSitsOut,
   onClearAllPlayers,
   onAddConstraint,
   onRemoveConstraint,
@@ -83,6 +90,7 @@ export function AssignFlowSteps({
         onImport={onImportPlayers}
         onRemovePlayer={onRemovePlayer}
         onToggleAdmin={onToggleAdmin}
+        onToggleSitsOut={onToggleSitsOut}
         onClearAll={onClearAllPlayers}
       />
     );
@@ -123,6 +131,9 @@ export function AssignFlowSteps({
   }
 
   if (step === 4) {
+    const drawing = drawingPlayers(players);
+    const sittingOut = players.filter((p) => !drawsNames(p));
+    const cardCount = handDeliveryPlayers(players).length;
     return (
       <div className="space-y-6">
         <Card>
@@ -141,10 +152,10 @@ export function AssignFlowSteps({
                   Participants
                 </p>
                 <p className="text-foreground mt-1 text-base">
-                  {players.length} people ready to draw names
+                  {drawing.length} people ready to draw names
                 </p>
                 <ul className="mt-3 flex flex-wrap gap-1.5">
-                  {players.map((p) => (
+                  {drawing.map((p) => (
                     <li
                       key={p.id}
                       className="bg-muted text-foreground/80 inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-light"
@@ -159,6 +170,20 @@ export function AssignFlowSteps({
                     </li>
                   ))}
                 </ul>
+                {sittingOut.length > 0 && (
+                  <p className="text-muted-foreground mt-3 text-sm font-light">
+                    {sittingOut.map((p) => p.name).join(", ")} organizing, not
+                    drawing.
+                  </p>
+                )}
+                {cardCount > 0 && (
+                  <p className="text-muted-foreground mt-3 flex items-center gap-1.5 text-sm font-light">
+                    <Printer className="size-3.5 shrink-0" aria-hidden />
+                    {cardCount === drawing.length
+                      ? "No emails: everyone gets a card to print or a link to text."
+                      : `${cardCount} without email will get a card to print or a link to text.`}
+                  </p>
+                )}
               </div>
               <div>
                 <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
@@ -174,7 +199,7 @@ export function AssignFlowSteps({
           </CardContent>
         </Card>
         <p className="text-muted-foreground text-center text-sm font-light tracking-wide">
-          We’ll shuffle names next. You can review matches before emails go out.
+          We’ll shuffle names next. Nothing goes out until you send it.
         </p>
       </div>
     );

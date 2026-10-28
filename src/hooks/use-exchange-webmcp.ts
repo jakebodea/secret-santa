@@ -62,7 +62,7 @@ export function useExchangeWebMCP({
     {
       name: "configure_exchange",
       description:
-        "Set up an empty exchange with all participants, optional name and exclusions. First participant is organizer unless isAdmin is specified; organizers get ALL matches by email. Ask who should organize. Only works on an empty draft; use the visible form to edit an existing draft. Does not draw or send email.",
+        "Set up an empty exchange with all participants, optional name and exclusions. Email is optional per person: people without one (such as kids) get a printable QR card or private link after the draw. First participant is organizer unless isAdmin is specified; organizers with email get ALL matches. An organizer can set sitsOut to run it without drawing. Ask who should organize. Only works on an empty draft; use the visible form to edit an existing draft. Does not draw or send email.",
       inputSchema: exchangeSchema,
       annotations: { untrustedContentHint: true },
       execute: (input) => {

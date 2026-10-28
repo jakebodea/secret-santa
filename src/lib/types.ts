@@ -3,8 +3,11 @@
 export interface Player {
   id: string;
   name: string;
-  email: string;
+  /** Empty or missing: no inbox, so they get a reveal card instead of an email. */
+  email?: string;
   isAdmin: boolean;
+  /** An organizer who runs the exchange but isn't in the draw. Only organizers sit out. */
+  sitsOut?: boolean;
 }
 
 export interface Constraint {

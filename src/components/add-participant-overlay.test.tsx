@@ -23,7 +23,7 @@ describe(AddParticipantOverlay, () => {
     );
     expect(screen.getByRole("dialog").dataset.slot).toBe("dialog-content");
     expect(screen.getByLabelText("Name")).toBeTruthy();
-    expect(screen.getByLabelText("Email")).toBeTruthy();
+    expect(screen.getByLabelText("Email (optional)")).toBeTruthy();
   });
 
   test("mobile uses Drawer defaults and Cancel dismisses it", () => {

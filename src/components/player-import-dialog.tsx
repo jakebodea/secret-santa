@@ -95,20 +95,20 @@ export function PlayerImportDialog({
         <DialogHeader>
           <DialogTitle>Import Participants</DialogTitle>
           <DialogDescription>
-            Upload a CSV or Excel file with your participants. The file must
-            contain the following columns:
+            Upload a CSV or Excel file with your participants.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <p className="text-sm font-medium">Required columns:</p>
+            <p className="text-sm font-medium">Columns:</p>
             <ul className="text-muted-foreground list-inside list-disc space-y-1 text-sm">
               <li>
-                <strong>name</strong> - Participant name
+                <strong>name</strong> - Participant name (required)
               </li>
               <li>
-                <strong>email</strong> - Participant email address
+                <strong>email</strong> - Optional. Blank means they get a
+                printable card
               </li>
             </ul>
             <p className="text-muted-foreground mt-3 text-xs">

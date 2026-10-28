@@ -2,6 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { UserPlus } from "lucide-react";
 import { useRef, useState } from "react";
 
+import { EMAIL_PATTERN, normalizeEmail } from "../lib/players";
 import type { Player } from "../lib/types";
 import { toTitleCase } from "../lib/utils";
 import { Button } from "./ui/button";
@@ -42,7 +43,7 @@ export function PlayerForm({
       }
 
       const newPlayer: Player = {
-        email: value.email.trim().toLowerCase(),
+        email: normalizeEmail(value.email),
         id: crypto.randomUUID(),
         isAdmin: existingPlayers.length === 0,
         name: toTitleCase(value.name.trim()),
@@ -115,10 +116,7 @@ export function PlayerForm({
           name="email"
           validators={{
             onChange: ({ value }) => {
-              if (!value.trim()) {
-                return "Email is required";
-              }
-              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(value)) {
+              if (value.trim() && !EMAIL_PATTERN.test(value)) {
                 return "Invalid email address";
               }
             },
@@ -127,7 +125,10 @@ export function PlayerForm({
           {(field) => (
             <div className="space-y-2">
               <Label htmlFor={emailFieldId} variant="field">
-                Email
+                Email{" "}
+                <span className="text-muted-foreground font-light">
+                  (optional)
+                </span>
               </Label>
               <Input
                 id={emailFieldId}
@@ -153,10 +154,19 @@ export function PlayerForm({
                 }}
                 onBlur={field.handleBlur}
                 aria-invalid={field.state.meta.errors.length > 0}
+                aria-describedby={`${emailFieldId}-hint`}
               />
-              {field.state.meta.errors.length > 0 && (
+              {field.state.meta.errors.length > 0 ? (
                 <p className="text-destructive text-sm">
                   {field.state.meta.errors.join(", ")}
+                </p>
+              ) : (
+                <p
+                  id={`${emailFieldId}-hint`}
+                  className="text-muted-foreground text-sm font-light"
+                >
+                  No email, like for kids? Leave it blank and print them a card
+                  after the draw.
                 </p>
               )}
             </div>

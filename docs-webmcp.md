@@ -21,8 +21,10 @@ Use test addresses for a setup/draw-only demo. For a delivery demo, substitute i
 | `/assign` | `configure_exchange` | Validates and saves a complete group, event name, and exclusions into an empty draft; opens review |
 | `/assign` | `get_exchange_status` | Returns participants, exclusions, and draw progress, without matches |
 | `/assign` | `draw_secret_santa` | Uses the existing solver and animation; refuses to overwrite a draw |
-| After animation | `get_delivery_status` | Reports verification, cooldown, and server acceptance |
-| After animation | `send_assignment_emails` | Requires `confirmed: true`, valid verification, and no cooldown; uses the existing send endpoint |
+| After animation | `get_delivery_status` | Reports verification, cooldown, server acceptance, `emailRecipientCount`, and `revealCardsFor` (names needing a printed card or link); `cards_only` when no one has email |
+| After animation | `send_assignment_emails` | Requires `confirmed: true`, valid verification, and no cooldown; uses the existing send endpoint; skips people without email; refuses when no one has email |
+
+Email is optional per participant. People without one get a QR reveal card (print) or private `/reveal` link (copy or share) from the page; agents get their names, never the links. Organizers can set `sitsOut: true` to stay out of the draw and still get the summary.
 
 Discover tools again after navigation and after the animation. Wait for the page to render after configuration before drawing. Existing draft edits, redraws, and resend overrides stay in the visible interface. Invalid inputs leave the draft untouched. Duplicate participant names are rejected; the first participant becomes organizer if none is specified. Status outputs containing participant data are marked untrusted.
 

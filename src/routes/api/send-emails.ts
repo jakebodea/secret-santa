@@ -135,6 +135,16 @@ export const Route = createFileRoute("/api/send-emails")({
             players,
           });
 
+          if (participants.length === 0 && admins.length === 0) {
+            return json(
+              {
+                error:
+                  "No one in this group has an email. Hand out their reveal cards instead.",
+              },
+              { status: 400 }
+            );
+          }
+
           const failedParticipants = await sendAll(participants);
           if (failedParticipants.length > 0) {
             throw new Error(

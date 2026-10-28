@@ -1,6 +1,7 @@
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
 
+import { EMAIL_PATTERN, normalizeEmail } from "./players";
 import type { Player } from "./types";
 
 export interface ImportResult {
@@ -13,7 +14,6 @@ type Row = Record<string, unknown>;
 
 const NAME_COLUMNS = ["name", "names", "participant", "participants"];
 const EMAIL_COLUMNS = ["email", "emails", "e-mail", "e-mail address"];
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u;
 
 // Normalize column names for flexible matching
 function normalizeColumnName(name: string): string {
@@ -35,7 +35,8 @@ function findColumn(headers: string[], targetNames: string[]): string | null {
   return null;
 }
 
-// Turn parsed spreadsheet rows into players, skipping incomplete or invalid rows
+// Turn parsed spreadsheet rows into players. Email is optional (blank means a
+// reveal card); rows without a name or with a malformed email are skipped.
 function rowsToPlayers(rows: Row[], fileLabel: string): ImportResult {
   if (rows.length === 0) {
     return {
@@ -48,9 +49,9 @@ function rowsToPlayers(rows: Row[], fileLabel: string): ImportResult {
   const nameKey = findColumn(headers, NAME_COLUMNS);
   const emailKey = findColumn(headers, EMAIL_COLUMNS);
 
-  if (!nameKey || !emailKey) {
+  if (!nameKey) {
     return {
-      error: `${fileLabel} must contain "name" and "email" columns`,
+      error: `${fileLabel} must contain a "name" column`,
       success: false,
     };
   }
@@ -59,9 +60,9 @@ function rowsToPlayers(rows: Row[], fileLabel: string): ImportResult {
 
   for (const row of rows) {
     const name = String(row[nameKey] ?? "").trim();
-    const email = String(row[emailKey] ?? "").trim();
+    const email = emailKey ? normalizeEmail(String(row[emailKey] ?? "")) : "";
 
-    if (!name || !email || !EMAIL_PATTERN.test(email)) {
+    if (!name || (email && !EMAIL_PATTERN.test(email))) {
       continue;
     }
 

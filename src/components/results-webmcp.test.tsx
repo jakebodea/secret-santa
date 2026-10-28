@@ -10,6 +10,10 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import type { WebMCPTool } from "../lib/webmcp/tools";
 import { ResultsDisplay } from "./results-display";
 
+vi.mock(import("../hooks/use-is-mobile"), () => ({
+  useIsMobile: () => false,
+}));
+
 vi.mock(import("./turnstile-widget"), () => ({
   TurnstileWidget: ({ onToken }: { onToken: (token: string) => void }) => (
     <button type="button" onClick={() => onToken("verified-token")}>
@@ -30,7 +34,7 @@ const assignments = [
   { giverId: "Cara", receiverId: "Alice" },
 ];
 
-function setup() {
+function setup(group = players) {
   const registry = new Map<string, WebMCPTool>();
   Object.defineProperty(document, "modelContext", {
     configurable: true,
@@ -43,7 +47,7 @@ function setup() {
   });
   render(
     <ResultsDisplay
-      players={players}
+      players={group}
       assignments={assignments}
       turnstileSiteKey="test"
       onRedraw={() => {}}
@@ -97,6 +101,38 @@ describe("WebMCP email delivery", () => {
     await expect(
       tools.get("get_delivery_status")?.execute({})
     ).resolves.toMatchObject({ status: "sent" });
+  });
+
+  test("a group without email gets cards, not a send step", async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    vi.stubGlobal("fetch", fetchMock);
+    const tools = setup(players.map((player) => ({ ...player, email: "" })));
+    expect(
+      screen.queryAllByRole("button").map((button) => button.textContent)
+    ).not.toContain("Send emails");
+    expect(screen.getByRole("button", { name: "Print 3 cards" })).toBeTruthy();
+    const status = await tools.get("get_delivery_status")?.execute({});
+    expect(status).toMatchObject({
+      emailRecipientCount: 0,
+      revealCardsFor: ["Alice", "Bob", "Cara"],
+      status: "cards_only",
+    });
+    expect(JSON.stringify(status)).not.toContain("/reveal");
+    await tools.get("send_assignment_emails")?.execute({ confirmed: true });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  test("a mixed group emails some and offers cards for the rest", async () => {
+    setup(
+      players.map((player) =>
+        player.name === "Cara" ? { ...player, email: "" } : player
+      )
+    );
+    expect(screen.getByRole("button", { name: "Send emails" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Print 1 card" })).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "Copy link for Cara" })
+    ).toBeTruthy();
   });
 
   test("agent cannot bypass a cooldown", async () => {

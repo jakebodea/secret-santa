@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer, useState } from "react";
 
 import type { AssignFlowStepId } from "../components/assign-flow-metadata";
 import { AssignFlowSteps } from "../components/assign-flow-steps";
@@ -16,6 +16,7 @@ import {
 } from "../components/ui/dialog";
 import { useExchangeWebMCP } from "../hooks/use-exchange-webmcp";
 import { drawDurationMs } from "../lib/draw-timeline";
+import { MIN_DRAWING_PLAYERS, drawingPlayers } from "../lib/players";
 import { generateAssignments } from "../lib/secret-santa-assignments";
 import {
   addConstraint,
@@ -30,6 +31,7 @@ import {
   saveConstraints,
   savePartyName,
   toggleAdmin,
+  toggleSitsOut,
 } from "../lib/storage";
 import { getTurnstileSiteKey } from "../lib/turnstile-site-key";
 import type { Assignment, Constraint, Player } from "../lib/types";
@@ -103,6 +105,8 @@ function AssignPage() {
   });
 
   const { players, constraints, assignments, animationComplete } = listState;
+  // Memoized: the draw animation picks its cards from this list once.
+  const drawing = useMemo(() => drawingPlayers(players), [players]);
 
   useEffect(() => {
     clearAllData();
@@ -118,11 +122,11 @@ function AssignPage() {
         patch: { animationComplete: true },
         type: "patch",
       });
-    }, drawDurationMs(players.length));
+    }, drawDurationMs(drawing.length));
     return () => {
       clearTimeout(timer);
     };
-  }, [isGenerating, players.length]);
+  }, [isGenerating, drawing.length]);
 
   const goToStep = (next: AssignFlowStepId) => {
     setStepState({ direction: next >= step ? 1 : -1, step: next });
@@ -153,6 +157,11 @@ function AssignPage() {
     dispatchList({ type: "sync_from_storage" });
   };
 
+  const handleToggleSitsOut = (playerId: string) => {
+    toggleSitsOut(playerId);
+    dispatchList({ type: "sync_from_storage" });
+  };
+
   const handleImportPlayers = (importedPlayers: Player[]) => {
     if (importedPlayers.length < 3) {
       setErrorDialog({
@@ -179,18 +188,18 @@ function AssignPage() {
   const handleGenerateAssignments = (
     previousAssignments: Assignment[] = []
   ) => {
-    if (players.length < 3) {
+    if (drawing.length < MIN_DRAWING_PLAYERS) {
       setErrorDialog({
         details:
-          "You need at least 3 players to generate Secret Santa assignments.",
+          "You need at least 3 people drawing names to generate Secret Santa assignments.",
         message: "Not enough players",
         open: true,
       });
-      return { error: "At least 3 participants are required." };
+      return { error: "At least 3 participants must draw names." };
     }
 
     const result = generateAssignments(
-      players,
+      drawing,
       constraints,
       previousAssignments
     );
@@ -213,7 +222,7 @@ function AssignPage() {
     return result.success
       ? {
           status: "drawing",
-          next: "Wait for the animation, then use get_delivery_status and send_assignment_emails.",
+          next: "Wait for the animation, then use get_delivery_status. Send emails with send_assignment_emails if anyone has one; people without email get reveal cards on the page.",
         }
       : { error: result.error, details: result.details };
   };
@@ -285,12 +294,12 @@ function AssignPage() {
       persistPartyName();
       goToStep(2);
     },
-    playersCount: players.length,
+    playersCount: drawing.length,
     step,
   });
 
   if (isGenerating) {
-    return <AssignmentAnimation players={players} />;
+    return <AssignmentAnimation players={drawing} />;
   }
 
   return (
@@ -317,6 +326,7 @@ function AssignPage() {
           onRedraw={() => handleGenerateAssignments(assignments)}
           onStartOver={handleStartOver}
           onToggleAdmin={handleToggleAdmin}
+          onToggleSitsOut={handleToggleSitsOut}
           partyName={partyName}
           players={players}
           step={step}

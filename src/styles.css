@@ -367,3 +367,27 @@ code {
     transparent
   );
 }
+
+/* Reveal cards (src/components/reveal-cards.tsx) print alone, without the page. */
+.print-cards {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 0.5in;
+  }
+
+  html,
+  body {
+    background: #fff;
+  }
+
+  body:has(> .print-cards) > :not(.print-cards) {
+    display: none !important;
+  }
+
+  .print-cards {
+    display: block;
+  }
+}
