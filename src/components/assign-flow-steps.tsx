@@ -180,8 +180,8 @@ export function AssignFlowSteps({
                   <p className="text-muted-foreground mt-3 flex items-center gap-1.5 text-sm font-light">
                     <Printer className="size-3.5 shrink-0" aria-hidden />
                     {cardCount === drawing.length
-                      ? "No emails: everyone gets a card to print or a link to text."
-                      : `${cardCount} without email will get a card to print or a link to text.`}
+                      ? "Everyone chose QR cards / private links. Print, scan, or share after the draw."
+                      : `${cardCount} using QR cards / private links; ${drawing.length - cardCount} using email.`}
                   </p>
                 )}
               </div>

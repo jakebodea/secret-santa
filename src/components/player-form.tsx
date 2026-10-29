@@ -23,6 +23,9 @@ export function PlayerForm({
   fieldIdPrefix = "participant",
 }: PlayerFormProps) {
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const [delivery, setDelivery] = useState<"card" | "email">("card");
+  const [sitsOut, setSitsOut] = useState(false);
+  const isOrganizer = existingPlayers.length === 0;
   const [duplicateError, setDuplicateError] = useState<string | null>(null);
   const nameFieldId = `${fieldIdPrefix}-name`;
   const emailFieldId = `${fieldIdPrefix}-email`;
@@ -34,6 +37,12 @@ export function PlayerForm({
       name: "",
     },
     onSubmit: ({ value }) => {
+      if (
+        !value.name.trim() ||
+        (delivery === "email" && !EMAIL_PATTERN.test(value.email))
+      ) {
+        return;
+      }
       const duplicate = existingPlayers.find(
         (p) => p.name.toLowerCase() === value.name.toLowerCase()
       );
@@ -43,9 +52,10 @@ export function PlayerForm({
       }
 
       const newPlayer: Player = {
-        email: normalizeEmail(value.email),
+        email: delivery === "email" ? normalizeEmail(value.email) : "",
         id: crypto.randomUUID(),
-        isAdmin: existingPlayers.length === 0,
+        isAdmin: isOrganizer,
+        sitsOut: isOrganizer && sitsOut,
         name: toTitleCase(value.name.trim()),
       };
 
@@ -112,75 +122,160 @@ export function PlayerForm({
           )}
         </form.Field>
 
-        <form.Field
-          name="email"
-          validators={{
-            onChange: ({ value }) => {
-              if (value.trim() && !EMAIL_PATTERN.test(value)) {
-                return "Invalid email address";
-              }
-            },
-          }}
-        >
-          {(field) => (
-            <div className="space-y-2">
-              <Label htmlFor={emailFieldId} variant="field">
-                Email{" "}
-                <span className="text-muted-foreground font-light">
-                  (optional)
-                </span>
-              </Label>
-              <Input
-                id={emailFieldId}
-                type="email"
-                placeholder="alex@example.com"
-                autoComplete="off"
-                autoCapitalize="none"
-                autoCorrect="off"
-                enterKeyHint="done"
-                className={isDialog ? "h-11" : undefined}
-                value={field.state.value}
-                onKeyDown={(e) => {
-                  if (e.key === " ") {
-                    e.preventDefault();
-                  }
-                }}
-                onChange={(e) => {
-                  const valueWithoutSpaces = e.target.value.replaceAll(
-                    /\s/gu,
-                    ""
-                  );
-                  field.handleChange(valueWithoutSpaces);
-                }}
-                onBlur={field.handleBlur}
-                aria-invalid={field.state.meta.errors.length > 0}
-                aria-describedby={`${emailFieldId}-hint`}
-              />
-              {field.state.meta.errors.length > 0 ? (
-                <p className="text-destructive text-sm">
-                  {field.state.meta.errors.join(", ")}
-                </p>
-              ) : (
-                <p
-                  id={`${emailFieldId}-hint`}
-                  className="text-muted-foreground text-sm font-light"
-                >
-                  No email, like for kids? Leave it blank and print them a card
-                  after the draw.
-                </p>
-              )}
+        {isOrganizer && (
+          <fieldset className="space-y-2">
+            <legend className="text-sm font-medium">
+              As the organizer, are you playing?
+            </legend>
+            <div className="flex flex-wrap gap-4">
+              <label className="flex min-h-11 items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name={`${fieldIdPrefix}-role`}
+                  checked={!sitsOut}
+                  onChange={() => setSitsOut(false)}
+                  className="accent-primary"
+                />
+                Playing too
+              </label>
+              <label className="flex min-h-11 items-center gap-2 text-sm">
+                <input
+                  type="radio"
+                  name={`${fieldIdPrefix}-role`}
+                  checked={sitsOut}
+                  onChange={() => setSitsOut(true)}
+                  className="accent-primary"
+                />
+                Only organizing
+              </label>
             </div>
-          )}
-        </form.Field>
+          </fieldset>
+        )}
+        <fieldset className="space-y-2">
+          <legend className="text-sm font-medium">
+            {isOrganizer && sitsOut
+              ? "Organizer summary"
+              : "How will they get their match?"}
+          </legend>
+          <div className="flex flex-wrap gap-4">
+            <label className="flex min-h-11 items-center gap-2 text-sm">
+              <input
+                type="radio"
+                name={`${fieldIdPrefix}-delivery`}
+                checked={delivery === "card"}
+                onChange={() => {
+                  setDelivery("card");
+                  form.setFieldValue("email", "");
+                }}
+                className="accent-primary"
+              />
+              {isOrganizer && sitsOut
+                ? "No email summary"
+                : "QR card / private link"}
+            </label>
+            <label className="flex min-h-11 items-center gap-2 text-sm">
+              <input
+                type="radio"
+                name={`${fieldIdPrefix}-delivery`}
+                checked={delivery === "email"}
+                onChange={() => setDelivery("email")}
+                className="accent-primary"
+              />
+              Email
+            </label>
+          </div>
+          <p className="text-muted-foreground text-sm font-light">
+            {isOrganizer && sitsOut
+              ? "You’ll manage the draw here without getting a match. An optional email summary includes every pairing."
+              : "Print a QR card, let them scan your screen, or text their private link after the draw. No account needed."}
+          </p>
+        </fieldset>
+
+        {delivery === "email" && (
+          <form.Field
+            name="email"
+            validators={{
+              onChange: ({ value }) => {
+                if (!EMAIL_PATTERN.test(value)) {
+                  return "Invalid email address";
+                }
+              },
+            }}
+          >
+            {(field) => (
+              <div className="space-y-2">
+                <Label htmlFor={emailFieldId} variant="field">
+                  Email address
+                </Label>
+                <Input
+                  id={emailFieldId}
+                  type="email"
+                  required
+                  placeholder="alex@example.com"
+                  autoComplete="off"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  enterKeyHint="done"
+                  className={isDialog ? "h-11" : undefined}
+                  value={field.state.value}
+                  onKeyDown={(e) => {
+                    if (e.key === " ") {
+                      e.preventDefault();
+                    }
+                  }}
+                  onChange={(e) => {
+                    const valueWithoutSpaces = e.target.value.replaceAll(
+                      /\s/gu,
+                      ""
+                    );
+                    field.handleChange(valueWithoutSpaces);
+                  }}
+                  onBlur={field.handleBlur}
+                  aria-invalid={field.state.meta.errors.length > 0}
+                  aria-describedby={`${emailFieldId}-hint`}
+                />
+                {field.state.meta.errors.length > 0 ? (
+                  <p
+                    id={`${emailFieldId}-hint`}
+                    className="text-destructive text-sm"
+                  >
+                    {field.state.meta.errors.join(", ")}
+                  </p>
+                ) : (
+                  <p
+                    id={`${emailFieldId}-hint`}
+                    className="text-muted-foreground text-sm font-light"
+                  >
+                    {isOrganizer
+                      ? "The organizer also receives a link to every match."
+                      : "Use an inbox this person can open privately."}
+                  </p>
+                )}
+              </div>
+            )}
+          </form.Field>
+        )}
       </div>
 
       <form.Subscribe
-        selector={(state) => [state.canSubmit, state.isSubmitting]}
+        selector={(state) =>
+          [
+            state.canSubmit,
+            state.isSubmitting,
+            state.values.email,
+            state.values.name,
+          ] as const
+        }
       >
-        {([canSubmit, isSubmitting]) => (
+        {([canSubmit, isSubmitting, email, name]) => (
           <Button
             type="submit"
-            disabled={!canSubmit || isSubmitting}
+            disabled={
+              !canSubmit ||
+              !name.trim() ||
+              isSubmitting ||
+              (delivery === "email" && !EMAIL_PATTERN.test(email))
+            }
             size={isDialog ? "default" : "lg"}
             className="w-full"
           >

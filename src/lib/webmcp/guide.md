@@ -6,7 +6,7 @@ Use the site's tools to set up the whole group, draw names, and deliver assignme
 
 Collect 3–100 participants with distinct names, an email address for each person who has one, an optional event name, exclusions, and who should organize. Use details already supplied by the user or available in context they have authorized you to use for this task, including their own email; ask only for missing or ambiguous information. Confirm which address to use if multiple are available.
 
-**Email is optional.** Omit `email` for anyone without an inbox, such as kids. Don't invent addresses, and don't substitute a parent's address unless the user asks: a parent who is also playing could see a match meant to surprise them. After the draw, the page gives each person without email a printable card with a QR code and a private link the user can text. Mixed groups work: people with email get one, everyone else gets a card. A group with no emails at all needs no email step.
+**Choose delivery for each person.** Email is optional. Omit `email` for anyone who wants a QR card or private link, including kids without an inbox. Don't invent addresses, and don't substitute a parent's address unless the user asks: a parent who is also playing could see a match meant to surprise them. After the draw, the page gives each person without email a printable card with a QR code and a private link the user can text. Mixed groups work: people with email get one, everyone else gets a card. A group with no emails at all needs no email step.
 
 Organizers with an email receive the **full assignment summary** as well as their own match. Set `isAdmin: true` for each intended organizer. If none is selected, the first participant becomes the organizer. Make this consequence clear when confirming the group.
 
@@ -45,7 +45,7 @@ Wait for the animation to finish, then discover the tools again. `get_delivery_s
 
 Call `get_delivery_status`. It returns `emailRecipientCount` and `revealCardsFor`, the names of people who need a hand-delivered card. `status: "cards_only"` means no one has email: skip sending.
 
-**Cards.** Tell the user to press **Print cards** on the page, or **Copy link** (**Send link** on phones) next to each name in `revealCardsFor`. You can't print or read the links, and you shouldn't ask for them: each one opens a secret match. Printing doesn't show matches, so the organizer can print and still play. Each person scans their card or opens their link and taps to see their match. A redraw invalidates cards and links already handed out.
+**Cards.** Tell the user to press **Print cards** on the page, or **Copy link** (**Send link** on phones) next to each name in `revealCardsFor`. You can't print or read the links, and you shouldn't ask for them: each one opens a secret match. Printing doesn't show matches, so the organizer can print and still play. Each person scans their card or opens their link and taps to see their match. The user can also expand **Show QR card** next to a name for that person to scan on screen. Anyone with the code or link can open the match, so share privately. After a redraw, replace cards and links already handed out: older copies still open the older matches.
 
 **Emails.** Proceed only when the user has approved sending emails to this group and its organizers. Honor approval already given for the same group; ask if it is missing or the recipients have changed.
 

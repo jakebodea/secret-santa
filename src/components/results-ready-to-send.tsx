@@ -59,7 +59,7 @@ export function ResultsReadyToSend({
     description =
       "Print a card for each person, or text them their link. Each one opens only that person’s match.";
   } else if (cards.length > 0) {
-    description = `${emailCount} ${emailCount === 1 ? "person gets" : "people get"} an email. Print a card or text a link for the ${cards.length} without one.`;
+    description = `${emailCount} ${emailCount === 1 ? "person gets" : "people get"} an email. Print a card or text a link for the ${cards.length} using QR cards / private links.`;
   }
 
   return (

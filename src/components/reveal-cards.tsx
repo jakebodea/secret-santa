@@ -52,18 +52,18 @@ export function RevealCards({ cards, primary = false }: RevealCardsProps) {
   return (
     <section
       aria-labelledby="reveal-cards-heading"
-      className="bg-card mx-auto max-w-lg space-y-4 rounded-2xl border px-5 py-5 text-left shadow-xs"
+      className="bg-card mx-auto max-w-lg space-y-4 rounded-2xl border px-5 py-5 text-left"
     >
       <div className="space-y-1">
         <h2
           id="reveal-cards-heading"
           className="text-foreground text-base font-medium"
         >
-          {primary ? "Hand out the cards" : "No email? Hand them a card"}
+          QR cards & private links
         </h2>
         <p className="text-muted-foreground text-sm font-light tracking-wide">
-          Each card has a QR code that opens that person’s match. You won’t see
-          the matches when you print or copy them.
+          Hand each person the card with their name, or send their link
+          privately. Printing and sharing keep the matches hidden.
         </p>
       </div>
       <Button
@@ -79,27 +79,52 @@ export function RevealCards({ cards, primary = false }: RevealCardsProps) {
       </Button>
       <ul className="divide-border/60 divide-y">
         {cards.map((card) => (
-          <li
-            key={card.giver}
-            className="flex items-center justify-between gap-3 py-2"
-          >
-            <span className="min-w-0 truncate font-normal tracking-wide">
-              {card.giver}
-            </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              aria-label={`${isMobile ? "Send link" : "Copy link"} for ${card.giver}`}
-              onClick={() => {
-                void shareLink(card, revealUrl(origin, card), isMobile);
-              }}
-            >
-              <Link2 data-icon="inline-start" />
-              {isMobile ? "Send link" : "Copy link"}
-            </Button>
+          <li key={card.giver} className="py-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="min-w-0 truncate font-normal tracking-wide">
+                {card.giver}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-label={`${isMobile ? "Send link" : "Copy link"} for ${card.giver}`}
+                onClick={() => {
+                  void shareLink(card, revealUrl(origin, card), isMobile);
+                }}
+              >
+                <Link2 data-icon="inline-start" />
+                {isMobile ? "Send link" : "Copy link"}
+              </Button>
+            </div>
+            <details name="reveal-card" className="mt-1">
+              <summary className="text-primary min-h-11 cursor-pointer py-3 text-sm underline underline-offset-4">
+                Show QR card for {card.giver}
+              </summary>
+              <div className="flex flex-col items-center gap-3 py-4 text-center">
+                <p className="font-medium">For {card.giver}</p>
+                <QrCode
+                  value={revealUrl(origin, card)}
+                  alt={`QR code for ${card.giver}’s match`}
+                  className="size-40"
+                />
+                <p className="text-muted-foreground max-w-xs text-sm">
+                  {card.giver} can scan this with their phone camera, open the
+                  link, then tap to reveal their match.
+                </p>
+              </div>
+            </details>
           </li>
         ))}
       </ul>
+      <p className="text-muted-foreground text-sm font-light">
+        Keep each code private: anyone with it can open that match. A parent can
+        help a child scan, unless they want to keep the surprise too.
+      </p>
+      <p className="text-muted-foreground text-sm font-light">
+        Save the cards as a PDF in the print dialog if you’ll hand them out
+        later. If you draw again, replace every card and link you already
+        shared.
+      </p>
       {createPortal(
         <PrintableCards cards={cards} origin={origin} />,
         document.body

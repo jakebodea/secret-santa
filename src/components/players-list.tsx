@@ -1,5 +1,5 @@
 import { AnimatePresence, m } from "framer-motion";
-import { Trash2, Crown, MoreVertical, UserMinus, UserPlus } from "lucide-react";
+import { Trash2, Crown, MoreVertical } from "lucide-react";
 
 import { listItemMotion } from "../lib/motion";
 import { hasEmail } from "../lib/players";
@@ -38,6 +38,14 @@ function PlayerRow({
   onToggleAdmin: (playerId: string) => void;
   onToggleSitsOut: (playerId: string) => void;
 }) {
+  let deliveryLabel = hasEmail(player)
+    ? `Email · ${player.email}`
+    : "QR card / private link";
+  if (player.sitsOut) {
+    deliveryLabel = hasEmail(player)
+      ? `Summary to ${player.email}`
+      : "Managing here · no email summary";
+  }
   return (
     <div className="hover:bg-muted/50 flex items-center justify-between gap-3 px-2 py-2.5 transition-colors sm:px-3">
       <div className="flex min-w-0 items-center gap-3">
@@ -65,10 +73,21 @@ function PlayerRow({
             {player.sitsOut && <Badge variant="outline">Not drawing</Badge>}
           </div>
           <p className="text-muted-foreground truncate text-sm font-light tracking-wide">
-            {hasEmail(player)
-              ? player.email
-              : "No email · gets a printable card"}
+            {deliveryLabel}
           </p>
+          {player.isAdmin && (
+            <Button
+              type="button"
+              variant="link"
+              size="sm"
+              className="min-h-11"
+              onClick={() => onToggleSitsOut(player.id)}
+            >
+              {player.sitsOut
+                ? "Join the draw"
+                : "Only organizing? Sit out of the draw"}
+            </Button>
+          )}
         </div>
       </div>
       <DropdownMenu>
@@ -90,20 +109,6 @@ function PlayerRow({
               <Crown className="h-4 w-4" />
               {player.isAdmin ? "Remove organizer role" : "Make organizer"}
             </DropdownMenuItem>
-            {player.isAdmin && (
-              <DropdownMenuItem
-                onClick={() => {
-                  onToggleSitsOut(player.id);
-                }}
-              >
-                {player.sitsOut ? (
-                  <UserPlus className="h-4 w-4" />
-                ) : (
-                  <UserMinus className="h-4 w-4" />
-                )}
-                {player.sitsOut ? "Join the draw" : "Organize only, don’t draw"}
-              </DropdownMenuItem>
-            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {

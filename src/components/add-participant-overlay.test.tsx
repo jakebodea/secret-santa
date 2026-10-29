@@ -22,8 +22,11 @@ describe(AddParticipantOverlay, () => {
       />
     );
     expect(screen.getByRole("dialog").dataset.slot).toBe("dialog-content");
-    expect(screen.getByLabelText("Name")).toBeTruthy();
-    expect(screen.getByLabelText("Email (optional)")).toBeTruthy();
+    expect(screen.getByLabelText("QR card / private link")).toBeTruthy();
+    expect(screen.getByLabelText("Only organizing")).toBeTruthy();
+    expect(screen.queryByLabelText("Email address")).toBeNull();
+    fireEvent.click(screen.getByLabelText("Email"));
+    expect(screen.getByLabelText("Email address")).toBeTruthy();
   });
 
   test("mobile uses Drawer defaults and Cancel dismisses it", () => {

@@ -249,8 +249,8 @@ function HomePage() {
                 description={
                   <>
                     No signups, no logins, no hassle. Just add names and{" "}
-                    <span className="underline">go</span>. No email? Print them
-                    a card.
+                    <span className="underline">go</span>. Share matches by
+                    email, QR card, or private link.
                   </>
                 }
                 tone="primary"

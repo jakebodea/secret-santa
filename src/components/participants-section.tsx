@@ -30,7 +30,7 @@ interface ParticipantsSectionProps {
 
 function participantProgressLabel(count: number): string | null {
   if (count === 0) {
-    return "Add at least three people to draw names. Email is optional.";
+    return "Add at least three people to draw names. Choose email or QR cards for each.";
   }
   if (count < MIN_DRAWING_PLAYERS) {
     const remaining = MIN_DRAWING_PLAYERS - count;
@@ -122,8 +122,8 @@ export function ParticipantsSection({
                     No one here yet
                   </p>
                   <p className="text-muted-foreground max-w-sm text-sm font-light tracking-wide">
-                    Start your group one person at a time, or import a
-                    spreadsheet.
+                    Add yourself first as the organizer, even if you’re not
+                    playing. Then add your group, or import a spreadsheet.
                   </p>
                 </div>
                 <Button type="button" onClick={openAdd}>
