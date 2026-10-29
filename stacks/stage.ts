@@ -31,6 +31,14 @@ export interface StageSettings {
   readonly origin: string;
   /** Custom domain to attach: the site's domain on `prod`, otherwise none. */
   readonly domain: string | undefined;
+  /**
+   * The Worker's `domain` prop: on prod the hostname plus `www.<domain>` as an
+   * alias, which `src/start.ts` 301s to the apex.
+   */
+  readonly workerDomain:
+    | string
+    | { aliases: string[]; name: string }
+    | undefined;
 }
 
 const PULL_REQUEST_STAGE = /^pr-[1-9]\d*$/u;
@@ -73,6 +81,10 @@ export const resolveStage = (
         : `https://${domain}`,
     production,
     stage,
+    workerDomain:
+      domain === undefined
+        ? undefined
+        : { aliases: [`www.${domain}`], name: domain },
     workerName,
   };
 };

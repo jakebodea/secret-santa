@@ -6,18 +6,14 @@ import { useState } from "react";
 import { Button } from "../components/ui/button";
 import { EASE_OUT } from "../lib/motion";
 import { decodeReveal } from "../lib/reveal-link";
+import { pageHead } from "../lib/seo";
 
 export const Route = createFileRoute("/reveal")({
   component: RevealPage,
   validateSearch: (search: Record<string, unknown>): { d?: string } => ({
     d: typeof search.d === "string" ? search.d : undefined,
   }),
-  head: () => ({
-    meta: [
-      { title: "Your Secret Santa match" },
-      { content: "noindex, nofollow", name: "robots" },
-    ],
-  }),
+  head: () => pageHead({ noindex: true, title: "Your Secret Santa match" }),
 });
 
 /** One person's match, from a printed card's QR code or a texted link. */

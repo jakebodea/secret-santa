@@ -128,7 +128,7 @@ export default Alchemy.Stack(
         flags: ["nodejs_compat"],
       },
       dev: { port, strictPort: true },
-      domain: stage.domain,
+      domain: stage.workerDomain,
       env: {
         // Under `alchemy dev` this writes each message to .alchemy/local/email.
         EMAIL: Cloudflare.Email.SendEmail("Email", {

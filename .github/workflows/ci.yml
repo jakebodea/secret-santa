@@ -52,6 +52,8 @@ jobs:
         run: bunx alchemy deploy --stage "$STAGE" --yes --no-input
       - name: Smoke test
         run: bun scripts/ci/smoke.ts "$STAGE"
+      - name: SEO audit
+        run: bun scripts/ci/seo.ts "$STAGE"
 
   production:
     needs: check
@@ -80,3 +82,5 @@ jobs:
         run: bunx alchemy deploy --stage prod --yes --no-input
       - name: Smoke test
         run: bun scripts/ci/smoke.ts prod
+      - name: SEO audit
+        run: bun scripts/ci/seo.ts prod

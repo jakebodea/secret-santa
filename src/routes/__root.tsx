@@ -4,6 +4,7 @@ import React from "react";
 
 import { Toaster } from "../components/ui/sonner";
 import { useWebMCPTools } from "../hooks/use-webmcp-tools";
+import { SITE_NAME, SITE_URL } from "../lib/seo";
 import { exchangeGuideTool } from "../lib/webmcp/guide";
 
 import appCss from "../styles.css?url";
@@ -44,16 +45,14 @@ export const Route = createRootRoute({
         type: "image/svg+xml",
       },
       {
-        href: "/gift.svg",
+        // iOS ignores SVG touch icons
+        href: "/apple-touch-icon.png",
         rel: "apple-touch-icon",
+        sizes: "180x180",
       },
       {
         href: "/manifest.json",
         rel: "manifest",
-      },
-      {
-        href: "https://supersimplesecretsanta.com",
-        rel: "canonical",
       },
       // Agents find the WebMCP tools and workflow here instead of in page copy
       {
@@ -81,56 +80,18 @@ export const Route = createRootRoute({
         content: "#fdf7f1",
         name: "theme-color",
       },
-      {
-        title: "Secret Santa - Organize Your Gift Exchange",
-      },
-      {
-        content:
-          "Free Secret Santa organizer. No account. Add people, set exclusions, and share matches by email, QR card, or private link.",
-        name: "description",
-      },
-      {
-        content:
-          "secret santa, simple secret santa, secret santa free, gift exchange, christmas, holiday, gift organizer, random assignment",
-        name: "keywords",
-      },
-      {
-        content: "Secret Santa - Organize Your Gift Exchange",
-        property: "og:title",
-      },
-      {
-        content:
-          "Free Secret Santa organizer. No account. Add people, set exclusions, and share matches by email, QR card, or private link.",
-        property: "og:description",
-      },
+      // Titles, descriptions, canonicals and share cards are per page: see pageHead
       {
         content: "website",
         property: "og:type",
       },
       {
-        content: "/gift.svg",
-        property: "og:image",
+        content: SITE_NAME,
+        property: "og:site_name",
       },
       {
-        content: "https://supersimplesecretsanta.com",
-        property: "og:url",
-      },
-      {
-        content: "summary",
+        content: "summary_large_image",
         name: "twitter:card",
-      },
-      {
-        content: "Secret Santa - Organize Your Gift Exchange",
-        name: "twitter:title",
-      },
-      {
-        content:
-          "Free Secret Santa organizer. No account. Add people, set exclusions, and share matches by email, QR card, or private link.",
-        name: "twitter:description",
-      },
-      {
-        content: "/gift.svg",
-        name: "twitter:image",
       },
     ],
   }),
@@ -147,16 +108,18 @@ const jsonLd = {
     "A WebMCP-compatible browser agent is required for AI agent tools. Manual setup works without WebMCP.",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
   featureList: [
-    "Free Secret Santa gift exchanges",
-    "Participant exclusions",
+    "Free Secret Santa name drawing for 3 to 100 people",
+    "No sign-up or account",
     "Matches by email, printable QR card, or private link; email is optional",
+    "Exclusions so couples don't draw each other",
+    "Organizer can run the exchange without playing",
     "Pre-filled setup links for chat assistants",
     "WebMCP tools for browser AI agents",
   ],
   description:
-    "Free Secret Santa organizer. No account. Add people, set exclusions, and share matches by email, QR card, or private link.",
-  name: "Secret Santa",
-  url: "https://supersimplesecretsanta.com",
+    "Free Secret Santa generator. No sign-up. Add people, set exclusions, and share matches by email, QR card, or private link.",
+  name: SITE_NAME,
+  url: SITE_URL,
 };
 
 function RootDocument({ children }: { children: React.ReactNode }) {

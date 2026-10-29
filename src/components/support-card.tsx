@@ -15,12 +15,15 @@ interface SupportCardProps {
 function DonationCard({
   logoSrc,
   logoAlt,
+  logoSize,
   logoClassName,
   logoBoxClassName,
   children,
 }: {
   logoSrc: string;
   logoAlt: string;
+  /** Intrinsic [width, height], so the card doesn't shift when the logo loads. */
+  logoSize: readonly [number, number];
   logoClassName: string;
   logoBoxClassName: string;
   children: ReactNode;
@@ -30,7 +33,13 @@ function DonationCard({
       <CardContent>
         <div className="flex h-full flex-col items-center gap-3 p-4 sm:gap-4">
           <div className={logoBoxClassName}>
-            <img src={logoSrc} alt={logoAlt} className={logoClassName} />
+            <img
+              src={logoSrc}
+              alt={logoAlt}
+              width={logoSize[0]}
+              height={logoSize[1]}
+              className={logoClassName}
+            />
           </div>
           <div className="mt-auto flex w-full flex-col gap-2">{children}</div>
         </div>
@@ -92,7 +101,8 @@ export function SupportCard({
         className={`grid md:grid-cols-3 ${gridGap} ${showHeader ? "pt-2" : "pt-8"}`}
       >
         <DonationCard
-          logoSrc="/paypal-logo.png"
+          logoSrc="/paypal-logo.webp"
+          logoSize={[284, 160]}
           logoAlt="PayPal"
           logoClassName={logoClassName}
           logoBoxClassName="mb-2 flex items-center justify-center"
@@ -121,7 +131,8 @@ export function SupportCard({
         </DonationCard>
 
         <DonationCard
-          logoSrc="/venmo-logo.png"
+          logoSrc="/venmo-logo.webp"
+          logoSize={[160, 160]}
           logoAlt="Venmo"
           logoClassName="h-full w-auto object-contain object-center"
           logoBoxClassName={logoBoxClassName}
@@ -150,7 +161,8 @@ export function SupportCard({
         </DonationCard>
 
         <DonationCard
-          logoSrc="/zelle-logo.png"
+          logoSrc="/zelle-logo.webp"
+          logoSize={[240, 160]}
           logoAlt="Zelle"
           logoClassName="h-full w-auto object-contain object-center"
           logoBoxClassName={logoBoxClassName}
@@ -185,12 +197,16 @@ export function SupportCard({
           <div className="flex flex-col items-center gap-4 py-4">
             <div className="mx-auto flex w-full max-w-[280px] flex-col items-center gap-3 rounded-lg border bg-white p-4">
               <img
-                src="/paypal.png"
+                src="/paypal.webp"
+                width={256}
+                height={256}
                 alt="PayPal QR Code"
                 className="h-auto w-full object-contain"
               />
               <img
-                src="/paypal-logo.png"
+                src="/paypal-logo.webp"
+                width={284}
+                height={160}
                 alt="PayPal"
                 className="h-8 object-contain"
               />
@@ -207,7 +223,9 @@ export function SupportCard({
           <div className="flex flex-col items-center gap-4 py-4">
             <div className="mx-auto aspect-square w-full max-w-[300px] rounded-lg border bg-white p-3">
               <img
-                src="/venmo.png"
+                src="/venmo.webp"
+                width={644}
+                height={858}
                 alt="Venmo QR Code"
                 className="h-full w-full object-contain"
               />
@@ -224,7 +242,9 @@ export function SupportCard({
           <div className="flex flex-col items-center gap-4 py-4">
             <div className="mx-auto aspect-square w-full max-w-[300px] rounded-lg border bg-white p-3">
               <img
-                src="/zelle.png"
+                src="/zelle.webp"
+                width={694}
+                height={822}
                 alt="Zelle QR Code"
                 className="h-full w-full object-contain"
               />

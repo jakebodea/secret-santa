@@ -19,6 +19,7 @@ import { useExchangeWebMCP } from "../hooks/use-exchange-webmcp";
 import { drawDurationMs } from "../lib/draw-timeline";
 import { MIN_DRAWING_PLAYERS, drawingPlayers } from "../lib/players";
 import { generateAssignments } from "../lib/secret-santa-assignments";
+import { pageHead } from "../lib/seo";
 import { readSetupLink } from "../lib/setup-link";
 import {
   addConstraint,
@@ -43,6 +44,13 @@ import { toTitleCase } from "../lib/utils";
 export const Route = createFileRoute("/assign")({
   component: AssignPage,
   loader: async () => ({ turnstileSiteKey: await getTurnstileSiteKey() }),
+  head: () =>
+    pageHead({
+      description:
+        "Add names, set exclusions, and draw. Send matches by email, or hand out QR cards and private links. Free, no sign-up.",
+      path: "/assign",
+      title: "Draw names for Secret Santa",
+    }),
 });
 
 interface ListState {

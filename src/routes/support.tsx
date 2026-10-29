@@ -2,21 +2,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 
 import { SupportCard } from "../components/support-card";
+import { pageHead } from "../lib/seo";
 
 export const Route = createFileRoute("/support")({
   component: SupportPage,
-  head: () => ({
-    meta: [
-      {
-        title: "Support - Secret Santa",
-      },
-      {
-        content:
-          "Support the development of Secret Santa. Your contribution helps keep this tool free and available for everyone.",
-        name: "description",
-      },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      description:
+        "Super Simple Secret Santa is free with no ads or premium tier. Tips via Venmo, PayPal or Zelle keep it running.",
+      path: "/support",
+      title: "Support this project",
+    }),
 });
 
 function SupportPage() {

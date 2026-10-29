@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { EASE_OUT } from "../lib/motion";
+import { pageHead } from "../lib/seo";
 
 interface CompactAssignment {
   giver: string;
@@ -37,6 +38,7 @@ export const Route = createFileRoute("/results")({
   validateSearch: (search: Record<string, unknown>): { data?: string } => ({
     data: typeof search.data === "string" ? search.data : undefined,
   }),
+  head: () => pageHead({ noindex: true, title: "Secret Santa results" }),
 });
 
 function decodeResultsData(data: string | undefined): {

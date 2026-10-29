@@ -13,6 +13,7 @@ TanStack Start on Cloudflare Workers, deployed with Alchemy v2. Follows the jbol
 | `stacks/github.ts` | CI control plane (stack `secret-santa-ci`, stage `ci`): GitHub environments, `main` ruleset, `preview` label, scoped expiring Cloudflare deploy tokens, Infisical OIDC variables |
 | `.github/workflows/` | `ci.yml`: `check` on every PR; `preview` deploys `pr-<n>` when the PR has the `preview` label; `production` deploys `prod` on merge to `main`. `preview-cleanup.yml` destroys `pr-<n>` |
 | `src/env.ts` | Typed Worker bindings; server code imports `env` from here |
+| `src/lib/seo.ts` | `pageHead()`: every route's `head` (canonical, title budget, share card, noindex); `scripts/ci/seo.ts` audits the rendered pages |
 | `src/lib/assignment-mail.ts` | Who gets which email (pure, tested); `src/routes/api/send-emails.ts` renders and sends |
 
 ## Commands
@@ -22,6 +23,7 @@ bun run dev       # alchemy dev on stage dev-<worktree>, own port; mail lands in
 bun run ci        # lint + typecheck + tests
 bun alchemy plan --stage pr-<n>   # read-only diff of a preview
 bun scripts/ci/smoke.ts <stage>   # pages 200 + send endpoint refuses tokenless requests
+bun scripts/ci/seo.ts <stage>     # rendered-HTML SEO audit (or --url http://localhost:<port> for dev)
 ALCHEMY_PROFILE=admin bunx alchemy plan stacks/github.ts --stage ci   # control plane diff
 ```
 
