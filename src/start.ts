@@ -1,7 +1,14 @@
 import { createMiddleware, createStart } from "@tanstack/react-start";
 
 import llms from "../public/llms.txt?raw";
+import { env } from "./env";
 import { wantsAgentMarkdown } from "./lib/agent-markdown";
+import { canonicalRedirect } from "./lib/canonical-redirect";
+
+// `www` and plain HTTP 301 to the apex before anything renders.
+const canonicalHost = createMiddleware().server(
+  ({ request, next }) => canonicalRedirect(request, env.SITE_ORIGIN) ?? next()
+);
 
 const agentMarkdown = createMiddleware().server(({ request, next }) => {
   if (!wantsAgentMarkdown(request)) {
@@ -16,5 +23,5 @@ const agentMarkdown = createMiddleware().server(({ request, next }) => {
 });
 
 export const startInstance = createStart(() => ({
-  requestMiddleware: [agentMarkdown],
+  requestMiddleware: [canonicalHost, agentMarkdown],
 }));

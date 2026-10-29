@@ -1,20 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { SupportCard } from "../components/support-card";
+import { pageHead } from "../lib/seo";
 
 export const Route = createFileRoute("/test-support")({
   component: TestSupportPage,
-  head: () => ({
-    meta: [
-      {
-        title: "Test Support - Secret Santa",
-      },
-      {
-        content: "Test page for the support card component",
-        name: "description",
-      },
-    ],
-  }),
+  head: () => pageHead({ noindex: true, title: "Test Support - Secret Santa" }),
 });
 
 function TestSupportPage() {

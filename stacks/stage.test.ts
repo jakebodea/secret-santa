@@ -16,14 +16,20 @@ describe(resolveStage, () => {
       origin: "https://supersimplesecretsanta.com",
       production: true,
       stage: "prod",
+      workerDomain: {
+        aliases: ["www.supersimplesecretsanta.com"],
+        name: "supersimplesecretsanta.com",
+      },
       workerName: "secret-santa-prod",
     });
   });
 
   it("serves previews from workers.dev", () => {
-    expect(resolveStage(site, "pr-12").origin).toBe(
+    const preview = resolveStage(site, "pr-12");
+    expect(preview.origin).toBe(
       "https://secret-santa-pr-12.jakebodea.workers.dev"
     );
+    expect(preview.workerDomain).toBeUndefined();
   });
 
   it("rejects names Cloudflare can't use", () => {

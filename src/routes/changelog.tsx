@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { Separator } from "@/components/ui/separator";
 
+import { pageHead } from "../lib/seo";
+
 interface TimelineEntry {
   date: string;
   title: string;
@@ -240,17 +242,13 @@ const timelineData: TimelineEntry[] = [
 
 export const Route = createFileRoute("/changelog")({
   component: ChangelogPage,
-  head: () => ({
-    meta: [
-      {
-        title: "Changelog - Secret Santa",
-      },
-      {
-        content: "View the changelog and version history for Secret Santa.",
-        name: "description",
-      },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      description:
+        "What's new in Super Simple Secret Santa, the free Secret Santa generator.",
+      path: "/changelog",
+      title: "Changelog",
+    }),
 });
 
 function ChangelogPage() {
@@ -262,6 +260,8 @@ function ChangelogPage() {
             <div className="mb-10 flex flex-col items-center">
               <img
                 src="/santa-playful.svg"
+                width={192}
+                height={192}
                 alt="Playful Santa"
                 className="mb-4 h-24 w-24 sm:h-32 sm:w-32 md:h-40 md:w-40"
               />

@@ -4,8 +4,10 @@ import { Zap, Heart, ShieldCheck, ArrowRight } from "lucide-react";
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 
 import { FeatureCard } from "../components/feature-card";
+import { HomeGuide } from "../components/home-guide";
 import { Button } from "../components/ui/button";
 import { useWebMCPTools } from "../hooks/use-webmcp-tools";
+import { pageHead } from "../lib/seo";
 import { clearAllData } from "../lib/storage";
 import { emptySchema } from "../lib/webmcp/tools";
 
@@ -14,23 +16,13 @@ const animationsCompleteDelay = 0.9;
 
 export const Route = createFileRoute("/")({
   component: HomePage,
-  head: () => ({
-    meta: [
-      {
-        title: "Secret Santa - Organize Your Gift Exchange",
-      },
-      {
-        content:
-          "Free Secret Santa organizer. No account. Add people, set exclusions, and share matches by email, QR card, or private link.",
-        name: "description",
-      },
-      {
-        content:
-          "secret santa, simple secret santa, secret santa free, free secret santa, secret santa generator, secret santa organizer, gift exchange, christmas, holiday, gift organizer, random assignment, secret santa app",
-        name: "keywords",
-      },
-    ],
-  }),
+  head: () =>
+    pageHead({
+      description:
+        "Draw names for your gift exchange in two minutes. Free, no sign-up, and no email required: share matches by email, printable QR card, or private link.",
+      path: "/",
+      title: "Free Secret Santa Generator",
+    }),
 });
 
 const HOVER_QUERY = "(hover: hover) and (pointer: fine)";
@@ -131,11 +123,6 @@ function HomePage() {
     setIsHovered(false);
   };
 
-  const handleGetStarted = () => {
-    clearAllData();
-    navigate({ to: "/assign" });
-  };
-
   const handleAgentStart = async () => {
     await navigate({ to: "/assign" });
     return { next: "configure_exchange" };
@@ -161,6 +148,8 @@ function HomePage() {
           <div className="animate-pop-in flex justify-center">
             <m.img
               src={isHovered ? "/santa-playful.svg" : "/santa.svg"}
+              width={192}
+              height={192}
               alt="Secret Santa"
               className="h-28 w-28 cursor-pointer select-none sm:h-40 sm:w-40 md:h-48 md:w-48"
               draggable={false}
@@ -221,7 +210,14 @@ function HomePage() {
 
           {/* CTA Button */}
           <div className="animate-reveal reveal-order-3 space-y-3 pt-2">
-            <Button onClick={handleGetStarted} size="cta" className="group">
+            <Button
+              // A real link so crawlers can follow it to /assign
+              render={<Link to="/assign" />}
+              nativeButton={false}
+              onClick={clearAllData}
+              size="cta"
+              className="group"
+            >
               Get started
               <ArrowRight className="h-5 w-5 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />
             </Button>
@@ -273,6 +269,7 @@ function HomePage() {
             </div>
           </div>
         </div>
+        <HomeGuide />
       </main>
 
       {/* Footer */}
@@ -292,6 +289,13 @@ function HomePage() {
             >
               For AI agents
             </a>
+            <span aria-hidden="true"> · </span>
+            <Link
+              to="/changelog"
+              className="hover:text-primary underline-offset-4 transition-colors hover:underline"
+            >
+              Changelog
+            </Link>
           </p>
         </div>
       </footer>

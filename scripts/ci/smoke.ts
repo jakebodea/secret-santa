@@ -4,7 +4,8 @@
  *   bun scripts/ci/smoke.ts <stage>
  *
  * Pages answer 200, and the send endpoint refuses a request with no
- * Turnstile token (403), which proves the guard is live. Retries while a
+ * Turnstile token (403), which proves the guard is live. On prod, `www`
+ * answers 301 to the apex (`src/lib/canonical-redirect.ts`). Retries while a
  * fresh custom domain or workers.dev route is still propagating.
  */
 import { site } from "../../stacks/config.ts";
@@ -18,9 +19,18 @@ if (stage === undefined) {
   process.stderr.write("Usage: bun scripts/ci/smoke.ts <stage>\n");
   process.exit(2);
 }
-const { origin } = resolveStage(site, stage);
+const { origin, production } = resolveStage(site, stage);
+const wwwOrigin = origin.replace("https://", "https://www.");
 
-const checks: { path: string; init?: RequestInit; status: number }[] = [
+interface Check {
+  path: string;
+  init?: RequestInit;
+  status: number;
+  /** Another origin than the stage's, e.g. prod's `www` alias. */
+  origin?: string;
+}
+
+const checks: Check[] = [
   { path: "/", status: 200 },
   { path: "/assign", status: 200 },
   { path: "/support", status: 200 },
@@ -33,11 +43,21 @@ const checks: { path: string; init?: RequestInit; status: number }[] = [
     path: "/api/send-emails",
     status: 403,
   },
+  ...(production
+    ? [
+        {
+          init: { redirect: "manual" } as const,
+          origin: wwwOrigin,
+          path: "/support",
+          status: 301,
+        },
+      ]
+    : []),
 ];
 
-const statusOf = async (path: string, init?: RequestInit) => {
+const statusOf = async ({ path, init, origin: base = origin }: Check) => {
   try {
-    const response = await fetch(`${origin}${path}`, {
+    const response = await fetch(`${base}${path}`, {
       ...init,
       signal: AbortSignal.timeout(DELAY_MS),
     });
@@ -52,7 +72,7 @@ for (const check of checks) {
   let status = 0;
   for (let attempt = 1; attempt <= ATTEMPTS; attempt += 1) {
     // oxlint-disable-next-line no-await-in-loop -- retries must wait for each other
-    status = await statusOf(check.path, check.init);
+    status = await statusOf(check);
     if (status === check.status) {
       break;
     }
@@ -60,7 +80,9 @@ for (const check of checks) {
     await Bun.sleep(DELAY_MS);
   }
   const verb = check.init?.method ?? "GET";
-  process.stdout.write(`${verb} ${check.path} → ${status}\n`);
+  process.stdout.write(
+    `${verb} ${check.origin ?? ""}${check.path} → ${status}\n`
+  );
   if (status !== check.status) {
     process.stderr.write(`expected ${check.status}\n`);
     process.exit(1);

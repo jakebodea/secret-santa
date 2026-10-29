@@ -1,3 +1,5 @@
+import { SITE_URL } from "../lib/seo";
+
 interface SecretSantaAssignmentProps {
   giverName: string;
   receiverName: string;
@@ -200,6 +202,25 @@ export default function SecretSantaAssignment({
                       }}
                     >
                       Happy gift giving! 🎄✨
+                    </p>
+                    <p
+                      style={{
+                        color: "#a08f84",
+                        fontSize: "12px",
+                        margin: "16px 0 0",
+                      }}
+                    >
+                      Drawn with{" "}
+                      <a
+                        href={SITE_URL}
+                        style={{
+                          color: "#8c3e2b",
+                          textDecoration: "underline",
+                        }}
+                      >
+                        Super Simple Secret Santa
+                      </a>
+                      , free with no sign-up.
                     </p>
                   </td>
                 </tr>
