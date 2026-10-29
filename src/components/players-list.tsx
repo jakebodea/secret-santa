@@ -2,6 +2,7 @@ import { AnimatePresence, m } from "framer-motion";
 import { Trash2, Crown, MoreVertical } from "lucide-react";
 
 import { listItemMotion } from "../lib/motion";
+import { hasEmail } from "../lib/players";
 import type { Player } from "../lib/types";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { avatarFallbackToneForId } from "./ui/avatar-tones";
@@ -21,6 +22,7 @@ interface PlayersListProps {
   players: Player[];
   onRemovePlayer: (playerId: string) => void;
   onToggleAdmin: (playerId: string) => void;
+  onToggleSitsOut: (playerId: string) => void;
   onClearAll: () => void;
   embedded?: boolean;
 }
@@ -29,11 +31,21 @@ function PlayerRow({
   player,
   onRemovePlayer,
   onToggleAdmin,
+  onToggleSitsOut,
 }: {
   player: Player;
   onRemovePlayer: (playerId: string) => void;
   onToggleAdmin: (playerId: string) => void;
+  onToggleSitsOut: (playerId: string) => void;
 }) {
+  let deliveryLabel = hasEmail(player)
+    ? `Email · ${player.email}`
+    : "QR card / private link";
+  if (player.sitsOut) {
+    deliveryLabel = hasEmail(player)
+      ? `Summary to ${player.email}`
+      : "Managing here · no email summary";
+  }
   return (
     <div className="hover:bg-muted/50 flex items-center justify-between gap-3 px-2 py-2.5 transition-colors sm:px-3">
       <div className="flex min-w-0 items-center gap-3">
@@ -58,10 +70,24 @@ function PlayerRow({
                 </span>
               </Badge>
             )}
+            {player.sitsOut && <Badge variant="outline">Not drawing</Badge>}
           </div>
           <p className="text-muted-foreground truncate text-sm font-light tracking-wide">
-            {player.email}
+            {deliveryLabel}
           </p>
+          {player.isAdmin && (
+            <Button
+              type="button"
+              variant="link"
+              size="sm"
+              className="min-h-11"
+              onClick={() => onToggleSitsOut(player.id)}
+            >
+              {player.sitsOut
+                ? "Join the draw"
+                : "Only organizing? Sit out of the draw"}
+            </Button>
+          )}
         </div>
       </div>
       <DropdownMenu>
@@ -104,6 +130,7 @@ export function PlayersList({
   players,
   onRemovePlayer,
   onToggleAdmin,
+  onToggleSitsOut,
   onClearAll,
   embedded = false,
 }: PlayersListProps) {
@@ -140,6 +167,7 @@ export function PlayersList({
                   player={player}
                   onRemovePlayer={onRemovePlayer}
                   onToggleAdmin={onToggleAdmin}
+                  onToggleSitsOut={onToggleSitsOut}
                 />
               </m.div>
             ))}
@@ -175,6 +203,7 @@ export function PlayersList({
               player={player}
               onRemovePlayer={onRemovePlayer}
               onToggleAdmin={onToggleAdmin}
+              onToggleSitsOut={onToggleSitsOut}
             />
           ))}
         </div>

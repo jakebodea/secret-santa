@@ -2,6 +2,7 @@ import { Upload, UserPlus, Users } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { MIN_DRAWING_PLAYERS, drawingPlayers } from "../lib/players";
 import type { Player } from "../lib/types";
 import { cn } from "../lib/utils";
 import { AddParticipantOverlay } from "./add-participant-overlay";
@@ -17,23 +18,22 @@ import {
   CardTitle,
 } from "./ui/card";
 
-const MIN_PARTICIPANTS = 3;
-
 interface ParticipantsSectionProps {
   players: Player[];
   onAddPlayer: (player: Player) => void;
   onImport: (players: Player[]) => void;
   onRemovePlayer: (playerId: string) => void;
   onToggleAdmin: (playerId: string) => void;
+  onToggleSitsOut: (playerId: string) => void;
   onClearAll: () => void;
 }
 
 function participantProgressLabel(count: number): string | null {
   if (count === 0) {
-    return "Add at least three people to draw names.";
+    return "Add at least three people to draw names. Choose email or QR cards for each.";
   }
-  if (count < MIN_PARTICIPANTS) {
-    const remaining = MIN_PARTICIPANTS - count;
+  if (count < MIN_DRAWING_PLAYERS) {
+    const remaining = MIN_DRAWING_PLAYERS - count;
     return `${remaining} more ${remaining === 1 ? "person" : "people"} until you can continue.`;
   }
   return null;
@@ -45,6 +45,7 @@ export function ParticipantsSection({
   onImport,
   onRemovePlayer,
   onToggleAdmin,
+  onToggleSitsOut,
   onClearAll,
 }: ParticipantsSectionProps) {
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
@@ -64,7 +65,8 @@ export function ParticipantsSection({
     toast.success(`Imported ${importedPlayers.length} people`);
   };
 
-  const progressLabel = participantProgressLabel(players.length);
+  const drawingCount = drawingPlayers(players).length;
+  const progressLabel = participantProgressLabel(drawingCount);
 
   return (
     <>
@@ -120,8 +122,8 @@ export function ParticipantsSection({
                     No one here yet
                   </p>
                   <p className="text-muted-foreground max-w-sm text-sm font-light tracking-wide">
-                    Start your group one person at a time, or import a
-                    spreadsheet.
+                    Add yourself first as the organizer, even if you’re not
+                    playing. Then add your group, or import a spreadsheet.
                   </p>
                 </div>
                 <Button type="button" onClick={openAdd}>
@@ -135,28 +137,31 @@ export function ParticipantsSection({
                 players={players}
                 onRemovePlayer={onRemovePlayer}
                 onToggleAdmin={onToggleAdmin}
+                onToggleSitsOut={onToggleSitsOut}
                 onClearAll={onClearAll}
               />
             )}
 
-            {players.length > 0 && players.length < MIN_PARTICIPANTS && (
+            {drawingCount > 0 && drawingCount < MIN_DRAWING_PLAYERS && (
               <output
                 className="flex items-center gap-3"
-                aria-label={`${players.length} of ${MIN_PARTICIPANTS} participants added`}
+                aria-label={`${drawingCount} of ${MIN_DRAWING_PLAYERS} participants added`}
               >
                 <div className="flex flex-1 justify-center gap-2">
-                  {Array.from({ length: MIN_PARTICIPANTS }).map((_, index) => (
-                    <div
-                      key={index}
-                      className={cn(
-                        "size-2 rounded-full transition-colors duration-300 ease-out",
-                        index < players.length ? "bg-primary" : "bg-muted"
-                      )}
-                    />
-                  ))}
+                  {Array.from({ length: MIN_DRAWING_PLAYERS }).map(
+                    (_, index) => (
+                      <div
+                        key={index}
+                        className={cn(
+                          "size-2 rounded-full transition-colors duration-300 ease-out",
+                          index < drawingCount ? "bg-primary" : "bg-muted"
+                        )}
+                      />
+                    )
+                  )}
                 </div>
                 <span className="text-muted-foreground shrink-0 text-xs font-medium tabular-nums">
-                  {players.length}/{MIN_PARTICIPANTS}
+                  {drawingCount}/{MIN_DRAWING_PLAYERS}
                 </span>
               </output>
             )}

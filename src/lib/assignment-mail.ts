@@ -2,6 +2,7 @@
  * Who gets which email after a draw. Pure: rendering and sending happen in
  * `src/routes/api/send-emails.ts`, so this is testable without a Worker.
  */
+import { hasEmail } from "./players";
 import type { Assignment, Player } from "./types";
 
 export interface AssignmentMail {
@@ -53,8 +54,10 @@ export const encodeResults = (
 };
 
 /**
- * One assignment email per giver, then one summary per admin linking to the
- * full results. Throws when an assignment names a player who isn't in the list.
+ * One assignment email per giver with an inbox, then one summary per admin with
+ * an inbox linking to the full results. Givers without email get reveal cards
+ * on the page instead (`src/lib/reveal-link.ts`). Throws when an assignment
+ * names a player who isn't in the list.
  */
 export const planMail = (input: {
   readonly players: readonly Player[];
@@ -66,26 +69,29 @@ export const planMail = (input: {
   const playerMap = new Map(players.map((p) => [p.id, p]));
   const event = partyName ?? "Secret Santa";
 
-  const participants = assignments.map((assignment): AssignmentMail => {
+  const participants: AssignmentMail[] = [];
+  for (const assignment of assignments) {
     const giver = playerMap.get(assignment.giverId);
     const receiver = playerMap.get(assignment.receiverId);
     if (!(giver && receiver)) {
       throw new Error("Invalid assignment: player not found");
     }
-    return {
-      giverName: giver.name,
-      kind: "assignment",
-      partyName,
-      receiverName: receiver.name,
-      subject: `Hey ${giver.name}! You've been assigned for ${event}...`,
-      to: giver.email,
-    };
-  });
+    if (hasEmail(giver)) {
+      participants.push({
+        giverName: giver.name,
+        kind: "assignment",
+        partyName,
+        receiverName: receiver.name,
+        subject: `Hey ${giver.name}! You've been assigned for ${event}...`,
+        to: giver.email,
+      });
+    }
+  }
 
   const resultsUrl = `${origin}/results?data=${encodeResults(assignments, players, partyName)}`;
   const admins: AdminMail[] = [];
   for (const player of players) {
-    if (player.isAdmin) {
+    if (player.isAdmin && hasEmail(player)) {
       admins.push({
         adminName: player.name,
         kind: "admin",

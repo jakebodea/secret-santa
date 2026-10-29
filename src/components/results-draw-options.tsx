@@ -1,6 +1,7 @@
 import { ChevronDown, Eye, RotateCcw } from "lucide-react";
 import { useRef, useState } from "react";
 
+import { drawingPlayers } from "../lib/players";
 import { getPlayerName } from "../lib/secret-santa-assignments";
 import type { Assignment, Player } from "../lib/types";
 import { Button } from "./ui/button";
@@ -89,7 +90,7 @@ export function ResultsDrawOptions({
           </DialogTitle>
           <DialogDescription variant="body">
             {isRedraw &&
-              "This replaces the current draw for everyone. Your participants and exclusions stay the same, and the new matches will stay hidden. No emails will be sent."}
+              "This replaces the current draw for everyone. Your participants and exclusions stay the same, and the new matches will stay hidden. No emails will be sent, and any cards or links you already handed out stop matching."}
             {!isRedraw &&
               !isRevealed &&
               "Are you sure you want to peek? You’ll see who everyone is buying for, including your own match. Once you know, you can’t unsee it."}
@@ -115,7 +116,7 @@ export function ResultsDrawOptions({
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {players.map((player) => {
+                {drawingPlayers(players).map((player) => {
                   const match = assignments.find(
                     (assignment) => assignment.giverId === player.id
                   );

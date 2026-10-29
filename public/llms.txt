@@ -1,18 +1,18 @@
 # Super Simple Secret Santa
 
-> A free Secret Santa gift exchange organizer with no account required. Add 3–100 participants, exclude pairings such as couples, draw names, and email private assignments. Browser AI agents can use the site's WebMCP tools.
+> A free Secret Santa gift exchange organizer with no account required. Add 3–100 participants, exclude pairings such as couples, draw names, and email private assignments. People without email, such as kids, get a printable QR card or a private link instead. The organizer can run it without playing. Browser AI agents can use the site's WebMCP tools.
 
 ## Pages
 
 - [Home](https://supersimplesecretsanta.com/): Free manual setup and browser-agent tools.
-- [Set up an exchange](https://supersimplesecretsanta.com/assign): Participants, organizer, exclusions, drawing, and email delivery.
+- [Set up an exchange](https://supersimplesecretsanta.com/assign): Participants, organizer, exclusions, drawing, email delivery, and printable reveal cards.
 
 ## For browser agents
 
 Visit the site in a WebMCP-compatible browser and discover its tools. Call `get_exchange_guide` first for the complete Markdown workflow and input examples. The guide remains available across pages. WebMCP is experimental; agents without native support can use the normal interface.
 
-Collect participant names and email addresses, intended organizers, optional event name, and exclusions. Reuse information the user has supplied or authorized for this task; ask for missing or ambiguous details. Organizers receive the full assignment summary, so make that role clear. Confirm the recipients and permission to send emails. Keep secret matches out of conversation.
+Collect participant names, email addresses for those who have one (email is optional), intended organizers and whether they play, optional event name, and exclusions. Reuse information the user has supplied or authorized for this task; ask for missing or ambiguous details. Organizers receive the full assignment summary, so make that role clear. Confirm the recipients and permission to send emails. Keep secret matches out of conversation.
 
-Use the tools to configure the group, draw, and send after approval and verification. Setup and drawing do not send email. Report whether the exchange was configured, drawn, or its emails accepted by the server; acceptance does not prove inbox delivery.
+Use the tools to configure the group, draw, and send after approval and verification. Setup and drawing do not send email. People without email get reveal cards the user prints or links the user texts from the page; agents cannot read those links. Report whether the exchange was configured, drawn, or its emails accepted by the server, and who still needs a card; acceptance does not prove inbox delivery.
 
 No external MCP server, account, API key, or paid subscription is needed for this site's tools. Users bring their own compatible browser agent. Existing drafts, redraws, and resend overrides can be managed in the visible interface.

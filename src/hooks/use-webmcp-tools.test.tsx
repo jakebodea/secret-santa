@@ -127,8 +127,46 @@ describe("WebMCP", () => {
       parseExchange({
         participants: [{ name: "A", email: "bad" }, ...input.participants],
       })
-    ).toThrow("valid email");
+    ).toThrow("must be valid");
     expect(getData().players).toStrictEqual([]);
+  });
+
+  test("accepts people without email and organizers who sit out", () => {
+    const draft = parseExchange({
+      participants: [
+        { name: "Mom", email: "mom@example.com", isAdmin: true, sitsOut: true },
+        { name: "Kid One" },
+        { name: "Kid Two", email: "" },
+        { name: "Kid Three" },
+      ],
+    });
+    expect(
+      draft.players.map(({ name, email, isAdmin, sitsOut }) => ({
+        name,
+        email,
+        isAdmin,
+        sitsOut,
+      }))
+    ).toStrictEqual([
+      { name: "Mom", email: "mom@example.com", isAdmin: true, sitsOut: true },
+      { name: "Kid One", email: "", isAdmin: false, sitsOut: undefined },
+      { name: "Kid Two", email: "", isAdmin: false, sitsOut: undefined },
+      { name: "Kid Three", email: "", isAdmin: false, sitsOut: undefined },
+    ]);
+    expect(() =>
+      parseExchange({
+        participants: [{ name: "A", sitsOut: true }, ...input.participants],
+      })
+    ).toThrow("only sit out of the draw as an organizer");
+    expect(() =>
+      parseExchange({
+        participants: [
+          { name: "Mom", isAdmin: true, sitsOut: true },
+          { name: "A" },
+          { name: "B" },
+        ],
+      })
+    ).toThrow("At least 3 participants must draw");
   });
 
   test("registry keeps current callbacks without registering again and cleans up", async () => {

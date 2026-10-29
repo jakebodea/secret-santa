@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AssignRouteImport } from './routes/assign'
 import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as ResultsRouteImport } from './routes/results'
+import { Route as RevealRouteImport } from './routes/reveal'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as TestSupportRouteImport } from './routes/test-support'
 import { Route as ApiSendEmailsRouteImport } from './routes/api/send-emails'
@@ -37,6 +38,11 @@ const ResultsRoute = ResultsRouteImport.update({
   path: '/results',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RevealRoute = RevealRouteImport.update({
+  id: '/reveal',
+  path: '/reveal',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/assign': typeof AssignRoute
   '/changelog': typeof ChangelogRoute
   '/results': typeof ResultsRoute
+  '/reveal': typeof RevealRoute
   '/support': typeof SupportRoute
   '/test-support': typeof TestSupportRoute
   '/api/send-emails': typeof ApiSendEmailsRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/assign': typeof AssignRoute
   '/changelog': typeof ChangelogRoute
   '/results': typeof ResultsRoute
+  '/reveal': typeof RevealRoute
   '/support': typeof SupportRoute
   '/test-support': typeof TestSupportRoute
   '/api/send-emails': typeof ApiSendEmailsRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/assign': typeof AssignRoute
   '/changelog': typeof ChangelogRoute
   '/results': typeof ResultsRoute
+  '/reveal': typeof RevealRoute
   '/support': typeof SupportRoute
   '/test-support': typeof TestSupportRoute
   '/api/send-emails': typeof ApiSendEmailsRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/assign'
     | '/changelog'
     | '/results'
+    | '/reveal'
     | '/support'
     | '/test-support'
     | '/api/send-emails'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/assign'
     | '/changelog'
     | '/results'
+    | '/reveal'
     | '/support'
     | '/test-support'
     | '/api/send-emails'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/assign'
     | '/changelog'
     | '/results'
+    | '/reveal'
     | '/support'
     | '/test-support'
     | '/api/send-emails'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   AssignRoute: typeof AssignRoute
   ChangelogRoute: typeof ChangelogRoute
   ResultsRoute: typeof ResultsRoute
+  RevealRoute: typeof RevealRoute
   SupportRoute: typeof SupportRoute
   TestSupportRoute: typeof TestSupportRoute
   ApiSendEmailsRoute: typeof ApiSendEmailsRoute
@@ -151,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResultsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reveal': {
+      id: '/reveal'
+      path: '/reveal'
+      fullPath: '/reveal'
+      preLoaderRoute: typeof RevealRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/support': {
       id: '/support'
       path: '/support'
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   AssignRoute: AssignRoute,
   ChangelogRoute: ChangelogRoute,
   ResultsRoute: ResultsRoute,
+  RevealRoute: RevealRoute,
   SupportRoute: SupportRoute,
   TestSupportRoute: TestSupportRoute,
   ApiSendEmailsRoute: ApiSendEmailsRoute,

@@ -6,7 +6,8 @@ export const ASSIGN_FLOW_STEPS = [
     title: "Name your event",
   },
   {
-    description: "Add people one by one or import a spreadsheet.",
+    description:
+      "Choose email or QR cards for each person. You can organize without playing.",
     id: 2,
     label: "People",
     title: "Add participants",
@@ -19,10 +20,11 @@ export const ASSIGN_FLOW_STEPS = [
     title: "Set exclusions",
   },
   {
-    description: "Review everyone, generate matches, and email assignments.",
+    description:
+      "Review everyone, draw names, then email or print their matches.",
     id: 4,
-    label: "Send",
-    title: "Confirm & send",
+    label: "Share",
+    title: "Draw & share",
   },
 ] as const;
 

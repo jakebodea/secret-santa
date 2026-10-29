@@ -87,4 +87,43 @@ describe(planMail, () => {
       })
     ).toThrow("Invalid assignment: player not found");
   });
+
+  it("skips givers and organizers without email", () => {
+    const { participants, admins } = planMail({
+      assignments: [
+        { giverId: "k", receiverId: "b" },
+        { giverId: "b", receiverId: "k" },
+      ],
+      origin: "http://localhost:3000",
+      partyName: undefined,
+      players: [
+        { email: "", id: "k", isAdmin: true, name: "Kid" },
+        { email: "bo@example.com", id: "b", isAdmin: false, name: "Bo" },
+      ],
+    });
+    expect(participants.map((mail) => mail.to)).toStrictEqual([
+      "bo@example.com",
+    ]);
+    expect(admins).toStrictEqual([]);
+  });
+
+  it("sends the summary to an organizer who sits out of the draw", () => {
+    const { participants, admins } = planMail({
+      assignments,
+      origin: "http://localhost:3000",
+      partyName: undefined,
+      players: [
+        ...players.map((player) => ({ ...player, isAdmin: false })),
+        {
+          email: "mom@example.com",
+          id: "m",
+          isAdmin: true,
+          name: "Mom",
+          sitsOut: true,
+        },
+      ],
+    });
+    expect(participants).toHaveLength(2);
+    expect(admins.map((mail) => mail.to)).toStrictEqual(["mom@example.com"]);
+  });
 });

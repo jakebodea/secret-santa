@@ -1,3 +1,4 @@
+import { EMAIL_PATTERN, MIN_DRAWING_PLAYERS, normalizeEmail } from "../players";
 import type { Constraint, Player } from "../types";
 import { toTitleCase } from "../utils";
 
@@ -39,14 +40,24 @@ export const exchangeSchema = {
       items: {
         type: "object",
         additionalProperties: false,
-        required: ["name", "email"],
+        required: ["name"],
         properties: {
           name: { type: "string" },
-          email: { type: "string", format: "email" },
+          email: {
+            type: "string",
+            format: "email",
+            description:
+              "Optional. Omit for people without an inbox, such as kids; after the draw the page offers a printable QR card or a private link for each of them.",
+          },
           isAdmin: {
             type: "boolean",
             description:
-              "Organizer receives the full assignment summary. Defaults to the first participant if none selected.",
+              "Organizer receives the full assignment summary if they have an email. Defaults to the first participant if none selected.",
+          },
+          sitsOut: {
+            type: "boolean",
+            description:
+              "Organizers only: true means they run the exchange and get the summary but are not in the draw. At least 3 other people must draw.",
           },
         },
       },
@@ -70,8 +81,6 @@ export const exchangeSchema = {
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
-
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u;
 
 /** Validate the entire input before changing any draft state. */
 export function parseExchange(input: Record<string, unknown>): {
@@ -99,13 +108,21 @@ export function parseExchange(input: Record<string, unknown>): {
       typeof value.name !== "string" ||
       !value.name.trim() ||
       value.name.length > 200 ||
-      typeof value.email !== "string" ||
-      !EMAIL.test(value.email.trim()) ||
-      value.email.length > 254 ||
-      (value.isAdmin !== undefined && typeof value.isAdmin !== "boolean")
+      (value.email !== undefined &&
+        (typeof value.email !== "string" ||
+          value.email.length > 254 ||
+          (value.email.trim() !== "" &&
+            !EMAIL_PATTERN.test(value.email.trim())))) ||
+      (value.isAdmin !== undefined && typeof value.isAdmin !== "boolean") ||
+      (value.sitsOut !== undefined && typeof value.sitsOut !== "boolean")
     ) {
       throw new Error(
-        "Each participant needs a name and valid email; isAdmin must be a boolean."
+        "Each participant needs a name; email is optional but must be valid when given; isAdmin and sitsOut must be booleans."
+      );
+    }
+    if (value.sitsOut === true && value.isAdmin !== true) {
+      throw new Error(
+        `${value.name.trim()} can only sit out of the draw as an organizer (isAdmin: true).`
       );
     }
     const name = toTitleCase(value.name.trim());
@@ -118,12 +135,20 @@ export function parseExchange(input: Record<string, unknown>): {
     return {
       id: crypto.randomUUID(),
       name,
-      email: value.email.trim().toLowerCase(),
+      email: normalizeEmail(typeof value.email === "string" ? value.email : ""),
       isAdmin: value.isAdmin === true,
+      ...(value.sitsOut === true && { sitsOut: true }),
     };
   });
   if (!players.some((player) => player.isAdmin)) {
     players[0].isAdmin = true;
+  }
+  if (
+    players.filter((player) => !player.sitsOut).length < MIN_DRAWING_PLAYERS
+  ) {
+    throw new Error(
+      "At least 3 participants must draw names; organizers who sit out don't count."
+    );
   }
   if (input.exclusions !== undefined && !Array.isArray(input.exclusions)) {
     throw new Error("Exclusions must be an array.");

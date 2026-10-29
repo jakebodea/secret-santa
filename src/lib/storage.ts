@@ -59,12 +59,28 @@ export function toggleAdmin(playerId: string): void {
   }
 
   player.isAdmin = !player.isAdmin;
+  if (!player.isAdmin) {
+    // Only organizers may sit out; a former organizer rejoins the draw.
+    player.sitsOut = false;
+  }
 
   const hasAdmin = data.players.some((p) => p.isAdmin);
   if (!hasAdmin && data.players.length > 0) {
     data.players[0].isAdmin = true;
   }
 
+  saveData(data);
+}
+
+/** Organizers only: toggle between drawing names and just running the exchange. */
+export function toggleSitsOut(playerId: string): void {
+  const data = getData();
+  const player = data.players.find((p) => p.id === playerId);
+  if (!player?.isAdmin) {
+    return;
+  }
+  player.sitsOut = !player.sitsOut;
+  data.assignments = [];
   saveData(data);
 }
 
