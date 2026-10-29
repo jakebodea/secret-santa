@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { AddParticipantOverlay } from "./add-participant-overlay";
@@ -24,9 +30,29 @@ describe(AddParticipantOverlay, () => {
     expect(screen.getByRole("dialog").dataset.slot).toBe("dialog-content");
     expect(screen.getByLabelText("QR card / private link")).toBeTruthy();
     expect(screen.getByLabelText("Only organizing")).toBeTruthy();
-    expect(screen.queryByLabelText("Email address")).toBeNull();
-    fireEvent.click(screen.getByLabelText("Email"));
     expect(screen.getByLabelText("Email address")).toBeTruthy();
+    fireEvent.click(screen.getByLabelText("QR card / private link"));
+    expect(screen.queryByLabelText("Email address")).toBeNull();
+  });
+
+  test("remembers the delivery choice after closing and reopening", async () => {
+    viewport.mobile = false;
+    const props = {
+      onOpenChange: vi.fn<() => void>(),
+      onAddPlayer: vi.fn<() => void>(),
+      existingPlayers: [],
+    };
+    const { rerender } = render(<AddParticipantOverlay {...props} open />);
+    fireEvent.click(screen.getByLabelText("QR card / private link"));
+    rerender(<AddParticipantOverlay {...props} open={false} />);
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    rerender(<AddParticipantOverlay {...props} open />);
+    expect(
+      screen.getByRole<HTMLInputElement>("radio", {
+        name: "QR card / private link",
+      }).checked
+    ).toBeTruthy();
+    expect(screen.queryByLabelText("Email address")).toBeNull();
   });
 
   test("mobile uses Drawer defaults and Cancel dismisses it", () => {

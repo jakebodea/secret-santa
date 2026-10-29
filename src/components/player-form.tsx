@@ -9,7 +9,11 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
+export type DeliveryMethod = "card" | "email";
+
 interface PlayerFormProps {
+  defaultDelivery?: DeliveryMethod;
+  onDeliveryChange?: (delivery: DeliveryMethod) => void;
   onAddPlayer: (player: Player) => void;
   existingPlayers: Player[];
   variant?: "dialog" | "default";
@@ -19,11 +23,13 @@ interface PlayerFormProps {
 export function PlayerForm({
   onAddPlayer,
   existingPlayers,
+  defaultDelivery = "email",
+  onDeliveryChange,
   variant = "default",
   fieldIdPrefix = "participant",
 }: PlayerFormProps) {
   const nameInputRef = useRef<HTMLInputElement>(null);
-  const [delivery, setDelivery] = useState<"card" | "email">("card");
+  const [delivery, setDelivery] = useState<DeliveryMethod>(defaultDelivery);
   const [sitsOut, setSitsOut] = useState(false);
   const isOrganizer = existingPlayers.length === 0;
   const [duplicateError, setDuplicateError] = useState<string | null>(null);
@@ -61,6 +67,7 @@ export function PlayerForm({
 
       onAddPlayer(newPlayer);
       form.reset();
+      setSitsOut(false);
       setDuplicateError(null);
 
       setTimeout(() => {
@@ -165,6 +172,7 @@ export function PlayerForm({
                 checked={delivery === "card"}
                 onChange={() => {
                   setDelivery("card");
+                  onDeliveryChange?.("card");
                   form.setFieldValue("email", "");
                 }}
                 className="accent-primary"
@@ -178,7 +186,10 @@ export function PlayerForm({
                 type="radio"
                 name={`${fieldIdPrefix}-delivery`}
                 checked={delivery === "email"}
-                onChange={() => setDelivery("email")}
+                onChange={() => {
+                  setDelivery("email");
+                  onDeliveryChange?.("email");
+                }}
                 className="accent-primary"
               />
               Email

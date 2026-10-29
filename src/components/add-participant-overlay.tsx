@@ -1,6 +1,9 @@
+import { useState } from "react";
+
 import { useIsMobile } from "../hooks/use-is-mobile";
 import type { Player } from "../lib/types";
 import { PlayerForm } from "./player-form";
+import type { DeliveryMethod } from "./player-form";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -33,12 +36,15 @@ export function AddParticipantOverlay({
   existingPlayers,
 }: AddParticipantOverlayProps) {
   const isMobile = useIsMobile();
+  const [lastDelivery, setLastDelivery] = useState<DeliveryMethod>("email");
 
   const title = "Add someone";
   const isFirstParticipant = existingPlayers.length === 0;
 
   const form = (
     <PlayerForm
+      defaultDelivery={lastDelivery}
+      onDeliveryChange={setLastDelivery}
       variant="dialog"
       fieldIdPrefix="add-participant"
       existingPlayers={existingPlayers}

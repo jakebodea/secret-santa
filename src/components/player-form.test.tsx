@@ -13,6 +13,7 @@ describe(PlayerForm, () => {
     render(<PlayerForm existingPlayers={[]} onAddPlayer={onAddPlayer} />);
     await user.type(screen.getByLabelText("Name"), "Parent");
     await user.click(screen.getByLabelText("Only organizing"));
+    await user.click(screen.getByLabelText("No email summary"));
     await user.click(screen.getByRole("button", { name: "Add person" }));
     await waitFor(() =>
       expect(onAddPlayer).toHaveBeenCalledWith(
@@ -52,15 +53,24 @@ describe(PlayerForm, () => {
           })
         )
       );
+      expect(
+        screen.getByRole<HTMLInputElement>("radio", {
+          name: "QR card / private link",
+        }).checked
+      ).toBeTruthy();
     }
   );
 
-  test("email selection requires an address and accepts a directly pasted valid one", async () => {
+  test("email defaults on and requires an address, including a directly pasted one", async () => {
     const user = userEvent.setup();
     const onAddPlayer = vi.fn<() => void>();
     render(<PlayerForm existingPlayers={[]} onAddPlayer={onAddPlayer} />);
     await user.type(screen.getByLabelText("Name"), "Ava");
-    await user.click(screen.getByLabelText("Email"));
+    expect(
+      screen.getByRole<HTMLInputElement>("radio", {
+        name: "Email",
+      }).checked
+    ).toBeTruthy();
     expect(
       screen.getByRole<HTMLButtonElement>("button", { name: "Add person" })
         .disabled
