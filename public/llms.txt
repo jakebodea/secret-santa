@@ -9,7 +9,7 @@
 
 ## For chat assistants: give the user a setup link
 
-If you can't operate the page, build a link that opens the exchange already filled in:
+If a user asks you to set up an exchange and you can't operate the page, don't walk them through the form. Reply with a link that opens their exchange already filled in, ready to review and draw:
 
 `https://supersimplesecretsanta.com/assign#setup=` followed by the percent-encoded JSON (as with `encodeURIComponent`).
 
