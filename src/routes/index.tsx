@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
       },
       {
         content:
-          "Organize a free Secret Santa gift exchange with no account. Add participants, set exclusions, and email secret matches yourself or with a WebMCP-compatible AI agent.",
+          "Free Secret Santa organizer. No account. Add people, set exclusions, and share matches by email, QR card, or private link.",
         name: "description",
       },
       {
@@ -215,7 +215,7 @@ function HomePage() {
               <span className="whitespace-nowrap">Secret Santa</span>
             </h1>
             <p className="animate-reveal reveal-order-2 text-muted-foreground text-lg font-light tracking-wide sm:text-2xl">
-              Organize your gift exchange with this super simple tool!
+              The easiest way to draw names for your gift exchange.
             </p>
           </div>
 
@@ -228,17 +228,6 @@ function HomePage() {
             <p className="text-muted-foreground text-sm font-light tracking-wide">
               Takes about two minutes
             </p>
-            <p className="text-muted-foreground mx-auto max-w-md text-sm font-light tracking-wide">
-              Bring your AI agent, too. A WebMCP-compatible browser agent can
-              add your group, set exclusions, and draw names for free. You
-              approve before emails go out.{" "}
-              <a
-                href="/llms.txt"
-                className="text-foreground underline underline-offset-4"
-              >
-                Agent instructions
-              </a>
-            </p>
           </div>
           {/* Features */}
           <div className="grid gap-2 pt-6 sm:gap-8 sm:pt-12 md:grid-cols-3">
@@ -248,9 +237,8 @@ function HomePage() {
                 title="No Accounts"
                 description={
                   <>
-                    No signups, no logins, no hassle. Just add names and{" "}
-                    <span className="underline">go</span>. Share matches by
-                    email, QR card, or private link.
+                    No signups, no logins. Just add names and{" "}
+                    <span className="underline">go</span>.
                   </>
                 }
                 tone="primary"
@@ -262,9 +250,8 @@ function HomePage() {
                 title="Absolutely Free"
                 description={
                   <>
-                    No hidden costs, no premium tiers, no upsells.{" "}
-                    <span className="underline">Free</span> forever, for
-                    everyone.
+                    No upsells, no premium tier.{" "}
+                    <span className="underline">Free</span> forever.
                   </>
                 }
                 tone="secondary"
@@ -276,9 +263,9 @@ function HomePage() {
                 title="Privacy First"
                 description={
                   <>
-                    Zero data stored or sold. Your info is{" "}
+                    Nothing stored or sold. Your info is{" "}
                     <span className="underline">only</span> used to send
-                    assignments, then it’s gone.
+                    matches.
                   </>
                 }
                 tone="accent"
@@ -298,6 +285,13 @@ function HomePage() {
             >
               Support this project
             </Link>
+            <span aria-hidden="true"> · </span>
+            <a
+              href="/llms.txt"
+              className="hover:text-primary underline-offset-4 transition-colors hover:underline"
+            >
+              For AI agents
+            </a>
           </p>
         </div>
       </footer>

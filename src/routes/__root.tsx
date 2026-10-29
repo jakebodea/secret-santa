@@ -55,6 +55,13 @@ export const Route = createRootRoute({
         href: "https://supersimplesecretsanta.com",
         rel: "canonical",
       },
+      // Agents find the WebMCP tools and workflow here instead of in page copy
+      {
+        href: "/llms.txt",
+        rel: "alternate",
+        title: "Instructions for AI agents (WebMCP)",
+        type: "text/plain",
+      },
     ],
     meta: [
       {
@@ -79,7 +86,7 @@ export const Route = createRootRoute({
       },
       {
         content:
-          "Organize a free Secret Santa gift exchange with no account. Add participants, set exclusions, and email secret matches yourself or with a WebMCP-compatible AI agent.",
+          "Free Secret Santa organizer. No account. Add people, set exclusions, and share matches by email, QR card, or private link.",
         name: "description",
       },
       {
@@ -93,7 +100,7 @@ export const Route = createRootRoute({
       },
       {
         content:
-          "Organize a free Secret Santa gift exchange with no account. Add participants, set exclusions, and email secret matches yourself or with a WebMCP-compatible AI agent.",
+          "Free Secret Santa organizer. No account. Add people, set exclusions, and share matches by email, QR card, or private link.",
         property: "og:description",
       },
       {
@@ -118,7 +125,7 @@ export const Route = createRootRoute({
       },
       {
         content:
-          "Organize a free Secret Santa gift exchange with no account. Add participants, set exclusions, and email secret matches yourself or with a WebMCP-compatible AI agent.",
+          "Free Secret Santa organizer. No account. Add people, set exclusions, and share matches by email, QR card, or private link.",
         name: "twitter:description",
       },
       {
@@ -146,7 +153,7 @@ const jsonLd = {
     "WebMCP tools for browser AI agents",
   ],
   description:
-    "Organize a free Secret Santa gift exchange with no account. Add participants, set exclusions, and email secret matches yourself or with a WebMCP-compatible AI agent.",
+    "Free Secret Santa organizer. No account. Add people, set exclusions, and share matches by email, QR card, or private link.",
   name: "Secret Santa",
   url: "https://supersimplesecretsanta.com",
 };
