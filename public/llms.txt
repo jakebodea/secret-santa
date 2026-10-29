@@ -1,11 +1,35 @@
 # Super Simple Secret Santa
 
-> A free Secret Santa gift exchange organizer with no account required. Add 3–100 participants, exclude pairings such as couples, draw names, and email private assignments. People without email, such as kids, get a printable QR card or a private link instead. The organizer can run it without playing. Browser AI agents can use the site's WebMCP tools.
+> A free Secret Santa gift exchange organizer with no account required. Add 3–100 participants, exclude pairings such as couples, draw names, and email private assignments. People without email, such as kids, get a printable QR card or a private link instead. The organizer can run it without playing. Chat assistants can hand users a pre-filled setup link; browser AI agents can use the site's WebMCP tools.
 
 ## Pages
 
 - [Home](https://supersimplesecretsanta.com/): Free manual setup and browser-agent tools.
 - [Set up an exchange](https://supersimplesecretsanta.com/assign): Participants, organizer, exclusions, drawing, email delivery, and printable reveal cards.
+
+## For chat assistants: give the user a setup link
+
+If you can't operate the page, build a link that opens the exchange already filled in:
+
+`https://supersimplesecretsanta.com/assign#setup=` followed by the percent-encoded JSON (as with `encodeURIComponent`).
+
+```json
+{
+  "partyName": "Henderson Family",
+  "participants": [
+    { "name": "Sam", "email": "sam@example.com", "isAdmin": true },
+    { "name": "Alex", "email": "alex@example.com" },
+    { "name": "Jo" }
+  ],
+  "exclusions": [{ "giver": "Sam", "receiver": "Alex" }]
+}
+```
+
+- 3–100 participants with distinct names. `email` is optional; people without one get a printable QR card or private link after the draw.
+- The first participant organizes unless another has `"isAdmin": true`. Organizers with email receive every match. An organizer with `"sitsOut": true` runs the exchange without drawing.
+- Exclusions use exact participant names and apply both ways unless `"bidirectional": false`.
+
+The link opens a review screen. The user draws names and approves sending; the link itself sends nothing. The data stays in the URL fragment, which the site's server never receives. Tell the user the link contains the names and emails, so they shouldn't share it.
 
 ## For browser agents
 
