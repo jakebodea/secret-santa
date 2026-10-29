@@ -3,6 +3,7 @@ import { m } from "framer-motion";
 import { Zap, Heart, ShieldCheck, ArrowRight } from "lucide-react";
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 
+import { AgentSetupNote } from "../components/agent-setup-note";
 import { FeatureCard } from "../components/feature-card";
 import { Button } from "../components/ui/button";
 import { useWebMCPTools } from "../hooks/use-webmcp-tools";
@@ -215,7 +216,8 @@ function HomePage() {
               <span className="whitespace-nowrap">Secret Santa</span>
             </h1>
             <p className="animate-reveal reveal-order-2 text-muted-foreground text-lg font-light tracking-wide sm:text-2xl">
-              The easiest way to draw names for your gift exchange.
+              Draw names, keep couples apart, and share matches by email or QR
+              card.
             </p>
           </div>
 
@@ -285,14 +287,8 @@ function HomePage() {
             >
               Support this project
             </Link>
-            <span aria-hidden="true"> · </span>
-            <a
-              href="/llms.txt"
-              className="hover:text-primary underline-offset-4 transition-colors hover:underline"
-            >
-              For AI agents
-            </a>
           </p>
+          <AgentSetupNote />
         </div>
       </footer>
     </div>
