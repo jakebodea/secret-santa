@@ -149,7 +149,8 @@ const jsonLd = {
   featureList: [
     "Free Secret Santa gift exchanges",
     "Participant exclusions",
-    "Email assignments",
+    "Matches by email, printable QR card, or private link; email is optional",
+    "Pre-filled setup links for chat assistants",
     "WebMCP tools for browser AI agents",
   ],
   description:
