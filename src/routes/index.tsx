@@ -215,8 +215,7 @@ function HomePage() {
               <span className="whitespace-nowrap">Secret Santa</span>
             </h1>
             <p className="animate-reveal reveal-order-2 text-muted-foreground text-lg font-light tracking-wide sm:text-2xl">
-              Draw names, keep couples apart, and share matches by email or QR
-              card.
+              Draw names, keep couples apart, and share matches.
             </p>
           </div>
 
