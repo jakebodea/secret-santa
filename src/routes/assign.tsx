@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { toast } from "sonner";
 
 import type { AssignFlowStepId } from "../components/assign-flow-metadata";
 import { AssignFlowSteps } from "../components/assign-flow-steps";
@@ -18,6 +19,7 @@ import { useExchangeWebMCP } from "../hooks/use-exchange-webmcp";
 import { drawDurationMs } from "../lib/draw-timeline";
 import { MIN_DRAWING_PLAYERS, drawingPlayers } from "../lib/players";
 import { generateAssignments } from "../lib/secret-santa-assignments";
+import { readSetupLink } from "../lib/setup-link";
 import {
   addConstraint,
   addPlayer,
@@ -28,6 +30,7 @@ import {
   removePlayer,
   replacePlayers,
   saveAssignments,
+  saveData,
   saveConstraints,
   savePartyName,
   toggleAdmin,
@@ -108,8 +111,31 @@ function AssignPage() {
   // Memoized: the draw animation picks its cards from this list once.
   const drawing = useMemo(() => drawingPlayers(players), [players]);
 
+  // Survives a re-run of the mount effect after the hash is cleared
+  const setupHash = useRef<string | null>(null);
+
   useEffect(() => {
     clearAllData();
+    setupHash.current ??= window.location.hash;
+    const setup = readSetupLink(setupHash.current);
+    if (!setup) {
+      return;
+    }
+    // Keep names and emails out of the address bar and history
+    window.history.replaceState(null, "", window.location.pathname);
+    if ("error" in setup) {
+      toast.error("Couldn’t load that setup link", {
+        description: setup.error,
+        id: "setup-link",
+      });
+      return;
+    }
+    saveData({ ...setup.draft, assignments: [] });
+    // The hash only exists in the browser, so it can't seed state during SSR
+    // oxlint-disable-next-line react/set-state-in-effect
+    setPartyName(setup.draft.partyName);
+    dispatchList({ type: "sync_from_storage" });
+    setStepState({ direction: 1, step: 4 });
   }, []);
 
   useEffect(() => {
